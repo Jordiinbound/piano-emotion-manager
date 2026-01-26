@@ -231,3 +231,28 @@
 - [x] Verificar que las estadísticas se cargan correctamente (3 verticales, 0 de cola)
 - [ ] Implementar formulario de creación/edición de piano
 - [ ] Implementar página de detalle de piano
+
+## Fase 9: Migración detallada de la página de Agenda
+- [x] Crear router tRPC de appointments en el backend con endpoints:
+  - [x] getAppointments (con paginación y filtros por fecha y estado)
+  - [x] getAppointmentById
+  - [x] getStats (estadísticas: total, confirmadas, programadas, completadas)
+  - [x] createAppointment con generación automática de odId
+  - [x] updateAppointment
+  - [x] deleteAppointment
+  - [x] getUpcomingAppointments (próximas citas agrupadas por fecha)
+- [x] Registrar appointmentsRouter en routers.ts
+- [x] Crear tests para el router de appointments (8/8 pasando)
+- [x] Crear componente AppointmentCard para mostrar información de la cita
+- [x] Implementar página Agenda.tsx con:
+  - [x] Grid de estadísticas (4 tarjetas: Total, Programadas, Confirmadas, Completadas)
+  - [x] Filtros horizontales (Todas, Programadas, Confirmadas, Completadas, Canceladas)
+  - [x] Lista de citas agrupadas por fecha (Hoy, Mañana, Futuras)
+  - [x] Tarjetas de cita con hora, cliente, piano, estado y duración
+  - [x] Badges de estado con colores (programada, confirmada, completada, cancelada)
+  - [x] FAB (botón flotante) naranja para agregar cita
+- [x] Probar la página de Agenda en el navegador
+- [x] Verificar que todos los filtros funcionan correctamente
+- [x] Verificar que las estadísticas se cargan correctamente (0 citas porque DB está vacía)
+- [ ] Implementar formulario de creación/edición de cita
+- [ ] Implementar página de detalle de cita
