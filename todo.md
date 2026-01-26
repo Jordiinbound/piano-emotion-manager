@@ -279,3 +279,35 @@
 - [x] Probar la página de Facturación en el navegador
 - [x] Verificar que todos los filtros funcionan correctamente
 - [x] Verificar que las estadísticas se cargan correctamente (€0.00 porque DB está vacía)
+
+## Fase 11: Migración detallada de la página de Inventario
+- [x] Crear router tRPC de inventory en el backend con endpoints:
+  - [x] getInventory (con paginación y filtros por categoría, stock bajo y búsqueda)
+  - [x] getInventoryById
+  - [x] getStats (estadísticas: total items, stock bajo, categorías)
+  - [x] getLowStockItems (items con quantity <= minStock)
+  - [x] createInventoryItem con generación automática de odId
+  - [x] updateInventoryItem
+  - [x] deleteInventoryItem
+- [x] Registrar inventoryRouter en routers.ts
+- [x] Crear tests para el router de inventory (mínimo 8 tests)
+- [x] Crear componente InventoryCard para mostrar información del item
+- [x] Implementar página Inventario.tsx con:
+  - [x] Grid de estadísticas (Total Items, Stock Bajo, Categorías)
+  - [x] Barra de búsqueda por nombre, descripción o proveedor
+  - [x] Filtros por categoría (Todos, Stock Bajo, Cuerdas, Martillos, Fieltros, Herramientas, etc.)
+  - [x] Lista de items con nombre, categoría, stock, stock mínimo, precio y proveedor
+  - [x] Badges de alerta para stock bajo (quantity <= minStock)
+  - [x] FAB (botón flotante) naranja para agregar item
+- [x] Probar la página de Inventario en el navegador
+- [x] Verificar que todos los filtros funcionan correctamente
+- [x] Verificar que las estadísticas se cargan correctamente
+
+## Corrección de error: Anchor anidado
+- [ ] Identificar dónde está el error de `<a>` anidado en el código
+- [ ] Corregir el error eliminando el anchor anidado
+- [ ] Verificar que el error se ha resuelto en el navegador
+## Corrección de error: Anchor anidado
+- [x] Identificar dónde está el error de `<a>` anidado en el código
+- [x] Corregir el error eliminando el anchor anidado
+- [x] Verificar que el error se ha resuelto en el navegador

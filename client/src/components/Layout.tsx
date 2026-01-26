@@ -157,10 +157,11 @@ export default function Layout({ children }: LayoutProps) {
                   </Button>
                 </div>
               ) : (
-                <Link href="/sign-in">
-                  <a className="flex items-center gap-x-3 rounded-md px-3 py-2 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-accent">
-                    Iniciar Sesión
-                  </a>
+                <Link
+                  href="/sign-in"
+                  className="flex items-center gap-x-3 rounded-md px-3 py-2 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-accent"
+                >
+                  Iniciar Sesión
                 </Link>
               )}
             </div>
@@ -224,13 +225,12 @@ export default function Layout({ children }: LayoutProps) {
                         </Button>
                       </div>
                     ) : (
-                      <Link href="/sign-in">
-                        <a
-                          className="flex items-center gap-x-3 rounded-md px-3 py-2 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-accent"
-                          onClick={() => setSidebarOpen(false)}
-                        >
-                          Iniciar Sesión
-                        </a>
+                      <Link
+                        href="/sign-in"
+                        className="flex items-center gap-x-3 rounded-md px-3 py-2 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-accent"
+                        onClick={() => setSidebarOpen(false)}
+                      >
+                        Iniciar Sesión
                       </Link>
                     )}
                   </div>
