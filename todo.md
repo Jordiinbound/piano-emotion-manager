@@ -31,12 +31,16 @@
 - [ ] Conectar a base de datos de producción TiDB
 
 ## Fase 4: Diseñar layout responsive base
-- [ ] Crear componente de sidebar para desktop
-- [ ] Crear menú hamburguesa para móvil
-- [ ] Implementar navegación responsive
-- [ ] Probar en desktop (1920x1080, 1366x768)
-- [ ] Probar en tablet (768x1024)
-- [ ] Probar en móvil (375x667, 414x896)
+- [x] Crear componente Layout principal con sidebar
+- [x] Implementar navegación con enlaces a todas las secciones
+- [x] Agregar menú hamburguesa para móvil
+- [x] Implementar header con información de usuario
+- [x] Agregar estilos responsive (mobile-first)
+- [x] Probar navegación en desktop
+- [x] Sidebar persistente para desktop funcionando
+- [x] Resaltado de sección activa funcionando
+- [ ] Probar menú hamburguesa en móvil
+- [ ] Verificar responsive en diferentes tamaños
 
 ## Fase 5: Migrar dashboard principal
 - [ ] Crear página de dashboard
