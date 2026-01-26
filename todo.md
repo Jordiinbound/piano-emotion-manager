@@ -22,11 +22,13 @@
 - [x] Instalar @clerk/clerk-react
 - [x] Configurar credenciales de Clerk desde Vercel
 - [x] Crear ClerkProvider personalizado
-- [x] Crear hook useAuth
+- [x] Crear hook useAuth con timeout para evitar spinner infinito
 - [x] Crear páginas de SignIn y SignUp
 - [x] Agregar rutas de autenticación
-- [ ] Verificar que el login funciona correctamente
-- [ ] Probar flujo completo de autenticación
+- [x] Verificar que la aplicación carga correctamente
+- [x] Dashboard muestra métricas (0 porque DB está vacía)
+- [ ] Probar flujo completo de login con Clerk
+- [ ] Conectar a base de datos de producción TiDB
 
 ## Fase 4: Diseñar layout responsive base
 - [ ] Crear componente de sidebar para desktop

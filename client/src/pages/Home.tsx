@@ -2,7 +2,6 @@ import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Loader2 } from "lucide-react";
-import { getLoginUrl } from "@/const";
 import { trpc } from "@/lib/trpc";
 
 /**
@@ -11,38 +10,21 @@ import { trpc } from "@/lib/trpc";
 export default function Home() {
   const { user, loading, isAuthenticated, logout } = useAuth();
   
-  // Obtener métricas del dashboard
-  const { data: metrics, isLoading: metricsLoading } = trpc.dashboard.getMetrics.useQuery(
-    undefined,
-    {
-      enabled: isAuthenticated, // Solo ejecutar si el usuario está autenticado
-    }
-  );
+  console.log('[Home] Auth state:', { user, loading, isAuthenticated });
+  
+  // Obtener métricas del dashboard (sin depender de autenticación por ahora)
+  const { data: metrics, isLoading: metricsLoading, error: metricsError } = trpc.dashboard.getMetrics.useQuery();
 
+  // Mostrar estado de carga con información de depuración
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen flex flex-col items-center justify-center gap-4">
         <Loader2 className="h-8 w-8 animate-spin" />
-      </div>
-    );
-  }
-
-  if (!isAuthenticated) {
-    return (
-      <div className="min-h-screen flex flex-col items-center justify-center p-4">
-        <Card className="w-full max-w-md">
-          <CardHeader>
-            <CardTitle>Piano Emotion Manager</CardTitle>
-            <CardDescription>
-              Inicia sesión para acceder al sistema
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Button asChild className="w-full">
-              <a href={getLoginUrl()}>Iniciar Sesión</a>
-            </Button>
-          </CardContent>
-        </Card>
+        <p className="text-muted-foreground">Cargando autenticación...</p>
+        <div className="text-xs text-muted-foreground">
+          <p>Loading: {loading.toString()}</p>
+          <p>Authenticated: {isAuthenticated.toString()}</p>
+        </div>
       </div>
     );
   }
@@ -54,18 +36,34 @@ export default function Home() {
           <div>
             <h1 className="text-3xl font-bold">Dashboard</h1>
             <p className="text-muted-foreground">
-              Bienvenido, {user?.name || user?.email}
+              {isAuthenticated ? `Bienvenido, ${user?.name || user?.email}` : 'No autenticado'}
             </p>
           </div>
-          <Button variant="outline" onClick={() => logout()}>
-            Cerrar Sesión
-          </Button>
+          {isAuthenticated && (
+            <Button variant="outline" onClick={() => logout()}>
+              Cerrar Sesión
+            </Button>
+          )}
+          {!isAuthenticated && (
+            <Button asChild>
+              <a href="/sign-in">Iniciar Sesión</a>
+            </Button>
+          )}
         </div>
 
         {metricsLoading ? (
           <div className="flex items-center justify-center py-12">
             <Loader2 className="h-8 w-8 animate-spin" />
           </div>
+        ) : metricsError ? (
+          <Card>
+            <CardHeader>
+              <CardTitle>Error al cargar métricas</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-destructive">{metricsError.message}</p>
+            </CardContent>
+          </Card>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <Card>
