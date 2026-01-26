@@ -9,6 +9,7 @@ import { useState, useMemo } from 'react';
 import { trpc } from '@/lib/trpc';
 import { InvoiceCard } from '@/components/InvoiceCard';
 import { Plus, Search } from 'lucide-react';
+import InvoiceFormModal from '@/components/InvoiceFormModal';
 
 type FilterType = 'all' | 'draft' | 'sent' | 'paid' | 'cancelled';
 type PeriodType = 'all' | 'thisMonth' | 'lastMonth' | 'thisYear';
@@ -17,6 +18,7 @@ export default function Facturacion() {
   const [search, setSearch] = useState('');
   const [filter, setFilter] = useState<FilterType>('all');
   const [period, setPeriod] = useState<PeriodType>('all');
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   // Obtener estadísticas
   const { data: stats, isLoading: statsLoading } = trpc.invoices.getStats.useQuery();
@@ -244,15 +246,18 @@ export default function Facturacion() {
 
       {/* FAB (Floating Action Button) */}
       <button
-        onClick={() => {
-          // TODO: Abrir modal de crear factura
-          console.log('Add invoice clicked');
-        }}
+        onClick={() => setIsModalOpen(true)}
         className="fixed bottom-6 right-6 w-14 h-14 bg-[#e07a5f] text-white rounded-full shadow-lg hover:bg-[#d16a4f] transition-colors flex items-center justify-center"
         aria-label="Agregar factura"
       >
         <Plus className="w-6 h-6" />
       </button>
+
+      {/* Modal de formulario */}
+      <InvoiceFormModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+      />
     </div>
   );
 }

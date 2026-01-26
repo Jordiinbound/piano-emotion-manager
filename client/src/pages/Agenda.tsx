@@ -9,11 +9,13 @@ import { useState, useMemo } from 'react';
 import { trpc } from '@/lib/trpc';
 import { AppointmentCard } from '@/components/AppointmentCard';
 import { Plus } from 'lucide-react';
+import AppointmentFormModal from '@/components/AppointmentFormModal';
 
 type FilterType = 'all' | 'scheduled' | 'confirmed' | 'completed' | 'cancelled';
 
 export default function Agenda() {
   const [filter, setFilter] = useState<FilterType>('all');
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   // Obtener estadísticas
   const { data: stats, isLoading: statsLoading } = trpc.appointments.getStats.useQuery();
@@ -238,15 +240,18 @@ export default function Agenda() {
 
       {/* FAB (Floating Action Button) */}
       <button
-        onClick={() => {
-          // TODO: Abrir modal de crear cita
-          console.log('Add appointment clicked');
-        }}
+        onClick={() => setIsModalOpen(true)}
         className="fixed bottom-6 right-6 w-14 h-14 bg-[#e07a5f] text-white rounded-full shadow-lg hover:bg-[#d16a4f] transition-colors flex items-center justify-center"
         aria-label="Agregar cita"
       >
         <Plus className="w-6 h-6" />
       </button>
+
+      {/* Modal de formulario */}
+      <AppointmentFormModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+      />
     </div>
   );
 }

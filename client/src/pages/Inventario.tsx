@@ -9,12 +9,14 @@ import { useState } from 'react';
 import { trpc } from '@/lib/trpc';
 import { InventoryCard } from '@/components/InventoryCard';
 import { Plus, Search, AlertTriangle } from 'lucide-react';
+import InventoryFormModal from '@/components/InventoryFormModal';
 
 type FilterType = 'all' | 'low_stock' | 'strings' | 'hammers' | 'felts' | 'tools' | 'dampers' | 'keys' | 'action_parts' | 'pedals' | 'tuning_pins' | 'chemicals' | 'other';
 
 export default function Inventario() {
   const [search, setSearch] = useState('');
   const [filter, setFilter] = useState<FilterType>('all');
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   // Obtener estadísticas
   const { data: stats, isLoading: statsLoading } = trpc.inventory.getStats.useQuery();
@@ -230,15 +232,18 @@ export default function Inventario() {
 
       {/* FAB (Floating Action Button) */}
       <button
-        onClick={() => {
-          // TODO: Abrir modal de crear item
-          console.log('Add item clicked');
-        }}
+        onClick={() => setIsModalOpen(true)}
         className="fixed bottom-6 right-6 w-14 h-14 bg-[#e07a5f] text-white rounded-full shadow-lg hover:bg-[#d16a4f] transition-colors flex items-center justify-center"
         aria-label="Agregar item"
       >
         <Plus className="w-6 h-6" />
       </button>
+
+      {/* Modal de formulario */}
+      <InventoryFormModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+      />
     </div>
   );
 }
