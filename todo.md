@@ -19,11 +19,14 @@
 - [ ] Migrar routers adicionales según necesidad (incremental)
 
 ## Fase 3: Integrar Clerk para autenticación
-- [ ] Instalar y configurar Clerk
-- [ ] Implementar flujo de login
-- [ ] Implementar flujo de logout
-- [ ] Verificar sesiones persistentes
-- [ ] Probar autenticación en múltiples navegadores
+- [x] Instalar @clerk/clerk-react
+- [x] Configurar credenciales de Clerk desde Vercel
+- [x] Crear ClerkProvider personalizado
+- [x] Crear hook useAuth
+- [x] Crear páginas de SignIn y SignUp
+- [x] Agregar rutas de autenticación
+- [ ] Verificar que el login funciona correctamente
+- [ ] Probar flujo completo de autenticación
 
 ## Fase 4: Diseñar layout responsive base
 - [ ] Crear componente de sidebar para desktop
