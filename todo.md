@@ -183,3 +183,27 @@
 - [x] Verificar que Clerk funciona correctamente sin errores de dominio
 - [x] Confirmar que las claves de desarrollo NO afectan a producción
 - [x] Documentar que producción seguirá usando las claves de producción en Vercel
+
+## Fase 7: Migración detallada de la página de Servicios
+- [ ] Crear router tRPC de servicios en el backend con endpoints:
+  - [ ] getServices (con paginación y filtros por tipo y búsqueda)
+  - [ ] getServiceById
+  - [ ] getStats (estadísticas por tipo: afinaciones, mantenimiento, reparaciones, regulaciones)
+  - [ ] createService
+  - [ ] updateService
+  - [ ] deleteService
+- [ ] Registrar servicesRouter en routers.ts
+- [ ] Crear tests para el router de servicios (mínimo 6 tests)
+- [ ] Crear componente ServiceCard para mostrar información del servicio
+- [ ] Implementar página Servicios.tsx con:
+  - [ ] Grid de estadísticas por tipo (4 tarjetas: Afinaciones, Mantenimiento, Reparaciones, Regulaciones)
+  - [ ] Barra de búsqueda
+  - [ ] Filtros horizontales (Todos, Afinación, Mantenimiento, Reparación, Regulación)
+  - [ ] Lista de servicios con ServiceCard
+  - [ ] Indicador visual de servicios pasados vs futuros
+  - [ ] FAB (botón flotante) para agregar servicio
+- [ ] Probar la página de Servicios en el navegador
+- [ ] Verificar que todos los filtros funcionan correctamente
+- [ ] Verificar que las estadísticas se cargan correctamente
+- [ ] Implementar formulario de creación/edición de servicio
+- [ ] Implementar página de detalle de servicio
