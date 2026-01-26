@@ -256,3 +256,26 @@
 - [x] Verificar que las estadísticas se cargan correctamente (0 citas porque DB está vacía)
 - [ ] Implementar formulario de creación/edición de cita
 - [ ] Implementar página de detalle de cita
+
+## Fase 10: Migración detallada de la página de Facturación
+- [x] Crear router tRPC de invoices en el backend con endpoints:
+  - [x] getInvoices (con paginación y filtros por estado, fecha y búsqueda)
+  - [x] getInvoiceById
+  - [x] getStats (estadísticas: total, pendiente, cobrado, borradores)
+  - [x] createInvoice con generación automática de odId e invoiceNumber
+  - [x] updateInvoice
+  - [x] deleteInvoice
+- [x] Registrar invoicesRouter en routers.ts
+- [x] Crear tests para el router de invoices (9/9 pasando)
+- [x] Crear componente InvoiceCard para mostrar información de la factura
+- [x] Implementar página Facturacion.tsx con:
+  - [x] Grid de estadísticas (4 tarjetas: Total, Pendiente, Cobrado, Borradores)
+  - [x] Barra de búsqueda por número de factura o cliente
+  - [x] Filtros por estado (Todas, Borrador, Enviada, Pagada, Anulada)
+  - [x] Filtros por período (Todo, Este mes, Mes anterior, Este año)
+  - [x] Grid de facturas con número, cliente, fecha, estado y total
+  - [x] Badges de estado con colores (borrador, enviada, pagada, anulada)
+  - [x] FAB (botón flotante) naranja para agregar factura
+- [x] Probar la página de Facturación en el navegador
+- [x] Verificar que todos los filtros funcionan correctamente
+- [x] Verificar que las estadísticas se cargan correctamente (€0.00 porque DB está vacía)
