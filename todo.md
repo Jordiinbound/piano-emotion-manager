@@ -208,3 +208,26 @@
 - [x] Verificar que las estadísticas se cargan correctamente (12 servicios, 3 de cada tipo)
 - [ ] Implementar formulario de creación/edición de servicio
 - [ ] Implementar página de detalle de servicio
+
+## Fase 8: Migración detallada de la página de Pianos
+- [x] Crear router tRPC de pianos en el backend con endpoints:
+  - [x] getPianos (con paginación y filtros por categoría y búsqueda)
+  - [x] getPianoById
+  - [x] getStats (estadísticas por categoría: verticales, de cola)
+  - [x] createPiano con generación automática de odId y pianoType
+  - [x] updatePiano
+  - [x] deletePiano
+- [x] Registrar pianosRouter en routers.ts
+- [x] Crear tests para el router de pianos (8/8 pasando)
+- [x] Crear componente PianoCard para mostrar información del piano
+- [x] Implementar página Pianos.tsx con:
+  - [x] Grid de estadísticas (2 tarjetas: Verticales, De Cola)
+  - [x] Barra de búsqueda con placeholder
+  - [x] Filtros horizontales (Todos, Verticales, De Cola)
+  - [x] Lista de pianos con PianoCard
+  - [x] FAB (botón flotante) naranja para agregar piano
+- [x] Probar la página de Pianos en el navegador
+- [x] Verificar que todos los filtros funcionan correctamente
+- [x] Verificar que las estadísticas se cargan correctamente (3 verticales, 0 de cola)
+- [ ] Implementar formulario de creación/edición de piano
+- [ ] Implementar página de detalle de piano
