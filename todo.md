@@ -156,14 +156,19 @@
   - [x] getFilterOptions (regiones, ciudades, grupos de ruta)
 - [x] Registrar clientsRouter en routers.ts
 - [x] Crear tests para el router de clientes (6/6 pasando)
-- [ ] Crear componente ClientCard para mostrar información del cliente
-- [ ] Implementar página Clientes.tsx con:
-  - [ ] Sección de estadísticas (4 tarjetas minimalistas)
-  - [ ] Barra de búsqueda
-  - [ ] Filtros (Comunidad, Ciudad, Grupo de Ruta)
-  - [ ] Lista de clientes con ClientCard
-  - [ ] Paginación (50 items por página)
-  - [ ] Botón flotante FAB para agregar cliente
-  - [ ] Botones de Importar y Exportar en el header
-- [ ] Crear tests para el router de clientes
-- [ ] Verificar que todo funciona correctamente
+- [x] Crear componente ClientCard para mostrar información del cliente
+- [x] Implementar página Clientes.tsx con:
+  - [x] Header azul con título y contador de clientes
+  - [x] Sección de estadísticas (4 tarjetas minimalistas)
+  - [x] Barra de búsqueda con placeholder completo
+  - [x] Filtros (3 dropdowns: Comunidad, Ciudad, Grupo de Ruta)
+  - [x] Lista de clientes con ClientCard
+  - [x] Paginación (50 items por página)
+  - [x] Botones de Importar/Exportar en header
+  - [x] FAB (botón flotante) naranja para agregar cliente
+- [x] Probar la página de Clientes en el navegador
+- [x] Verificar que muestra el cliente de prueba correctamente
+- [x] Verificar que las estadísticas se cargan correctamente
+- [ ] Implementar formulario de creación/edición de cliente
+- [ ] Implementar página de detalle de cliente
+- [ ] Implementar funcionalidad de eliminación con confirmación
