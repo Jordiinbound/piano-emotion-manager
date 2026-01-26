@@ -10,6 +10,7 @@ import { trpc } from '@/lib/trpc';
 import { InvoiceCard } from '@/components/InvoiceCard';
 import { Plus, Search } from 'lucide-react';
 import InvoiceFormModal from '@/components/InvoiceFormModal';
+import DeleteConfirmModal from '@/components/DeleteConfirmModal';
 
 type FilterType = 'all' | 'draft' | 'sent' | 'paid' | 'cancelled';
 type PeriodType = 'all' | 'thisMonth' | 'lastMonth' | 'thisYear';
@@ -19,6 +20,18 @@ export default function Facturacion() {
   const [filter, setFilter] = useState<FilterType>('all');
   const [period, setPeriod] = useState<PeriodType>('all');
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingInvoiceId, setEditingInvoiceId] = useState<number | null>(null);
+  const [deletingInvoiceId, setDeletingInvoiceId] = useState<number | null>(null);
+
+  // Mutación para eliminar factura
+  const utils = trpc.useUtils();
+  const deleteInvoiceMutation = trpc.invoices.deleteInvoice.useMutation({
+    onSuccess: () => {
+      utils.invoices.getInvoices.invalidate();
+      utils.invoices.getStats.invalidate();
+      setDeletingInvoiceId(null);
+    },
+  });
 
   // Obtener estadísticas
   const { data: stats, isLoading: statsLoading } = trpc.invoices.getStats.useQuery();
@@ -234,10 +247,8 @@ export default function Facturacion() {
               <InvoiceCard
                 key={invoice.id}
                 invoice={invoice}
-                onClick={() => {
-                  // TODO: Navegar a detalle de la factura
-                  console.log('Invoice clicked:', invoice.id);
-                }}
+                onEdit={() => setEditingInvoiceId(invoice.id)}
+                onDelete={() => setDeletingInvoiceId(invoice.id)}
               />
             ))}
           </div>
@@ -253,11 +264,35 @@ export default function Facturacion() {
         <Plus className="w-6 h-6" />
       </button>
 
-      {/* Modal de formulario */}
+      {/* Modal de formulario para crear */}
       <InvoiceFormModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
       />
+
+      {/* Modal de formulario para editar */}
+      {editingInvoiceId && (
+        <InvoiceFormModal
+          isOpen={true}
+          onClose={() => setEditingInvoiceId(null)}
+          invoiceId={editingInvoiceId}
+        />
+      )}
+
+      {/* Modal de confirmación de eliminación */}
+      {deletingInvoiceId && (
+        <DeleteConfirmModal
+          isOpen={true}
+          onClose={() => setDeletingInvoiceId(null)}
+          onConfirm={() => {
+            deleteInvoiceMutation.mutate({ id: deletingInvoiceId });
+          }}
+          isDeleting={deleteInvoiceMutation.isPending}
+          title="Eliminar Factura"
+          message="¿Estás seguro de que deseas eliminar esta factura? Esta acción no se puede deshacer."
+          entityName={invoices.find((i: any) => i.id === deletingInvoiceId)?.invoiceNumber}
+        />
+      )}
     </div>
   );
 }

@@ -10,6 +10,7 @@ import { trpc } from '@/lib/trpc';
 import { PianoCard } from '@/components/PianoCard';
 import { Plus } from 'lucide-react';
 import PianoFormModal from '@/components/PianoFormModal';
+import DeleteConfirmModal from '@/components/DeleteConfirmModal';
 
 type FilterType = 'all' | 'vertical' | 'grand';
 
@@ -18,10 +19,22 @@ export default function Pianos() {
   const [filter, setFilter] = useState<FilterType>('all');
   const [page, setPage] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingPianoId, setEditingPianoId] = useState<number | null>(null);
+  const [deletingPianoId, setDeletingPianoId] = useState<number | null>(null);
   const pageSize = 50;
 
   // Obtener estadísticas
   const { data: stats, isLoading: statsLoading } = trpc.pianos.getStats.useQuery();
+
+  // Mutación para eliminar piano
+  const utils = trpc.useUtils();
+  const deletePianoMutation = trpc.pianos.deletePiano.useMutation({
+    onSuccess: () => {
+      utils.pianos.getPianos.invalidate();
+      utils.pianos.getStats.invalidate();
+      setDeletingPianoId(null);
+    },
+  });
 
   // Obtener lista de pianos con filtros
   const { data: pianosData, isLoading: pianosLoading } = trpc.pianos.getPianos.useQuery({
@@ -162,10 +175,8 @@ export default function Pianos() {
                 <PianoCard
                   key={piano.id}
                   piano={piano}
-                  onClick={() => {
-                    // TODO: Navegar a detalle del piano
-                    console.log('Piano clicked:', piano.id);
-                  }}
+                  onEdit={() => setEditingPianoId(piano.id)}
+                  onDelete={() => setDeletingPianoId(piano.id)}
                 />
               ))}
             </div>
@@ -205,11 +216,35 @@ export default function Pianos() {
         <Plus className="w-6 h-6" />
       </button>
 
-      {/* Modal de formulario */}
+      {/* Modal de formulario para crear */}
       <PianoFormModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
       />
+
+      {/* Modal de formulario para editar */}
+      {editingPianoId && (
+        <PianoFormModal
+          isOpen={true}
+          onClose={() => setEditingPianoId(null)}
+          pianoId={editingPianoId}
+        />
+      )}
+
+      {/* Modal de confirmación de eliminación */}
+      {deletingPianoId && (
+        <DeleteConfirmModal
+          isOpen={true}
+          onClose={() => setDeletingPianoId(null)}
+          onConfirm={() => {
+            deletePianoMutation.mutate({ id: deletingPianoId });
+          }}
+          isDeleting={deletePianoMutation.isPending}
+          title="Eliminar Piano"
+          message="¿Estás seguro de que deseas eliminar este piano? Se eliminarán también todos los servicios asociados."
+          entityName={pianos.find(p => p.id === deletingPianoId)?.brand + ' ' + (pianos.find(p => p.id === deletingPianoId)?.model || '')}
+        />
+      )}
     </div>
   );
 }

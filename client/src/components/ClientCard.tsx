@@ -1,4 +1,4 @@
-import { Users, Phone, ChevronRight } from 'lucide-react';
+import { Users, Phone, Edit2, Trash2 } from 'lucide-react';
 
 // Paleta profesional minimalista (del drawer original)
 const COLORS = {
@@ -31,10 +31,11 @@ interface ClientCardProps {
     clientType: string;
   };
   pianoCount: number;
-  onPress: () => void;
+  onEdit: () => void;
+  onDelete: () => void;
 }
 
-export function ClientCard({ client, pianoCount, onPress }: ClientCardProps) {
+export function ClientCard({ client, pianoCount, onEdit, onDelete }: ClientCardProps) {
   // Obtener iniciales del nombre
   const initials = client.name
     .split(' ')
@@ -44,9 +45,8 @@ export function ClientCard({ client, pianoCount, onPress }: ClientCardProps) {
     .slice(0, 2);
 
   return (
-    <button
-      onClick={onPress}
-      className="w-full flex items-center gap-4 p-4 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors text-left"
+    <div
+      className="w-full flex items-center gap-4 p-4 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
       aria-label={`Cliente ${client.name}, ${CLIENT_TYPE_LABELS[client.clientType] || client.clientType}, ${pianoCount} pianos`}
     >
       {/* Avatar con iniciales */}
@@ -73,7 +73,7 @@ export function ClientCard({ client, pianoCount, onPress }: ClientCardProps) {
         )}
       </div>
 
-      {/* Lado derecho: badge de pianos y chevron */}
+      {/* Lado derecho: badge de pianos y botones de acción */}
       <div className="flex items-center gap-3">
         <div
           className="flex items-center gap-1.5 px-3 py-1.5 rounded-md"
@@ -84,8 +84,31 @@ export function ClientCard({ client, pianoCount, onPress }: ClientCardProps) {
             {pianoCount}
           </span>
         </div>
-        <ChevronRight className="w-5 h-5 text-gray-400" />
+        
+        {/* Botones de acción */}
+        <div className="flex items-center gap-2">
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onEdit();
+            }}
+            className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+            aria-label="Editar cliente"
+          >
+            <Edit2 className="w-4 h-4" />
+          </button>
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onDelete();
+            }}
+            className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+            aria-label="Eliminar cliente"
+          >
+            <Trash2 className="w-4 h-4" />
+          </button>
+        </div>
       </div>
-    </button>
+    </div>
   );
 }

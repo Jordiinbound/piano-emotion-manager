@@ -5,6 +5,8 @@
  * Diseño profesional y minimalista para mostrar información de citas
  */
 
+import { Edit2, Trash2 } from 'lucide-react';
+
 interface AppointmentCardProps {
   appointment: {
     id: number;
@@ -18,10 +20,11 @@ interface AppointmentCardProps {
     pianoBrand?: string | null;
     pianoModel?: string | null;
   };
-  onClick?: () => void;
+  onEdit: () => void;
+  onDelete: () => void;
 }
 
-export function AppointmentCard({ appointment, onClick }: AppointmentCardProps) {
+export function AppointmentCard({ appointment, onEdit, onDelete }: AppointmentCardProps) {
   // Formatear fecha y hora
   const date = new Date(appointment.date);
   const timeString = date.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
@@ -43,8 +46,7 @@ export function AppointmentCard({ appointment, onClick }: AppointmentCardProps) 
 
   return (
     <div
-      onClick={onClick}
-      className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow cursor-pointer"
+      className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow"
     >
       <div className="flex items-start gap-4">
         {/* Hora */}
@@ -98,21 +100,28 @@ export function AppointmentCard({ appointment, onClick }: AppointmentCardProps) 
           </div>
         </div>
 
-        {/* Icono de flecha */}
-        <div className="flex-shrink-0">
-          <svg
-            className="w-5 h-5 text-gray-400"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
+        {/* Botones de acción */}
+        <div className="flex items-center gap-2">
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onEdit();
+            }}
+            className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+            aria-label="Editar cita"
           >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M9 5l7 7-7 7"
-            />
-          </svg>
+            <Edit2 className="w-4 h-4" />
+          </button>
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onDelete();
+            }}
+            className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+            aria-label="Eliminar cita"
+          >
+            <Trash2 className="w-4 h-4" />
+          </button>
         </div>
       </div>
     </div>

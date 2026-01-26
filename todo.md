@@ -393,3 +393,25 @@
 - [ ] Verificar validación de campos obligatorios
 - [ ] Verificar manejo de errores y feedback visual
 - [ ] Guardar checkpoint con formularios completos
+
+## Fase 16: Funcionalidad de edición y eliminación
+- [ ] Modal de confirmación de eliminación reutilizable
+- [ ] Botones editar/eliminar en ClientCard
+- [ ] Botones editar/eliminar en ServiceCard
+- [ ] Botones editar/eliminar en PianoCard
+- [ ] Botones editar/eliminar en AppointmentCard
+- [ ] Botones editar/eliminar en InvoiceCard
+- [ ] Botones editar/eliminar en InventoryCard
+- [ ] Integración de modales de edición en todas las páginas
+- [ ] Pruebas de edición y eliminación en todas las entidades
+
+## Fase 16: Funcionalidad de edición y eliminación - COMPLETADA ✅
+- [x] Modal de confirmación de eliminación reutilizable (DeleteConfirmModal)
+- [x] Botones de editar y eliminar en ClientCard con mutación tRPC
+- [x] Botones de editar y eliminar en ServiceCard con mutación tRPC
+- [x] Botones de editar y eliminar en PianoCard con mutación tRPC
+- [x] Botones de editar y eliminar en AppointmentCard con mutación tRPC
+- [x] Botones de editar y eliminar en InvoiceCard con mutación tRPC
+- [x] Botones de editar y eliminar en InventoryCard con mutación tRPC
+- [x] Integración completa en todas las páginas con modales de edición y eliminación
+- [x] Actualización optimista de queries tras eliminación exitosa

@@ -5,6 +5,8 @@
  * Diseño profesional y minimalista para mostrar información de pianos
  */
 
+import { Edit2, Trash2 } from 'lucide-react';
+
 interface PianoCardProps {
   piano: {
     id: number;
@@ -17,10 +19,11 @@ interface PianoCardProps {
     location: string | null;
   };
   clientName?: string;
-  onClick?: () => void;
+  onEdit: () => void;
+  onDelete: () => void;
 }
 
-export function PianoCard({ piano, clientName, onClick }: PianoCardProps) {
+export function PianoCard({ piano, clientName, onEdit, onDelete }: PianoCardProps) {
   // Traducir categoría
   const categoryLabel = piano.category === 'vertical' ? 'Vertical' : 'De Cola';
   
@@ -36,8 +39,7 @@ export function PianoCard({ piano, clientName, onClick }: PianoCardProps) {
 
   return (
     <div
-      onClick={onClick}
-      className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow cursor-pointer"
+      className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow"
     >
       <div className="flex items-start gap-3">
         {/* Icono del piano */}
@@ -97,6 +99,30 @@ export function PianoCard({ piano, clientName, onClick }: PianoCardProps) {
               📍 {piano.location}
             </p>
           )}
+        </div>
+
+        {/* Botones de acción */}
+        <div className="flex items-center gap-2">
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onEdit();
+            }}
+            className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+            aria-label="Editar piano"
+          >
+            <Edit2 className="w-4 h-4" />
+          </button>
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onDelete();
+            }}
+            className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+            aria-label="Eliminar piano"
+          >
+            <Trash2 className="w-4 h-4" />
+          </button>
         </div>
       </div>
     </div>

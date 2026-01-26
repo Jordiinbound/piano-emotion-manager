@@ -5,7 +5,7 @@
  * Diseño profesional y minimalista para mostrar información de items de inventario
  */
 
-import { AlertTriangle } from 'lucide-react';
+import { AlertTriangle, Edit2, Trash2 } from 'lucide-react';
 
 interface InventoryCardProps {
   item: {
@@ -18,7 +18,8 @@ interface InventoryCardProps {
     costPerUnit?: string | number;
     supplier?: string;
   };
-  onClick?: () => void;
+  onEdit: () => void;
+  onDelete: () => void;
 }
 
 // Mapeo de categorías a español
@@ -36,7 +37,7 @@ const categoryMap: Record<string, string> = {
   other: 'Otros',
 };
 
-export function InventoryCard({ item, onClick }: InventoryCardProps) {
+export function InventoryCard({ item, onEdit, onDelete }: InventoryCardProps) {
   // Convertir quantity y minStock a números
   const quantity = typeof item.quantity === 'string' ? parseFloat(item.quantity) : item.quantity;
   const minStock = typeof item.minStock === 'string' ? parseFloat(item.minStock) : item.minStock;
@@ -57,17 +58,38 @@ export function InventoryCard({ item, onClick }: InventoryCardProps) {
 
   return (
     <div
-      onClick={onClick}
-      className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow cursor-pointer"
+      className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow"
     >
       {/* Header: Nombre y alerta de stock bajo */}
       <div className="flex items-start justify-between mb-2">
         <h3 className="text-base font-bold text-gray-900 flex-1">{item.name}</h3>
-        {isLowStock && (
-          <div className="ml-2">
+        <div className="flex items-center gap-2">
+          {isLowStock && (
             <AlertTriangle className="w-5 h-5" style={{ color: stockColor }} />
-          </div>
-        )}
+          )}
+
+          {/* Botones de acción */}
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onEdit();
+            }}
+            className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+            aria-label="Editar item"
+          >
+            <Edit2 className="w-4 h-4" />
+          </button>
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onDelete();
+            }}
+            className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+            aria-label="Eliminar item"
+          >
+            <Trash2 className="w-4 h-4" />
+          </button>
+        </div>
       </div>
 
       {/* Categoría */}

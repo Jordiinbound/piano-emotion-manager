@@ -10,6 +10,7 @@ import { trpc } from '@/lib/trpc';
 import { InventoryCard } from '@/components/InventoryCard';
 import { Plus, Search, AlertTriangle } from 'lucide-react';
 import InventoryFormModal from '@/components/InventoryFormModal';
+import DeleteConfirmModal from '@/components/DeleteConfirmModal';
 
 type FilterType = 'all' | 'low_stock' | 'strings' | 'hammers' | 'felts' | 'tools' | 'dampers' | 'keys' | 'action_parts' | 'pedals' | 'tuning_pins' | 'chemicals' | 'other';
 
@@ -17,6 +18,19 @@ export default function Inventario() {
   const [search, setSearch] = useState('');
   const [filter, setFilter] = useState<FilterType>('all');
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingItemId, setEditingItemId] = useState<number | null>(null);
+  const [deletingItemId, setDeletingItemId] = useState<number | null>(null);
+
+  // Mutación para eliminar item
+  const utils = trpc.useUtils();
+  const deleteItemMutation = trpc.inventory.deleteInventoryItem.useMutation({
+    onSuccess: () => {
+      utils.inventory.getInventory.invalidate();
+      utils.inventory.getStats.invalidate();
+      utils.inventory.getLowStockItems.invalidate();
+      setDeletingItemId(null);
+    },
+  });
 
   // Obtener estadísticas
   const { data: stats, isLoading: statsLoading } = trpc.inventory.getStats.useQuery();
@@ -220,10 +234,8 @@ export default function Inventario() {
               <InventoryCard
                 key={item.id}
                 item={item}
-                onClick={() => {
-                  // TODO: Navegar a detalle del item
-                  console.log('Item clicked:', item.id);
-                }}
+                onEdit={() => setEditingItemId(item.id)}
+                onDelete={() => setDeletingItemId(item.id)}
               />
             ))}
           </div>
@@ -244,6 +256,30 @@ export default function Inventario() {
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
       />
+
+      {/* Modal de formulario para editar */}
+      {editingItemId && (
+        <InventoryFormModal
+          isOpen={true}
+          onClose={() => setEditingItemId(null)}
+          itemId={editingItemId}
+        />
+      )}
+
+      {/* Modal de confirmación de eliminación */}
+      {deletingItemId && (
+        <DeleteConfirmModal
+          isOpen={true}
+          onClose={() => setDeletingItemId(null)}
+          onConfirm={() => {
+            deleteItemMutation.mutate({ id: deletingItemId });
+          }}
+          isDeleting={deleteItemMutation.isPending}
+          title="Eliminar Item"
+          message="¿Estás seguro de que deseas eliminar este item del inventario? Esta acción no se puede deshacer."
+          entityName={items.find((i: any) => i.id === deletingItemId)?.name}
+        />
+      )}
     </div>
   );
 }

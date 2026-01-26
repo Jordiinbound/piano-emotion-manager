@@ -3,6 +3,7 @@ import { Search, Upload, Download, Plus, ChevronLeft, ChevronRight } from 'lucid
 import { trpc } from '../lib/trpc';
 import { ClientCard } from '../components/ClientCard';
 import ClientFormModal from '../components/ClientFormModal';
+import DeleteConfirmModal from '../components/DeleteConfirmModal';
 
 // Paleta profesional minimalista
 const COLORS = {
@@ -25,6 +26,8 @@ export default function ClientesPage() {
   const [selectedRouteGroup, setSelectedRouteGroup] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingClientId, setEditingClientId] = useState<number | null>(null);
+  const [deletingClientId, setDeletingClientId] = useState<number | null>(null);
 
   // Obtener estadísticas
   const { data: stats, isLoading: statsLoading } = trpc.clients.getStats.useQuery();
@@ -41,6 +44,16 @@ export default function ClientesPage() {
 
   // Obtener opciones de filtros
   const { data: filterOptions } = trpc.clients.getFilterOptions.useQuery();
+
+  // Mutación para eliminar cliente
+  const utils = trpc.useUtils();
+  const deleteClientMutation = trpc.clients.deleteClient.useMutation({
+    onSuccess: () => {
+      utils.clients.getClients.invalidate();
+      utils.clients.getStats.invalidate();
+      setDeletingClientId(null);
+    },
+  });
 
   // Resetear a la primera página cuando cambian los filtros
   useMemo(() => {
@@ -212,7 +225,8 @@ export default function ClientesPage() {
                   key={client.id}
                   client={client}
                   pianoCount={0} // TODO: Obtener el conteo real de pianos por cliente
-                  onPress={() => handleClientPress(client.id)}
+                  onEdit={() => setEditingClientId(client.id)}
+                  onDelete={() => setDeletingClientId(client.id)}
                 />
               ))}
             </div>
@@ -282,11 +296,35 @@ export default function ClientesPage() {
         <Plus className="w-6 h-6 text-white" />
       </button>
 
-      {/* Modal de formulario */}
+      {/* Modal de formulario para crear */}
       <ClientFormModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
       />
+
+      {/* Modal de formulario para editar */}
+      {editingClientId && (
+        <ClientFormModal
+          isOpen={true}
+          onClose={() => setEditingClientId(null)}
+          clientId={editingClientId}
+        />
+      )}
+
+      {/* Modal de confirmación de eliminación */}
+      {deletingClientId && (
+        <DeleteConfirmModal
+          isOpen={true}
+          onClose={() => setDeletingClientId(null)}
+          onConfirm={() => {
+            deleteClientMutation.mutate({ id: deletingClientId });
+          }}
+          isDeleting={deleteClientMutation.isPending}
+          title="Eliminar Cliente"
+          message="¿Estás seguro de que deseas eliminar este cliente? Se eliminarán también todos los pianos y servicios asociados."
+          entityName={clientsData?.clients.find(c => c.id === deletingClientId)?.name}
+        />
+      )}
     </div>
   );
 }

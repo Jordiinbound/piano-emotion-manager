@@ -4,6 +4,7 @@ import { ServiceCard } from "@/components/ServiceCard";
 import { Input } from "@/components/ui/input";
 import { Search, Plus, Loader2 } from "lucide-react";
 import ServiceFormModal from "@/components/ServiceFormModal";
+import DeleteConfirmModal from "@/components/DeleteConfirmModal";
 
 type FilterType = 'all' | 'tuning' | 'maintenance' | 'repair' | 'regulation';
 
@@ -11,6 +12,8 @@ export default function Servicios() {
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState<FilterType>("all");
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingServiceId, setEditingServiceId] = useState<number | null>(null);
+  const [deletingServiceId, setDeletingServiceId] = useState<number | null>(null);
 
   const { data: stats, isLoading: statsLoading } = trpc.services.getStats.useQuery();
   const { data: services = [], isLoading: servicesLoading } = trpc.services.getServices.useQuery({
@@ -18,6 +21,16 @@ export default function Servicios() {
     limit: 100,
     search: search || undefined,
     serviceType: filter === 'all' ? undefined : filter,
+  });
+
+  // Mutación para eliminar servicio
+  const utils = trpc.useUtils();
+  const deleteServiceMutation = trpc.services.deleteService.useMutation({
+    onSuccess: () => {
+      utils.services.getServices.invalidate();
+      utils.services.getStats.invalidate();
+      setDeletingServiceId(null);
+    },
   });
 
   // Calculate stats from backend data
@@ -149,7 +162,8 @@ export default function Servicios() {
               pianoInfo={undefined} // TODO: Get piano info
               clientName={undefined} // TODO: Get client name
               isPast={service.isPast}
-              onClick={() => handleServiceClick(service.id)}
+              onEdit={() => setEditingServiceId(service.id)}
+              onDelete={() => setDeletingServiceId(service.id)}
             />
           ))
         )}
@@ -164,11 +178,35 @@ export default function Servicios() {
         <Plus size={24} />
       </button>
 
-      {/* Modal de formulario */}
+      {/* Modal de formulario para crear */}
       <ServiceFormModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
       />
+
+      {/* Modal de formulario para editar */}
+      {editingServiceId && (
+        <ServiceFormModal
+          isOpen={true}
+          onClose={() => setEditingServiceId(null)}
+          serviceId={editingServiceId}
+        />
+      )}
+
+      {/* Modal de confirmación de eliminación */}
+      {deletingServiceId && (
+        <DeleteConfirmModal
+          isOpen={true}
+          onClose={() => setDeletingServiceId(null)}
+          onConfirm={() => {
+            deleteServiceMutation.mutate({ id: deletingServiceId });
+          }}
+          isDeleting={deleteServiceMutation.isPending}
+          title="Eliminar Servicio"
+          message="¿Estás seguro de que deseas eliminar este servicio? Esta acción no se puede deshacer."
+          entityName={services.find(s => s.id === deletingServiceId)?.serviceType}
+        />
+      )}
     </div>
   );
 }

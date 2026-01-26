@@ -10,15 +10,28 @@ import { trpc } from '@/lib/trpc';
 import { AppointmentCard } from '@/components/AppointmentCard';
 import { Plus } from 'lucide-react';
 import AppointmentFormModal from '@/components/AppointmentFormModal';
+import DeleteConfirmModal from '@/components/DeleteConfirmModal';
 
 type FilterType = 'all' | 'scheduled' | 'confirmed' | 'completed' | 'cancelled';
 
 export default function Agenda() {
   const [filter, setFilter] = useState<FilterType>('all');
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingAppointmentId, setEditingAppointmentId] = useState<number | null>(null);
+  const [deletingAppointmentId, setDeletingAppointmentId] = useState<number | null>(null);
 
   // Obtener estadísticas
   const { data: stats, isLoading: statsLoading } = trpc.appointments.getStats.useQuery();
+
+  // Mutación para eliminar cita
+  const utils = trpc.useUtils();
+  const deleteAppointmentMutation = trpc.appointments.deleteAppointment.useMutation({
+    onSuccess: () => {
+      utils.appointments.getUpcomingAppointments.invalidate();
+      utils.appointments.getStats.invalidate();
+      setDeletingAppointmentId(null);
+    },
+  });
 
   // Obtener próximas citas
   const { data: upcomingAppointments, isLoading: appointmentsLoading } = trpc.appointments.getUpcomingAppointments.useQuery();
@@ -225,10 +238,8 @@ export default function Agenda() {
                     <AppointmentCard
                       key={apt.id}
                       appointment={apt}
-                      onClick={() => {
-                        // TODO: Navegar a detalle de la cita
-                        console.log('Appointment clicked:', apt.id);
-                      }}
+                      onEdit={() => setEditingAppointmentId(apt.id)}
+                      onDelete={() => setDeletingAppointmentId(apt.id)}
                     />
                   ))}
                 </div>
@@ -247,11 +258,35 @@ export default function Agenda() {
         <Plus className="w-6 h-6" />
       </button>
 
-      {/* Modal de formulario */}
+      {/* Modal de formulario para crear */}
       <AppointmentFormModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
       />
+
+      {/* Modal de formulario para editar */}
+      {editingAppointmentId && (
+        <AppointmentFormModal
+          isOpen={true}
+          onClose={() => setEditingAppointmentId(null)}
+          appointmentId={editingAppointmentId}
+        />
+      )}
+
+      {/* Modal de confirmación de eliminación */}
+      {deletingAppointmentId && (
+        <DeleteConfirmModal
+          isOpen={true}
+          onClose={() => setDeletingAppointmentId(null)}
+          onConfirm={() => {
+            deleteAppointmentMutation.mutate({ id: deletingAppointmentId });
+          }}
+          isDeleting={deleteAppointmentMutation.isPending}
+          title="Eliminar Cita"
+          message="¿Estás seguro de que deseas eliminar esta cita? Esta acción no se puede deshacer."
+          entityName={appointments.find((a: any) => a.id === deletingAppointmentId)?.title}
+        />
+      )}
     </div>
   );
 }

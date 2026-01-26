@@ -1,4 +1,4 @@
-import { Wrench, Calendar, Music, User, Euro } from "lucide-react";
+import { Wrench, Calendar, Music, User, Euro, Edit2, Trash2 } from "lucide-react";
 
 interface ServiceCardProps {
   service: {
@@ -13,7 +13,8 @@ interface ServiceCardProps {
   pianoInfo?: string;
   clientName?: string;
   isPast?: boolean;
-  onClick: () => void;
+  onEdit: () => void;
+  onDelete: () => void;
 }
 
 const SERVICE_TYPE_LABELS: Record<string, string> = {
@@ -34,7 +35,7 @@ const SERVICE_TYPE_COLORS: Record<string, string> = {
   regulation: '#8b5cf6',
 };
 
-export function ServiceCard({ service, pianoInfo, clientName, isPast, onClick }: ServiceCardProps) {
+export function ServiceCard({ service, pianoInfo, clientName, isPast, onEdit, onDelete }: ServiceCardProps) {
   const serviceColor = SERVICE_TYPE_COLORS[service.serviceType] || '#6b7280';
   const serviceLabel = SERVICE_TYPE_LABELS[service.serviceType] || service.serviceType;
   
@@ -49,8 +50,7 @@ export function ServiceCard({ service, pianoInfo, clientName, isPast, onClick }:
 
   return (
     <div
-      onClick={onClick}
-      className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow cursor-pointer mb-3"
+      className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow mb-3"
     >
       <div className="flex items-start gap-3">
         {/* Icon */}
@@ -109,6 +109,30 @@ export function ServiceCard({ service, pianoInfo, clientName, isPast, onClick }:
             </div>
           </div>
         )}
+
+        {/* Botones de acción */}
+        <div className="flex items-center gap-2">
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onEdit();
+            }}
+            className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+            aria-label="Editar servicio"
+          >
+            <Edit2 className="w-4 h-4" />
+          </button>
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onDelete();
+            }}
+            className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+            aria-label="Eliminar servicio"
+          >
+            <Trash2 className="w-4 h-4" />
+          </button>
+        </div>
       </div>
     </div>
   );
