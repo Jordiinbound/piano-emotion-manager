@@ -3,12 +3,14 @@ import { trpc } from "@/lib/trpc";
 import { ServiceCard } from "@/components/ServiceCard";
 import { Input } from "@/components/ui/input";
 import { Search, Plus, Loader2 } from "lucide-react";
+import ServiceFormModal from "@/components/ServiceFormModal";
 
 type FilterType = 'all' | 'tuning' | 'maintenance' | 'repair' | 'regulation';
 
 export default function Servicios() {
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState<FilterType>("all");
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const { data: stats, isLoading: statsLoading } = trpc.services.getStats.useQuery();
   const { data: services = [], isLoading: servicesLoading } = trpc.services.getServices.useQuery({
@@ -57,8 +59,7 @@ export default function Servicios() {
   };
 
   const handleAddService = () => {
-    console.log('Add service clicked');
-    // TODO: Open add service modal
+    setIsModalOpen(true);
   };
 
   if (statsLoading || servicesLoading) {
@@ -162,6 +163,12 @@ export default function Servicios() {
       >
         <Plus size={24} />
       </button>
+
+      {/* Modal de formulario */}
+      <ServiceFormModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+      />
     </div>
   );
 }

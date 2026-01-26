@@ -9,6 +9,7 @@ import { useState } from 'react';
 import { trpc } from '@/lib/trpc';
 import { PianoCard } from '@/components/PianoCard';
 import { Plus } from 'lucide-react';
+import PianoFormModal from '@/components/PianoFormModal';
 
 type FilterType = 'all' | 'vertical' | 'grand';
 
@@ -16,6 +17,7 @@ export default function Pianos() {
   const [search, setSearch] = useState('');
   const [filter, setFilter] = useState<FilterType>('all');
   const [page, setPage] = useState(1);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const pageSize = 50;
 
   // Obtener estadísticas
@@ -196,15 +198,18 @@ export default function Pianos() {
 
       {/* FAB (Floating Action Button) */}
       <button
-        onClick={() => {
-          // TODO: Abrir modal de crear piano
-          console.log('Add piano clicked');
-        }}
+        onClick={() => setIsModalOpen(true)}
         className="fixed bottom-6 right-6 w-14 h-14 bg-[#e07a5f] text-white rounded-full shadow-lg hover:bg-[#d16a4f] transition-colors flex items-center justify-center"
         aria-label="Agregar piano"
       >
         <Plus className="w-6 h-6" />
       </button>
+
+      {/* Modal de formulario */}
+      <PianoFormModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+      />
     </div>
   );
 }

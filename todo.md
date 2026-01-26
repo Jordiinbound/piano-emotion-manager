@@ -344,19 +344,19 @@
 - [ ] Crear componente FormField reutilizable con validación
 
 ### Formularios de Clientes
-- [ ] Crear ClientFormModal con campos (nombre, email, teléfono, dirección)
+- [x] Crear ClientFormModal con campos (nombre, email, teléfono, dirección)
 - [ ] Integrar con trpc.clients.createClient y updateClient
 - [ ] Agregar validación Zod y manejo de errores
 - [ ] Integrar modal en página Clientes con botón "Nuevo Cliente"
 
 ### Formularios de Servicios
-- [ ] Crear ServiceFormModal con campos (tipo, descripción, precio, duración)
+- [x] Crear ServiceFormModal con campos (tipo, descripción, precio, duración)
 - [ ] Integrar con trpc.services.createService y updateService
 - [ ] Agregar validación Zod y manejo de errores
 - [ ] Integrar modal en página Servicios con botón "Nuevo Servicio"
 
 ### Formularios de Pianos
-- [ ] Crear PianoFormModal con campos (marca, modelo, tipo, categoría, condición, ubicación)
+- [x] Crear PianoFormModal con campos (marca, modelo, tipo, categoría, condición, ubicación)
 - [ ] Integrar con trpc.pianos.createPiano y updatePiano
 - [ ] Agregar validación Zod y manejo de errores
 - [ ] Integrar modal en página Pianos con botón "Nuevo Piano"
