@@ -185,15 +185,15 @@
 - [x] Documentar que producción seguirá usando las claves de producción en Vercel
 
 ## Fase 7: Migración detallada de la página de Servicios
-- [ ] Crear router tRPC de servicios en el backend con endpoints:
-  - [ ] getServices (con paginación y filtros por tipo y búsqueda)
-  - [ ] getServiceById
-  - [ ] getStats (estadísticas por tipo: afinaciones, mantenimiento, reparaciones, regulaciones)
-  - [ ] createService
-  - [ ] updateService
-  - [ ] deleteService
-- [ ] Registrar servicesRouter en routers.ts
-- [ ] Crear tests para el router de servicios (mínimo 6 tests)
+- [x] Crear router tRPC de servicios en el backend con endpoints:
+  - [x] getServices (con paginación y filtros por tipo y búsqueda)
+  - [x] getServiceById
+  - [x] getStats (estadísticas por tipo: afinaciones, mantenimiento, reparaciones, regulaciones)
+  - [x] createService con generación automática de odId
+  - [x] updateService
+  - [x] deleteService
+- [x] Registrar servicesRouter en routers.ts
+- [x] Crear tests para el router de servicios (8/8 pasando)
 - [ ] Crear componente ServiceCard para mostrar información del servicio
 - [ ] Implementar página Servicios.tsx con:
   - [ ] Grid de estadísticas por tipo (4 tarjetas: Afinaciones, Mantenimiento, Reparaciones, Regulaciones)
