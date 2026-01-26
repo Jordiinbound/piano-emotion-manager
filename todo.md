@@ -144,3 +144,26 @@
 - [ ] Revisar y replicar página de Accesos Rápidos
 - [ ] Revisar y replicar página de Herramientas Avanzadas
 - [ ] Revisar y replicar página de Configuración
+
+## Migración detallada de la página de Clientes
+- [x] Crear router tRPC de clientes en el backend con endpoints:
+  - [x] getClients (con paginación y filtros)
+  - [x] getClientById
+  - [x] getStats (Total, Activos, VIP, Con Pianos)
+  - [x] createClient
+  - [x] updateClient
+  - [x] deleteClient
+  - [x] getFilterOptions (regiones, ciudades, grupos de ruta)
+- [x] Registrar clientsRouter en routers.ts
+- [x] Crear tests para el router de clientes (6/6 pasando)
+- [ ] Crear componente ClientCard para mostrar información del cliente
+- [ ] Implementar página Clientes.tsx con:
+  - [ ] Sección de estadísticas (4 tarjetas minimalistas)
+  - [ ] Barra de búsqueda
+  - [ ] Filtros (Comunidad, Ciudad, Grupo de Ruta)
+  - [ ] Lista de clientes con ClientCard
+  - [ ] Paginación (50 items por página)
+  - [ ] Botón flotante FAB para agregar cliente
+  - [ ] Botones de Importar y Exportar en el header
+- [ ] Crear tests para el router de clientes
+- [ ] Verificar que todo funciona correctamente
