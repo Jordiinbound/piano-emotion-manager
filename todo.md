@@ -172,3 +172,14 @@
 - [ ] Implementar formulario de creación/edición de cliente
 - [ ] Implementar página de detalle de cliente
 - [ ] Implementar funcionalidad de eliminación con confirmación
+## Fase 6: Configurar claves de desarrollo de Clerk
+- [x] Acceder al dashboard de Clerk y cambiar al entorno Development
+- [x] Obtener las claves de desarrollo:
+  - VITE_CLERK_PUBLISHABLE_KEY: pk_test_c2luY2VyZS1jaGltcC02My5jbGVyay5hY2NvdW50cy5kZXYk
+  - CLERK_SECRET_KEY: sk_test_VXnvxqFvJdhMbWHubNG6IqH8uqkirpZo1hgpNxMegR
+- [x] Configurar las claves de desarrollo en las variables de entorno del proyecto
+- [x] Crear tests para validar las credenciales (3/3 pasando)
+- [x] Reiniciar servidor para cargar las nuevas credenciales
+- [x] Verificar que Clerk funciona correctamente sin errores de dominio
+- [x] Confirmar que las claves de desarrollo NO afectan a producción
+- [x] Documentar que producción seguirá usando las claves de producción en Vercel
