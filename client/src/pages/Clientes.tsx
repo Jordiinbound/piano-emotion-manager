@@ -2,6 +2,7 @@ import { useState, useMemo } from 'react';
 import { Search, Upload, Download, Plus, ChevronLeft, ChevronRight } from 'lucide-react';
 import { trpc } from '../lib/trpc';
 import { ClientCard } from '../components/ClientCard';
+import ClientFormModal from '../components/ClientFormModal';
 
 // Paleta profesional minimalista
 const COLORS = {
@@ -23,6 +24,7 @@ export default function ClientesPage() {
   const [selectedCity, setSelectedCity] = useState('');
   const [selectedRouteGroup, setSelectedRouteGroup] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   // Obtener estadísticas
   const { data: stats, isLoading: statsLoading } = trpc.clients.getStats.useQuery();
@@ -51,8 +53,7 @@ export default function ClientesPage() {
   };
 
   const handleAddClient = () => {
-    // TODO: Abrir modal o navegar a formulario de nuevo cliente
-    console.log('Agregar nuevo cliente');
+    setIsModalOpen(true);
   };
 
   const handleImport = () => {
@@ -280,6 +281,12 @@ export default function ClientesPage() {
       >
         <Plus className="w-6 h-6 text-white" />
       </button>
+
+      {/* Modal de formulario */}
+      <ClientFormModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+      />
     </div>
   );
 }

@@ -334,3 +334,62 @@
 - [x] Crear página Configuracion.tsx con diseño minimalista
 - [x] Verificar funcionamiento de las 3 páginas en el navegador
 - [x] Guardar checkpoint final con todas las páginas completadas
+
+
+## Fase 15: Formularios modales completos
+
+### Componentes base de formularios
+- [x] Instalar react-hook-form y zod para validación
+- [ ] Crear componente Dialog reutilizable con shadcn/ui
+- [ ] Crear componente FormField reutilizable con validación
+
+### Formularios de Clientes
+- [ ] Crear ClientFormModal con campos (nombre, email, teléfono, dirección)
+- [ ] Integrar con trpc.clients.createClient y updateClient
+- [ ] Agregar validación Zod y manejo de errores
+- [ ] Integrar modal en página Clientes con botón "Nuevo Cliente"
+
+### Formularios de Servicios
+- [ ] Crear ServiceFormModal con campos (tipo, descripción, precio, duración)
+- [ ] Integrar con trpc.services.createService y updateService
+- [ ] Agregar validación Zod y manejo de errores
+- [ ] Integrar modal en página Servicios con botón "Nuevo Servicio"
+
+### Formularios de Pianos
+- [ ] Crear PianoFormModal con campos (marca, modelo, tipo, categoría, condición, ubicación)
+- [ ] Integrar con trpc.pianos.createPiano y updatePiano
+- [ ] Agregar validación Zod y manejo de errores
+- [ ] Integrar modal en página Pianos con botón "Nuevo Piano"
+
+### Formularios de Citas
+- [ ] Crear AppointmentFormModal con campos (fecha, cliente, piano, servicio, duración, estado)
+- [ ] Integrar con trpc.appointments.createAppointment y updateAppointment
+- [ ] Agregar validación Zod y manejo de errores
+- [ ] Integrar modal en página Agenda con botón "Nueva Cita"
+
+### Formularios de Facturas
+- [ ] Crear InvoiceFormModal con campos (cliente, items, fecha, vencimiento, notas)
+- [ ] Integrar con trpc.invoices.createInvoice y updateInvoice
+- [ ] Agregar validación Zod y manejo de errores
+- [ ] Integrar modal en página Facturación con botón "Nueva Factura"
+
+### Formularios de Inventario
+- [ ] Crear InventoryFormModal con campos (nombre, categoría, cantidad, unidad, precio, proveedor)
+- [ ] Integrar con trpc.inventory.createItem y updateItem
+- [ ] Agregar validación Zod y manejo de errores
+- [ ] Integrar modal en página Inventario con botón "Nuevo Item"
+
+### Funcionalidad de eliminación
+- [ ] Crear DeleteConfirmModal reutilizable
+- [ ] Agregar botón de eliminar en ClientCard con confirmación
+- [ ] Agregar botón de eliminar en ServiceCard con confirmación
+- [ ] Agregar botón de eliminar en PianoCard con confirmación
+- [ ] Agregar botón de eliminar en AppointmentCard con confirmación
+- [ ] Agregar botón de eliminar en InvoiceCard con confirmación
+- [ ] Agregar botón de eliminar en InventoryCard con confirmación
+
+### Testing y verificación
+- [ ] Verificar funcionamiento de todos los formularios en el navegador
+- [ ] Verificar validación de campos obligatorios
+- [ ] Verificar manejo de errores y feedback visual
+- [ ] Guardar checkpoint con formularios completos
