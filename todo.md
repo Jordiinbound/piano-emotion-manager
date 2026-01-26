@@ -119,3 +119,28 @@
 - [x] Crear páginas placeholder para todas las nuevas rutas
 - [x] Actualizar App.tsx con todas las rutas nuevas
 - [x] Verificar que la navegación coincida exactamente con el proyecto original
+
+## Revisar contenido central del Dashboard
+- [x] Revisar página index del drawer original
+- [x] Identificar todas las secciones y componentes del dashboard
+- [x] Replicar estructura exacta del dashboard original:
+  - [x] Barra de alertas (verde/roja)
+  - [x] Grid 2x2 de métricas "Este Mes" con navegación de meses
+  - [x] Predicciones IA con 3 indicadores circulares
+  - [x] Próximas Citas
+  - [x] Acciones Rápidas (6 botones terracota)
+- [x] Verificar que todos los elementos coincidan
+- [x] Corregir error de TypeScript
+
+## Revisar y replicar todas las páginas del Drawer
+- [ ] Revisar y replicar página de Agenda
+- [ ] Revisar y replicar página de Clientes
+- [ ] Revisar y replicar página de Pianos
+- [ ] Revisar y replicar página de Servicios
+- [ ] Revisar y replicar página de Facturación
+- [ ] Revisar y replicar página de Inventario
+- [ ] Revisar y replicar página de Store
+- [ ] Revisar y replicar página de Reportes
+- [ ] Revisar y replicar página de Accesos Rápidos
+- [ ] Revisar y replicar página de Herramientas Avanzadas
+- [ ] Revisar y replicar página de Configuración
