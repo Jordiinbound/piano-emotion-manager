@@ -91,24 +91,23 @@ export default function Layout({ children }: LayoutProps) {
           const active = isActive(item.href);
           return (
             <li key={item.name}>
-              <Link href={item.href}>
-                <a
-                  className={`
-                    group flex items-center gap-x-3 rounded-md px-3 py-2 text-sm font-medium transition-colors relative
-                    ${
-                      active
-                        ? 'bg-primary text-primary-foreground'
-                        : 'text-muted-foreground hover:text-foreground hover:bg-accent'
-                    }
-                  `}
-                  onClick={() => isMobile && setSidebarOpen(false)}
-                >
-                  {active && (
-                    <div className="absolute left-0 top-0 bottom-0 w-1 bg-primary rounded-r-full" />
-                  )}
-                  <item.icon className="h-5 w-5 shrink-0" aria-hidden="true" />
-                  {item.name}
-                </a>
+              <Link
+                href={item.href}
+                className={`
+                  group flex items-center gap-x-3 rounded-md px-3 py-2 text-sm font-medium transition-colors relative
+                  ${
+                    active
+                      ? 'bg-primary text-primary-foreground'
+                      : 'text-muted-foreground hover:text-foreground hover:bg-accent'
+                  }
+                `}
+                onClick={() => isMobile && setSidebarOpen(false)}
+              >
+                {active && (
+                  <div className="absolute left-0 top-0 bottom-0 w-1 bg-primary rounded-r-full" />
+                )}
+                <item.icon className="h-5 w-5 shrink-0" aria-hidden="true" />
+                {item.name}
               </Link>
             </li>
           );

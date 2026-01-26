@@ -194,16 +194,17 @@
   - [x] deleteService
 - [x] Registrar servicesRouter en routers.ts
 - [x] Crear tests para el router de servicios (8/8 pasando)
-- [ ] Crear componente ServiceCard para mostrar información del servicio
-- [ ] Implementar página Servicios.tsx con:
-  - [ ] Grid de estadísticas por tipo (4 tarjetas: Afinaciones, Mantenimiento, Reparaciones, Regulaciones)
-  - [ ] Barra de búsqueda
-  - [ ] Filtros horizontales (Todos, Afinación, Mantenimiento, Reparación, Regulación)
-  - [ ] Lista de servicios con ServiceCard
-  - [ ] Indicador visual de servicios pasados vs futuros
-  - [ ] FAB (botón flotante) para agregar servicio
-- [ ] Probar la página de Servicios en el navegador
-- [ ] Verificar que todos los filtros funcionan correctamente
-- [ ] Verificar que las estadísticas se cargan correctamente
+- [x] Crear componente ServiceCard para mostrar información del servicio
+- [x] Implementar página Servicios.tsx con:
+  - [x] Grid de estadísticas por tipo (4 tarjetas: Afinaciones, Mantenimiento, Reparaciones, Regulaciones)
+  - [x] Barra de búsqueda con placeholder
+  - [x] Filtros horizontales (Todos, Afinación, Mantenimiento, Reparación, Regulación)
+  - [x] Lista de servicios con ServiceCard
+  - [x] Indicador visual de servicios pasados vs futuros (badge "Completado")
+  - [x] FAB (botón flotante) naranja para agregar servicio
+- [x] Corregir error de enlaces anidados en Layout
+- [x] Probar la página de Servicios en el navegador
+- [x] Verificar que todos los filtros se muestran correctamente
+- [x] Verificar que las estadísticas se cargan correctamente (12 servicios, 3 de cada tipo)
 - [ ] Implementar formulario de creación/edición de servicio
 - [ ] Implementar página de detalle de servicio
