@@ -311,3 +311,16 @@
 - [x] Identificar dónde está el error de `<a>` anidado en el código
 - [x] Corregir el error eliminando el anchor anidado
 - [x] Verificar que el error se ha resuelto en el navegador
+
+## Fase 12: Página de Store (versión simplificada)
+- [x] Crear página Store.tsx con diseño elegante de "Próximamente"
+- [x] Incluir categorías de productos (Macillos, Cuerdas, Fieltros, Herramientas, etc.)
+- [x] Mensaje explicativo sobre el catálogo premium en preparación
+- [x] Diseño minimalista y profesional acorde al resto de la aplicación
+
+## Fase 13: Página de Reportes con estadísticas
+- [x] Crear página Reportes.tsx con diseño de analytics
+- [x] Grid de métricas principales (Servicios, Ingresos, Clientes, Pianos)
+- [x] Indicadores circulares de predicciones IA (placeholder)
+- [x] Sección de tendencias mensuales
+- [x] Diseño profesional y minimalista acorde al resto de la aplicación
