@@ -42,13 +42,18 @@
 - [ ] Probar menú hamburguesa en móvil
 - [ ] Verificar responsive en diferentes tamaños
 
-## Fase 5: Migrar dashboard principal
-- [ ] Crear página de dashboard
-- [ ] Implementar métricas de servicios
-- [ ] Implementar métricas de clientes
-- [ ] Implementar métricas de pianos
-- [ ] Verificar datos correctos del backend
-- [ ] Verificar diseño responsive en todos los tamaños
+## Fase 5: Migrar dashboard principal con métricas
+- [x] Mejorar métricas del dashboard con 4 tarjetas principales
+- [x] Agregar métrica de servicios del mes actual
+- [x] Agregar lista de servicios recientes (5 últimos)
+- [x] Agregar lista de próximos servicios programados (5 próximos)
+- [x] Crear router de dashboard con 4 endpoints
+- [x] Implementar getServicesStats para estadísticas mensuales
+- [x] Crear tests para todos los endpoints del dashboard
+- [x] Verificar que todos los tests pasen correctamente
+- [x] Diseño responsive con grid adaptativo
+- [ ] Agregar gráficos visuales de servicios por mes (opcional)
+- [ ] Conectar a base de datos de producción para ver datos reales
 
 ## Fase 6: Migrar gestión de clientes
 - [ ] Crear página de lista de clientes
