@@ -110,3 +110,12 @@
 - [ ] Verificación final de todas las funcionalidades
 - [ ] Documentar cambios y mejoras
 - [ ] Reportar resultado al usuario
+
+## Correcciones del Dashboard y Sidebar
+- [x] Revisar estructura del drawer original (CustomSidebar.tsx)
+- [x] Agregar sección "MAIN" con 7 opciones (Inicio, Agenda, Clientes, Pianos, Servicios, Facturación, Inventario)
+- [x] Agregar sección "COMERCIAL" con 2 opciones (Store, Reportes)
+- [x] Agregar sección "HERRAMIENTAS" con 3 opciones (Accesos Rápidos, Herramientas Avanzadas, Configuración)
+- [x] Crear páginas placeholder para todas las nuevas rutas
+- [x] Actualizar App.tsx con todas las rutas nuevas
+- [x] Verificar que la navegación coincida exactamente con el proyecto original

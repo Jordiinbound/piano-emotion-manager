@@ -2,12 +2,18 @@ import { useState } from 'react';
 import { Link, useLocation } from 'wouter';
 import { useAuth } from '@/hooks/useAuth';
 import {
-  LayoutDashboard,
+  Home,
+  Calendar,
   Users,
+  Music,
   Wrench,
-  Piano,
-  TrendingUp,
+  Receipt,
+  Package,
+  Store,
   BarChart3,
+  Zap,
+  Settings,
+  Hammer,
   Menu,
   X,
   LogOut,
@@ -18,13 +24,45 @@ interface LayoutProps {
   children: React.ReactNode;
 }
 
-const navigation = [
-  { name: 'Dashboard', href: '/', icon: LayoutDashboard },
-  { name: 'Clientes', href: '/clientes', icon: Users },
-  { name: 'Servicios', href: '/servicios', icon: Wrench },
-  { name: 'Pianos', href: '/pianos', icon: Piano },
-  { name: 'Predicciones', href: '/predicciones', icon: TrendingUp },
-  { name: 'Reportes', href: '/reportes', icon: BarChart3 },
+interface MenuItem {
+  name: string;
+  href: string;
+  icon: typeof Home;
+}
+
+interface MenuSection {
+  title: string;
+  items: MenuItem[];
+}
+
+const menuSections: MenuSection[] = [
+  {
+    title: 'MAIN',
+    items: [
+      { name: 'Inicio', href: '/', icon: Home },
+      { name: 'Agenda', href: '/agenda', icon: Calendar },
+      { name: 'Clientes', href: '/clientes', icon: Users },
+      { name: 'Pianos', href: '/pianos', icon: Music },
+      { name: 'Servicios', href: '/servicios', icon: Wrench },
+      { name: 'Facturación', href: '/facturacion', icon: Receipt },
+      { name: 'Inventario', href: '/inventario', icon: Package },
+    ],
+  },
+  {
+    title: 'COMERCIAL',
+    items: [
+      { name: 'Store', href: '/store', icon: Store },
+      { name: 'Reportes', href: '/reportes', icon: BarChart3 },
+    ],
+  },
+  {
+    title: 'HERRAMIENTAS',
+    items: [
+      { name: 'Accesos Rápidos', href: '/accesos-rapidos', icon: Zap },
+      { name: 'Herramientas Avanzadas', href: '/herramientas-avanzadas', icon: Hammer },
+      { name: 'Configuración', href: '/configuracion', icon: Settings },
+    ],
+  },
 ];
 
 export default function Layout({ children }: LayoutProps) {
@@ -36,72 +74,97 @@ export default function Layout({ children }: LayoutProps) {
     await logout();
   };
 
+  const isActive = (href: string) => {
+    if (href === '/') {
+      return location === '/';
+    }
+    return location.startsWith(href);
+  };
+
+  const renderMenuSection = (section: MenuSection, isMobile: boolean = false) => (
+    <div key={section.title} className="mb-6">
+      <h3 className="text-xs font-semibold text-muted-foreground px-3 mb-2 tracking-wider">
+        {section.title}
+      </h3>
+      <ul role="list" className="space-y-1">
+        {section.items.map((item) => {
+          const active = isActive(item.href);
+          return (
+            <li key={item.name}>
+              <Link href={item.href}>
+                <a
+                  className={`
+                    group flex items-center gap-x-3 rounded-md px-3 py-2 text-sm font-medium transition-colors relative
+                    ${
+                      active
+                        ? 'bg-primary text-primary-foreground'
+                        : 'text-muted-foreground hover:text-foreground hover:bg-accent'
+                    }
+                  `}
+                  onClick={() => isMobile && setSidebarOpen(false)}
+                >
+                  {active && (
+                    <div className="absolute left-0 top-0 bottom-0 w-1 bg-primary rounded-r-full" />
+                  )}
+                  <item.icon className="h-5 w-5 shrink-0" aria-hidden="true" />
+                  {item.name}
+                </a>
+              </Link>
+            </li>
+          );
+        })}
+      </ul>
+    </div>
+  );
+
   return (
     <div className="min-h-screen bg-background">
       {/* Sidebar para desktop */}
       <aside className="hidden lg:fixed lg:inset-y-0 lg:flex lg:w-64 lg:flex-col">
-        <div className="flex grow flex-col gap-y-5 overflow-y-auto border-r border-border bg-card px-6 pb-4">
-          <div className="flex h-16 shrink-0 items-center">
-            <h1 className="text-xl font-bold text-foreground">Piano Emotion</h1>
+        <div className="flex grow flex-col gap-y-5 overflow-y-auto border-r border-border bg-card px-4 pb-4">
+          {/* Logo/Brand */}
+          <div className="flex h-16 shrink-0 items-center gap-3 border-b border-border">
+            <Music className="h-8 w-8 text-primary" />
+            <div>
+              <h1 className="text-lg font-bold text-foreground leading-tight">Piano Emotion</h1>
+              <p className="text-xs text-muted-foreground">Manager</p>
+            </div>
           </div>
+
+          {/* Menu Sections */}
           <nav className="flex flex-1 flex-col">
-            <ul role="list" className="flex flex-1 flex-col gap-y-7">
-              <li>
-                <ul role="list" className="-mx-2 space-y-1">
-                  {navigation.map((item) => {
-                    const isActive = location === item.href;
-                    return (
-                      <li key={item.name}>
-                        <Link href={item.href}>
-                          <a
-                            className={`
-                              group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold transition-colors
-                              ${
-                                isActive
-                                  ? 'bg-primary text-primary-foreground'
-                                  : 'text-muted-foreground hover:text-foreground hover:bg-accent'
-                              }
-                            `}
-                          >
-                            <item.icon className="h-6 w-6 shrink-0" aria-hidden="true" />
-                            {item.name}
-                          </a>
-                        </Link>
-                      </li>
-                    );
-                  })}
-                </ul>
-              </li>
-              <li className="mt-auto">
-                {user ? (
-                  <div className="space-y-2">
-                    <div className="flex items-center gap-x-3 px-2">
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-semibold text-foreground truncate">
-                          {user.name || user.email}
-                        </p>
-                        <p className="text-xs text-muted-foreground truncate">{user.email}</p>
-                      </div>
-                    </div>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="w-full justify-start"
-                      onClick={handleLogout}
-                    >
-                      <LogOut className="h-4 w-4 mr-2" />
-                      Cerrar Sesión
-                    </Button>
+            <div className="flex-1">
+              {menuSections.map((section) => renderMenuSection(section))}
+            </div>
+
+            {/* User section */}
+            <div className="mt-auto pt-4 border-t border-border">
+              {user ? (
+                <div className="space-y-3">
+                  <div className="px-3">
+                    <p className="text-sm font-medium text-foreground truncate">
+                      {user.name || user.email}
+                    </p>
+                    <p className="text-xs text-muted-foreground truncate">{user.email}</p>
                   </div>
-                ) : (
-                  <Link href="/sign-in">
-                    <a className="group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold text-muted-foreground hover:text-foreground hover:bg-accent">
-                      Iniciar Sesión
-                    </a>
-                  </Link>
-                )}
-              </li>
-            </ul>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="w-full justify-start"
+                    onClick={handleLogout}
+                  >
+                    <LogOut className="h-4 w-4 mr-2" />
+                    Cerrar Sesión
+                  </Button>
+                </div>
+              ) : (
+                <Link href="/sign-in">
+                  <a className="flex items-center gap-x-3 rounded-md px-3 py-2 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-accent">
+                    Iniciar Sesión
+                  </a>
+                </Link>
+              )}
+            </div>
           </nav>
         </div>
       </aside>
@@ -125,72 +188,53 @@ export default function Layout({ children }: LayoutProps) {
                   <X className="h-6 w-6 text-foreground" aria-hidden="true" />
                 </button>
               </div>
-              <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-card px-6 pb-4">
-                <div className="flex h-16 shrink-0 items-center">
-                  <h1 className="text-xl font-bold text-foreground">Piano Emotion</h1>
+              <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-card px-4 pb-4">
+                {/* Logo/Brand */}
+                <div className="flex h-16 shrink-0 items-center gap-3 border-b border-border">
+                  <Music className="h-8 w-8 text-primary" />
+                  <div>
+                    <h1 className="text-lg font-bold text-foreground leading-tight">Piano Emotion</h1>
+                    <p className="text-xs text-muted-foreground">Manager</p>
+                  </div>
                 </div>
+
+                {/* Menu Sections */}
                 <nav className="flex flex-1 flex-col">
-                  <ul role="list" className="flex flex-1 flex-col gap-y-7">
-                    <li>
-                      <ul role="list" className="-mx-2 space-y-1">
-                        {navigation.map((item) => {
-                          const isActive = location === item.href;
-                          return (
-                            <li key={item.name}>
-                              <Link href={item.href}>
-                                <a
-                                  className={`
-                                    group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold transition-colors
-                                    ${
-                                      isActive
-                                        ? 'bg-primary text-primary-foreground'
-                                        : 'text-muted-foreground hover:text-foreground hover:bg-accent'
-                                    }
-                                  `}
-                                  onClick={() => setSidebarOpen(false)}
-                                >
-                                  <item.icon className="h-6 w-6 shrink-0" aria-hidden="true" />
-                                  {item.name}
-                                </a>
-                              </Link>
-                            </li>
-                          );
-                        })}
-                      </ul>
-                    </li>
-                    <li className="mt-auto">
-                      {user ? (
-                        <div className="space-y-2">
-                          <div className="flex items-center gap-x-3 px-2">
-                            <div className="flex-1 min-w-0">
-                              <p className="text-sm font-semibold text-foreground truncate">
-                                {user.name || user.email}
-                              </p>
-                              <p className="text-xs text-muted-foreground truncate">{user.email}</p>
-                            </div>
-                          </div>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            className="w-full justify-start"
-                            onClick={handleLogout}
-                          >
-                            <LogOut className="h-4 w-4 mr-2" />
-                            Cerrar Sesión
-                          </Button>
+                  <div className="flex-1">
+                    {menuSections.map((section) => renderMenuSection(section, true))}
+                  </div>
+
+                  {/* User section */}
+                  <div className="mt-auto pt-4 border-t border-border">
+                    {user ? (
+                      <div className="space-y-3">
+                        <div className="px-3">
+                          <p className="text-sm font-medium text-foreground truncate">
+                            {user.name || user.email}
+                          </p>
+                          <p className="text-xs text-muted-foreground truncate">{user.email}</p>
                         </div>
-                      ) : (
-                        <Link href="/sign-in">
-                          <a
-                            className="group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold text-muted-foreground hover:text-foreground hover:bg-accent"
-                            onClick={() => setSidebarOpen(false)}
-                          >
-                            Iniciar Sesión
-                          </a>
-                        </Link>
-                      )}
-                    </li>
-                  </ul>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="w-full justify-start"
+                          onClick={handleLogout}
+                        >
+                          <LogOut className="h-4 w-4 mr-2" />
+                          Cerrar Sesión
+                        </Button>
+                      </div>
+                    ) : (
+                      <Link href="/sign-in">
+                        <a
+                          className="flex items-center gap-x-3 rounded-md px-3 py-2 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-accent"
+                          onClick={() => setSidebarOpen(false)}
+                        >
+                          Iniciar Sesión
+                        </a>
+                      </Link>
+                    )}
+                  </div>
                 </nav>
               </div>
             </div>
@@ -211,8 +255,9 @@ export default function Layout({ children }: LayoutProps) {
             <Menu className="h-6 w-6" aria-hidden="true" />
           </button>
           <div className="flex flex-1 gap-x-4 self-stretch lg:gap-x-6">
-            <div className="flex flex-1 items-center">
-              <h1 className="text-lg font-semibold text-foreground">Piano Emotion</h1>
+            <div className="flex flex-1 items-center gap-3">
+              <Music className="h-6 w-6 text-primary" />
+              <h1 className="text-base font-semibold text-foreground">Piano Emotion</h1>
             </div>
           </div>
         </div>

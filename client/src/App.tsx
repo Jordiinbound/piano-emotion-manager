@@ -6,6 +6,17 @@ import ErrorBoundary from "./components/ErrorBoundary";
 import Layout from "./components/Layout";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import Home from "./pages/Home";
+import Agenda from "./pages/Agenda";
+import Clientes from "./pages/Clientes";
+import Pianos from "./pages/Pianos";
+import Servicios from "./pages/Servicios";
+import Facturacion from "./pages/Facturacion";
+import Inventario from "./pages/Inventario";
+import Store from "./pages/Store";
+import Reportes from "./pages/Reportes";
+import AccesosRapidos from "./pages/AccesosRapidos";
+import HerramientasAvanzadas from "./pages/HerramientasAvanzadas";
+import Configuracion from "./pages/Configuracion";
 import SignIn from "./pages/SignIn";
 import SignUp from "./pages/SignUp";
 
@@ -23,48 +34,64 @@ function Router() {
         </Layout>
       </Route>
       
+      {/* MAIN */}
+      <Route path="/agenda">
+        <Layout>
+          <Agenda />
+        </Layout>
+      </Route>
       <Route path="/clientes">
         <Layout>
-          <div className="text-foreground">
-            <h1 className="text-3xl font-bold mb-4">Clientes</h1>
-            <p className="text-muted-foreground">Página de gestión de clientes (próximamente)</p>
-          </div>
+          <Clientes />
         </Layout>
       </Route>
-      
-      <Route path="/servicios">
-        <Layout>
-          <div className="text-foreground">
-            <h1 className="text-3xl font-bold mb-4">Servicios</h1>
-            <p className="text-muted-foreground">Página de gestión de servicios (próximamente)</p>
-          </div>
-        </Layout>
-      </Route>
-      
       <Route path="/pianos">
         <Layout>
-          <div className="text-foreground">
-            <h1 className="text-3xl font-bold mb-4">Pianos</h1>
-            <p className="text-muted-foreground">Página de gestión de pianos (próximamente)</p>
-          </div>
+          <Pianos />
         </Layout>
       </Route>
-      
-      <Route path="/predicciones">
+      <Route path="/servicios">
         <Layout>
-          <div className="text-foreground">
-            <h1 className="text-3xl font-bold mb-4">Predicciones</h1>
-            <p className="text-muted-foreground">Página de predicciones matemáticas (próximamente)</p>
-          </div>
+          <Servicios />
         </Layout>
       </Route>
-      
+      <Route path="/facturacion">
+        <Layout>
+          <Facturacion />
+        </Layout>
+      </Route>
+      <Route path="/inventario">
+        <Layout>
+          <Inventario />
+        </Layout>
+      </Route>
+
+      {/* COMERCIAL */}
+      <Route path="/store">
+        <Layout>
+          <Store />
+        </Layout>
+      </Route>
       <Route path="/reportes">
         <Layout>
-          <div className="text-foreground">
-            <h1 className="text-3xl font-bold mb-4">Reportes</h1>
-            <p className="text-muted-foreground">Página de reportes y analytics (próximamente)</p>
-          </div>
+          <Reportes />
+        </Layout>
+      </Route>
+
+      {/* HERRAMIENTAS */}
+      <Route path="/accesos-rapidos">
+        <Layout>
+          <AccesosRapidos />
+        </Layout>
+      </Route>
+      <Route path="/herramientas-avanzadas">
+        <Layout>
+          <HerramientasAvanzadas />
+        </Layout>
+      </Route>
+      <Route path="/configuracion">
+        <Layout>
+          <Configuracion />
         </Layout>
       </Route>
       
