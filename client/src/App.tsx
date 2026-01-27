@@ -37,6 +37,8 @@ import ClientPortalLogin from "./pages/ClientPortalLogin";
 import ClientPortalRegister from "./pages/ClientPortalRegister";
 import ClientPortalDashboard from "./pages/ClientPortalDashboard";
 import ConfiguracionSMTP from "./pages/ConfiguracionSMTP";
+import EmailConfig from "./pages/EmailConfig";
+import PaymentStats from "./pages/PaymentStats";
 
 function Router() {
   return (
@@ -49,10 +51,12 @@ function Router() {
       <Route path="/client-portal/register" component={ClientPortalRegister} />
       <Route path="/client-portal/dashboard" component={ClientPortalDashboard} />
       
-      {/* Ruta de configuración SMTP */}
+      {/* Ruta de configuración de email con OAuth2 */}
       <Route path="/configuracion/email">
         <ProtectedRoute>
-          <ConfiguracionSMTP />
+          <Layout>
+            <EmailConfig />
+          </Layout>
         </ProtectedRoute>
       </Route>
       
@@ -158,6 +162,13 @@ function Router() {
         <ProtectedRoute>
           <Layout>
             <Facturacion />
+          </Layout>
+        </ProtectedRoute>
+      </Route>
+      <Route path="/facturacion/estadisticas">
+        <ProtectedRoute>
+          <Layout>
+            <PaymentStats />
           </Layout>
         </ProtectedRoute>
       </Route>

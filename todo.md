@@ -536,11 +536,10 @@
 - [ ] Actualizar webhook de Stripe para producción (https://www.pianoemotion.com/api/stripe/webhook)
 
 
-## Funcionalidades Avanzadas de Facturación (NUEVAS)
+## Funcionalidades Avanzadas de Facturación (COMPLETADAS)
 - [x] Implementar OAuth2 para Gmail y Outlook 365 (backend completo)
 - [x] Generación de recibos en PDF para facturas pagadas (backend completo)
-- [ ] Crear interfaz de configuración de email con OAuth2
-- [ ] Agregar botón de descarga de recibo en facturas pagadas
-- [ ] Dashboard de estadísticas de pagos y facturación
-- [ ] Exportación de facturas a Excel/CSV
-- [ ] Conectar sistema de alertas a la base de datos
+- [x] Crear interfaz de configuración de email con OAuth2 (/configuracion/email)
+- [x] Dashboard de estadísticas de pagos y facturación (/facturacion/estadisticas)
+- [x] Exportación de facturas a Excel/CSV (botones flotantes en /facturacion)
+- [x] Conectar sistema de alertas a la base de datos (barra verde/roja en dashboard)

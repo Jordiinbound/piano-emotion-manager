@@ -8,10 +8,11 @@
 import { useState, useMemo } from 'react';
 import { trpc } from '@/lib/trpc';
 import { InvoiceCard } from '@/components/InvoiceCard';
-import { Plus, Search } from 'lucide-react';
+import { Plus, Search, Download, FileSpreadsheet } from 'lucide-react';
 import InvoiceFormModal from '@/components/InvoiceFormModal';
 import DeleteConfirmModal from '@/components/DeleteConfirmModal';
 import { toast } from 'sonner';
+import { exportToExcel, exportToCSV, generateFilename } from '@/utils/exportInvoices';
 
 type FilterType = 'all' | 'draft' | 'sent' | 'paid' | 'cancelled';
 type PeriodType = 'all' | 'thisMonth' | 'lastMonth' | 'thisYear';
@@ -74,6 +75,39 @@ export default function Facturacion() {
   // Handler para enviar factura por email
   const handleSendEmail = (invoiceId: number) => {
     sendInvoiceEmailMutation.mutate({ invoiceId });
+  };
+
+  // Handlers para exportación
+  const handleExportExcel = () => {
+    if (!invoices || invoices.length === 0) {
+      toast.error('No hay facturas para exportar');
+      return;
+    }
+    const filename = generateFilename('facturas');
+    const success = exportToExcel(filteredInvoices, filename);
+    if (success) {
+      toast.success('Facturas exportadas a Excel', {
+        description: `Se han exportado ${filteredInvoices.length} facturas`,
+      });
+    } else {
+      toast.error('Error al exportar a Excel');
+    }
+  };
+
+  const handleExportCSV = () => {
+    if (!invoices || invoices.length === 0) {
+      toast.error('No hay facturas para exportar');
+      return;
+    }
+    const filename = generateFilename('facturas');
+    const success = exportToCSV(filteredInvoices, filename);
+    if (success) {
+      toast.success('Facturas exportadas a CSV', {
+        description: `Se han exportado ${filteredInvoices.length} facturas`,
+      });
+    } else {
+      toast.error('Error al exportar a CSV');
+    }
   };
 
   // Obtener estadísticas
@@ -300,14 +334,37 @@ export default function Facturacion() {
         )}
       </div>
 
-      {/* FAB (Floating Action Button) */}
-      <button
-        onClick={() => setIsModalOpen(true)}
-        className="fixed bottom-6 right-6 w-14 h-14 bg-[#e07a5f] text-white rounded-full shadow-lg hover:bg-[#d16a4f] transition-colors flex items-center justify-center"
-        aria-label="Agregar factura"
-      >
-        <Plus className="w-6 h-6" />
-      </button>
+      {/* Botones flotantes */}
+      <div className="fixed bottom-6 right-6 flex flex-col gap-3">
+        {/* Botón de exportar a Excel */}
+        <button
+          onClick={handleExportExcel}
+          className="w-14 h-14 bg-green-600 text-white rounded-full shadow-lg hover:bg-green-700 transition-colors flex items-center justify-center"
+          aria-label="Exportar a Excel"
+          title="Exportar a Excel"
+        >
+          <FileSpreadsheet className="w-6 h-6" />
+        </button>
+
+        {/* Botón de exportar a CSV */}
+        <button
+          onClick={handleExportCSV}
+          className="w-14 h-14 bg-blue-600 text-white rounded-full shadow-lg hover:bg-blue-700 transition-colors flex items-center justify-center"
+          aria-label="Exportar a CSV"
+          title="Exportar a CSV"
+        >
+          <Download className="w-6 h-6" />
+        </button>
+
+        {/* Botón de agregar factura */}
+        <button
+          onClick={() => setIsModalOpen(true)}
+          className="w-14 h-14 bg-[#e07a5f] text-white rounded-full shadow-lg hover:bg-[#d16a4f] transition-colors flex items-center justify-center"
+          aria-label="Agregar factura"
+        >
+          <Plus className="w-6 h-6" />
+        </button>
+      </div>
 
       {/* Modal de formulario para crear */}
       <InvoiceFormModal

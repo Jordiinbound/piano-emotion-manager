@@ -55,9 +55,10 @@ export default function Home() {
     year: 'numeric' 
   }).slice(1);
 
-  // Estado de alertas (simulado por ahora)
-  const hasAlerts: boolean = false;
-  const alertCount: number = 0;
+  // Obtener alertas desde la base de datos
+  const { data: alertsData } = trpc.alerts.getSummary.useQuery();
+  const hasAlerts = alertsData?.hasAlerts || false;
+  const alertCount = alertsData?.total || 0;
 
   // Función helper para formatear fechas
   const formatDate = (date: Date | string | null) => {
