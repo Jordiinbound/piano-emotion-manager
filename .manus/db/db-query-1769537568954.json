@@ -1,0 +1,9 @@
+{
+  "query": "SELECT id, invoiceNumber, clientName, total, status FROM invoices WHERE status = 'sent' LIMIT 5;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2ghn282qNtTBYRw.2c60fb684332 --database U7erxBowPGSR3wjYQtQi9z --execute SELECT id, invoiceNumber, clientName, total, status FROM invoices WHERE status = 'sent' LIMIT 5;",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 164
+}

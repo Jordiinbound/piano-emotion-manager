@@ -37,9 +37,12 @@ export default function Facturacion() {
   // Mutación para crear sesión de pago con Stripe
   const createCheckoutSessionMutation = trpc.stripe.createCheckoutSession.useMutation({
     onSuccess: (data) => {
-      // Redirigir a Stripe Checkout
+      // Abrir Stripe Checkout en nueva pestaña
       if (data.url) {
-        window.location.href = data.url;
+        window.open(data.url, '_blank');
+        toast.success('Redirigiendo a la página de pago', {
+          description: 'Se ha abierto una nueva pestaña con el formulario de pago de Stripe',
+        });
       }
     },
     onError: (error) => {
