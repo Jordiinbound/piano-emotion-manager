@@ -1,0 +1,8 @@
+{
+  "query": "ALTER TABLE users \nADD COLUMN IF NOT EXISTS emailProvider ENUM('smtp', 'gmail_oauth', 'outlook_oauth') DEFAULT 'smtp' AFTER smtpFromName,\nADD COLUMN IF NOT EXISTS oauth2AccessToken TEXT AFTER emailProvider,\nADD COLUMN IF NOT EXISTS oauth2RefreshToken TEXT AFTER oauth2AccessToken,\nADD COLUMN IF NOT EXISTS oauth2TokenExpiry TIMESTAMP NULL AFTER oauth2RefreshToken,\nADD COLUMN IF NOT EXISTS oauth2Email VARCHAR(320) AFTER oauth2TokenExpiry;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2ghn282qNtTBYRw.2c60fb684332 --database U7erxBowPGSR3wjYQtQi9z --execute ALTER TABLE users \nADD COLUMN IF NOT EXISTS emailProvider ENUM('smtp', 'gmail_oauth', 'outlook_oauth') DEFAULT 'smtp' AFTER smtpFromName,\nADD COLUMN IF NOT EXISTS oauth2AccessToken TEXT AFTER emailProvider,\nADD COLUMN IF NOT EXISTS oauth2RefreshToken TEXT AFTER oauth2AccessToken,\nADD COLUMN IF NOT EXISTS oauth2TokenExpiry TIMESTAMP NULL AFTER oauth2RefreshToken,\nADD COLUMN IF NOT EXISTS oauth2Email VARCHAR(320) AFTER oauth2TokenExpiry;",
+  "returncode": 1,
+  "logs": [
+    "ERROR 1054 (42S22) at line 1: Unknown column 'smtpfromname' in 'users'"
+  ]
+}

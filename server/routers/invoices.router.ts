@@ -12,6 +12,7 @@ import { invoices, users } from '../../drizzle/schema';
 import { eq, sql } from 'drizzle-orm';
 import { generatePaymentToken } from '../utils/paymentToken';
 import { sendInvoiceEmail } from '../utils/emailService';
+import { generateReceiptPDF } from '../utils/receiptPDF';
 
 export const invoicesRouter = router({
   // Obtener estadísticas de facturas
@@ -371,6 +372,55 @@ export const invoicesRouter = router({
       return {
         success: true,
         message: 'Factura enviada por email correctamente',
+      };
+    }),
+
+  // Generar recibo en PDF para factura pagada
+  generateReceipt: protectedProcedure
+    .input(z.object({ invoiceId: z.number() }))
+    .mutation(async ({ input }) => {
+      const db = await getDb();
+      if (!db) throw new Error('Database not available');
+
+      // Obtener la factura
+      const invoiceResult = await db.select().from(invoices).where(eq(invoices.id, input.invoiceId));
+      
+      if (!invoiceResult || invoiceResult.length === 0) {
+        throw new Error('Factura no encontrada');
+      }
+
+      const invoice = invoiceResult[0];
+
+      // Verificar que la factura esté pagada
+      if (invoice.status !== 'paid') {
+        throw new Error('Solo se pueden generar recibos para facturas pagadas');
+      }
+
+      // Generar número de recibo
+      const receiptNumber = `REC-${invoice.invoiceNumber.replace('INV-', '')}`;
+
+      // Generar PDF del recibo
+      const pdfBuffer = await generateReceiptPDF({
+        receiptNumber,
+        invoiceNumber: invoice.invoiceNumber,
+        paymentDate: invoice.updatedAt || new Date(),
+        clientName: invoice.clientName,
+        clientEmail: invoice.clientEmail || '',
+        clientAddress: invoice.clientAddress,
+        paymentMethod: 'Stripe',
+        transactionId: invoice.stripePaymentIntentId,
+        amountPaid: invoice.total,
+        notes: invoice.notes,
+        businessInfo: invoice.businessInfo,
+      });
+
+      // Convertir buffer a base64 para enviar al cliente
+      const base64PDF = pdfBuffer.toString('base64');
+
+      return {
+        success: true,
+        pdf: base64PDF,
+        filename: `Recibo-${invoice.invoiceNumber}.pdf`,
       };
     }),
 });

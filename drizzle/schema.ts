@@ -1037,6 +1037,12 @@ export const users = mysqlTable("users", {
 	smtpPassword: text(),
 	smtpSecure: tinyint().default(0),
 	smtpFromName: varchar({ length: 255 }),
+	// OAuth2 fields
+	emailProvider: mysqlEnum(['smtp', 'gmail_oauth', 'outlook_oauth']).default('smtp'),
+	oauth2AccessToken: text(),
+	oauth2RefreshToken: text(),
+	oauth2TokenExpiry: timestamp(),
+	oauth2Email: varchar({ length: 320 }),
 	});
 
 export type User = typeof users.$inferSelect;

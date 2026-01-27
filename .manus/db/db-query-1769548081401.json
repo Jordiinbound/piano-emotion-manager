@@ -1,0 +1,9 @@
+{
+  "query": "ALTER TABLE users \nADD COLUMN emailProvider ENUM('smtp', 'gmail_oauth', 'outlook_oauth') DEFAULT 'smtp',\nADD COLUMN oauth2AccessToken TEXT,\nADD COLUMN oauth2RefreshToken TEXT,\nADD COLUMN oauth2TokenExpiry TIMESTAMP NULL,\nADD COLUMN oauth2Email VARCHAR(320);",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2ghn282qNtTBYRw.2c60fb684332 --database U7erxBowPGSR3wjYQtQi9z --execute ALTER TABLE users \nADD COLUMN emailProvider ENUM('smtp', 'gmail_oauth', 'outlook_oauth') DEFAULT 'smtp',\nADD COLUMN oauth2AccessToken TEXT,\nADD COLUMN oauth2RefreshToken TEXT,\nADD COLUMN oauth2TokenExpiry TIMESTAMP NULL,\nADD COLUMN oauth2Email VARCHAR(320);",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 1578
+}

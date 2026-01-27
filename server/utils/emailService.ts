@@ -1,5 +1,10 @@
 import nodemailer from 'nodemailer';
 import { generateInvoicePDF } from './invoicePDF';
+import { createGmailTransporter, refreshGmailToken } from '../services/gmailOAuth';
+import { createOutlookTransporter, refreshOutlookToken } from '../services/outlookOAuth';
+import { getDb } from '../db';
+import { users } from '../../drizzle/schema';
+import { eq } from 'drizzle-orm';
 
 interface EmailConfig {
   host: string;
@@ -8,6 +13,15 @@ interface EmailConfig {
   user: string;
   password: string;
   fromName: string;
+}
+
+interface OAuth2Config {
+  provider: 'gmail_oauth' | 'outlook_oauth';
+  accessToken: string;
+  refreshToken: string;
+  tokenExpiry: Date | null;
+  email: string;
+  userId: number;
 }
 
 interface InvoiceEmailData {
@@ -29,15 +43,74 @@ interface InvoiceEmailData {
 }
 
 /**
- * Envía una factura por email con PDF adjunto
+ * Crea un transportador de nodemailer según la configuración del usuario
  */
-export async function sendInvoiceEmail(
-  emailConfig: EmailConfig,
-  invoiceData: InvoiceEmailData
-): Promise<boolean> {
-  try {
-    // Crear transportador SMTP
-    const transporter = nodemailer.createTransport({
+async function createTransporter(
+  emailConfig?: EmailConfig,
+  oauth2Config?: OAuth2Config
+) {
+  // Si es OAuth2
+  if (oauth2Config) {
+    const now = new Date();
+    let accessToken = oauth2Config.accessToken;
+
+    // Verificar si el token ha expirado y refrescarlo
+    if (oauth2Config.tokenExpiry && oauth2Config.tokenExpiry < now) {
+      console.log('[Email] Token expirado, refrescando...');
+
+      try {
+        if (oauth2Config.provider === 'gmail_oauth') {
+          const newTokens = await refreshGmailToken(oauth2Config.refreshToken);
+          accessToken = newTokens.access_token!;
+
+          // Actualizar tokens en la base de datos
+          const db = await getDb();
+          if (db) {
+            await db
+              .update(users)
+              .set({
+                oauth2AccessToken: accessToken,
+                oauth2TokenExpiry: newTokens.expiry_date
+                  ? new Date(newTokens.expiry_date)
+                  : null,
+              })
+              .where(eq(users.id, oauth2Config.userId));
+          }
+        } else if (oauth2Config.provider === 'outlook_oauth') {
+          const newTokens = await refreshOutlookToken(oauth2Config.refreshToken);
+          accessToken = newTokens.access_token!;
+
+          // Actualizar tokens en la base de datos
+          const db = await getDb();
+          if (db) {
+            await db
+              .update(users)
+              .set({
+                oauth2AccessToken: accessToken,
+                oauth2TokenExpiry: newTokens.expiry_date
+                  ? new Date(newTokens.expiry_date)
+                  : null,
+              })
+              .where(eq(users.id, oauth2Config.userId));
+          }
+        }
+      } catch (error) {
+        console.error('[Email] Error al refrescar token:', error);
+        throw new Error('Error al refrescar el token de autenticación');
+      }
+    }
+
+    // Crear transportador OAuth2
+    if (oauth2Config.provider === 'gmail_oauth') {
+      return createGmailTransporter(accessToken, oauth2Config.email);
+    } else {
+      return createOutlookTransporter(accessToken, oauth2Config.email);
+    }
+  }
+
+  // Si es SMTP manual
+  if (emailConfig) {
+    return nodemailer.createTransport({
       host: emailConfig.host,
       port: emailConfig.port,
       secure: emailConfig.secure,
@@ -46,6 +119,25 @@ export async function sendInvoiceEmail(
         pass: emailConfig.password,
       },
     });
+  }
+
+  throw new Error('No se proporcionó configuración de email');
+}
+
+/**
+ * Envía una factura por email con PDF adjunto
+ */
+export async function sendInvoiceEmail(
+  emailConfig: EmailConfig | OAuth2Config,
+  invoiceData: InvoiceEmailData
+): Promise<boolean> {
+  try {
+    // Determinar si es OAuth2 o SMTP
+    const isOAuth2 = 'provider' in emailConfig;
+    const transporter = await createTransporter(
+      isOAuth2 ? undefined : (emailConfig as EmailConfig),
+      isOAuth2 ? (emailConfig as OAuth2Config) : undefined
+    );
 
     // Generar PDF de la factura
     const pdfBuffer = await generateInvoicePDF(invoiceData);
@@ -58,6 +150,15 @@ export async function sendInvoiceEmail(
           year: 'numeric',
         })
       : 'No especificada';
+
+    // Determinar el remitente
+    const fromEmail = isOAuth2
+      ? (emailConfig as OAuth2Config).email
+      : (emailConfig as EmailConfig).user;
+
+    const fromName = isOAuth2
+      ? 'Piano Emotion'
+      : (emailConfig as EmailConfig).fromName || 'Piano Emotion';
 
     // HTML del email
     const htmlContent = `
@@ -173,9 +274,9 @@ export async function sendInvoiceEmail(
 
     // Enviar email
     const info = await transporter.sendMail({
-      from: `"${emailConfig.fromName}" <${emailConfig.user}>`,
+      from: `"${fromName}" <${fromEmail}>`,
       to: invoiceData.clientEmail,
-      subject: `Nueva factura ${invoiceData.invoiceNumber} - ${emailConfig.fromName}`,
+      subject: `Nueva factura ${invoiceData.invoiceNumber} - ${fromName}`,
       html: htmlContent,
       attachments: [
         {

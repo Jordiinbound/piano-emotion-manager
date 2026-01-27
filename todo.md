@@ -534,3 +534,13 @@
 - [ ] Agregar botón "Descargar recibo" en portal del cliente
 - [ ] Agregar botón "Descargar recibo" en app del técnico
 - [ ] Actualizar webhook de Stripe para producción (https://www.pianoemotion.com/api/stripe/webhook)
+
+
+## Funcionalidades Avanzadas de Facturación (NUEVAS)
+- [x] Implementar OAuth2 para Gmail y Outlook 365 (backend completo)
+- [x] Generación de recibos en PDF para facturas pagadas (backend completo)
+- [ ] Crear interfaz de configuración de email con OAuth2
+- [ ] Agregar botón de descarga de recibo en facturas pagadas
+- [ ] Dashboard de estadísticas de pagos y facturación
+- [ ] Exportación de facturas a Excel/CSV
+- [ ] Conectar sistema de alertas a la base de datos
