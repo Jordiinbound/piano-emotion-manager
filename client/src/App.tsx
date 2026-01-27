@@ -36,6 +36,7 @@ import PayInvoice from "./pages/PayInvoice";
 import ClientPortalLogin from "./pages/ClientPortalLogin";
 import ClientPortalRegister from "./pages/ClientPortalRegister";
 import ClientPortalDashboard from "./pages/ClientPortalDashboard";
+import ConfiguracionSMTP from "./pages/ConfiguracionSMTP";
 
 function Router() {
   return (
@@ -47,6 +48,13 @@ function Router() {
       <Route path="/client-portal/login" component={ClientPortalLogin} />
       <Route path="/client-portal/register" component={ClientPortalRegister} />
       <Route path="/client-portal/dashboard" component={ClientPortalDashboard} />
+      
+      {/* Ruta de configuración SMTP */}
+      <Route path="/configuracion/email">
+        <ProtectedRoute>
+          <ConfiguracionSMTP />
+        </ProtectedRoute>
+      </Route>
       
       {/* Rutas de autenticación sin layout */}
       <Route path="/sign-in" component={SignIn} />

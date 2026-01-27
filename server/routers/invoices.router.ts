@@ -316,6 +316,25 @@ export const invoicesRouter = router({
       const paymentUrl = `${ctx.req.headers.origin}/pay/${paymentToken}`;
       const portalUrl = `${ctx.req.headers.origin}/client-portal`;
 
+      // Preparar items de la factura
+      let invoiceItems = invoice.items as any;
+      
+      // Si no hay items o está vacío, crear un item genérico
+      if (!invoiceItems || (Array.isArray(invoiceItems) && invoiceItems.length === 0)) {
+        invoiceItems = [{
+          description: 'Servicio de afinación de piano',
+          quantity: 1,
+          price: Number(invoice.subtotal) || 0
+        }];
+      }
+      
+      // Asegurar que todos los items tengan los campos necesarios
+      invoiceItems = invoiceItems.map((item: any) => ({
+        description: item.description || 'Servicio',
+        quantity: Number(item.quantity) || 1,
+        price: Number(item.price) || 0
+      }));
+
       // Enviar email
       const success = await sendInvoiceEmail(
         {
@@ -333,7 +352,7 @@ export const invoicesRouter = router({
           clientName: invoice.clientName,
           clientEmail: invoice.clientEmail,
           clientAddress: invoice.clientAddress,
-          items: invoice.items as any || [],
+          items: invoiceItems,
           subtotal: invoice.subtotal,
           taxAmount: invoice.taxAmount,
           total: invoice.total,

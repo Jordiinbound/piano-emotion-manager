@@ -521,3 +521,16 @@
 - [ ] Implementar descarga de recibos en PDF
 - [x] Agregar botón "Enviar factura por email" en la app del técnico
 - [ ] Actualizar webhook de Stripe para producción (https://www.pianoemotion.com/api/stripe/webhook)
+
+
+## Sistema Híbrido de Email (OAuth2 + SMTP Manual)
+- [x] Registrar router de usuarios en el router principal
+- [x] Agregar ruta de configuración SMTP en App.tsx
+- [ ] Implementar integración OAuth2 para Gmail
+- [ ] Implementar integración OAuth2 para Outlook 365
+- [ ] Crear interfaz híbrida con botones OAuth2 y formulario SMTP manual
+- [ ] Actualizar emailService para soportar OAuth2 y SMTP
+- [ ] Implementar descarga de recibos en PDF para pagos completados
+- [ ] Agregar botón "Descargar recibo" en portal del cliente
+- [ ] Agregar botón "Descargar recibo" en app del técnico
+- [ ] Actualizar webhook de Stripe para producción (https://www.pianoemotion.com/api/stripe/webhook)

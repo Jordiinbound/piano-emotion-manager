@@ -1,0 +1,8 @@
+{
+  "query": "SELECT smtpHost, smtpPort, smtpUser, smtpFromName, LENGTH(smtpPassword) as password_length FROM users WHERE email = 'jnavarrete@inboundemotion.com'",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2ghn282qNtTBYRw.2c60fb684332 --database U7erxBowPGSR3wjYQtQi9z --execute SELECT smtpHost, smtpPort, smtpUser, smtpFromName, LENGTH(smtpPassword) as password_length FROM users WHERE email = 'jnavarrete@inboundemotion.com'",
+  "returncode": 1,
+  "logs": [
+    "ERROR 1054 (42S22) at line 1: Unknown column 'smtphost' in 'field list'"
+  ]
+}

@@ -17,20 +17,24 @@ import {
 } from 'lucide-react';
 
 const SETTINGS_SECTIONS = [
-  { key: 'ai', icon: Brain, label: 'Configuración IA', color: '#8B5CF6' },
-  { key: 'calendar', icon: Calendar, label: 'Calendario', color: '#A855F7' },
-  { key: 'inventory', icon: Package, label: 'Inventario', color: '#F59E0B' },
-  { key: 'notifications', icon: Bell, label: 'Notificaciones', color: '#F97316' },
-  { key: 'invoice', icon: FileText, label: 'Facturación', color: '#3B82F6' },
-  { key: 'payment', icon: CreditCard, label: 'Pagos', color: '#635BFF' },
-  { key: 'modules', icon: LayoutGrid, label: 'Módulos y Plan', color: '#8B5CF6' },
+  { key: 'ai', icon: Brain, label: 'Configuración IA', color: '#8B5CF6', href: null },
+  { key: 'calendar', icon: Calendar, label: 'Calendario', color: '#A855F7', href: null },
+  { key: 'inventory', icon: Package, label: 'Inventario', color: '#F59E0B', href: null },
+  { key: 'email', icon: Bell, label: 'Configuración Email', color: '#F97316', href: '/configuracion/email' },
+  { key: 'invoice', icon: FileText, label: 'Facturación', color: '#3B82F6', href: null },
+  { key: 'payment', icon: CreditCard, label: 'Pagos', color: '#635BFF', href: null },
+  { key: 'modules', icon: LayoutGrid, label: 'Módulos y Plan', color: '#8B5CF6', href: null },
 ];
 
 export default function Configuracion() {
   const [, setLocation] = useLocation();
 
-  const handleAction = (key: string) => {
-    alert('Funcionalidad próximamente');
+  const handleAction = (section: typeof SETTINGS_SECTIONS[0]) => {
+    if (section.href) {
+      setLocation(section.href);
+    } else {
+      alert('Funcionalidad próximamente');
+    }
   };
 
   return (
@@ -51,7 +55,7 @@ export default function Configuracion() {
             return (
               <button
                 key={section.key}
-                onClick={() => handleAction(section.key)}
+                onClick={() => handleAction(section)}
                 className="bg-white rounded-lg border border-gray-200 p-6 hover:shadow-lg hover:scale-105 transition-all duration-200 flex flex-col items-center gap-3 group"
               >
                 <div
