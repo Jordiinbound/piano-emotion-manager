@@ -408,6 +408,7 @@ export const invoices = mysqlTable("invoices", {
 	total: decimal({ precision: 10, scale: 2 }).notNull(),
 	notes: text(),
 	businessInfo: json(),
+	stripePaymentIntentId: varchar({ length: 255 }),
 	createdAt: timestamp().defaultNow().notNull(),
 	updatedAt: timestamp().defaultNow().onUpdateNow().notNull(),
 	partnerId: int().default(1).notNull(),

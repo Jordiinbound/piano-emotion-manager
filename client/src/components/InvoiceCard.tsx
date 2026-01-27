@@ -5,7 +5,7 @@
  * Diseño profesional y minimalista para mostrar información de facturas
  */
 
-import { Edit2, Trash2 } from 'lucide-react';
+import { Edit2, Trash2, CreditCard } from 'lucide-react';
 
 interface InvoiceCardProps {
   invoice: {
@@ -18,9 +18,10 @@ interface InvoiceCardProps {
   };
   onEdit: () => void;
   onDelete: () => void;
+  onPay?: () => void;
 }
 
-export function InvoiceCard({ invoice, onEdit, onDelete }: InvoiceCardProps) {
+export function InvoiceCard({ invoice, onEdit, onDelete, onPay }: InvoiceCardProps) {
   // Formatear fecha
   const date = new Date(invoice.date);
   const dateString = date.toLocaleDateString('es-ES', { 
@@ -87,10 +88,25 @@ export function InvoiceCard({ invoice, onEdit, onDelete }: InvoiceCardProps) {
       {/* Cliente */}
       <p className="text-sm text-gray-600 font-medium mb-3">{invoice.clientName}</p>
 
-      {/* Footer: Fecha y total */}
+      {/* Footer: Fecha, total y botón de pago */}
       <div className="flex items-center justify-between mt-2">
         <span className="text-xs text-gray-400">{dateString}</span>
-        <span className="text-base font-bold text-[#e07a5f]">€{total.toFixed(2)}</span>
+        <div className="flex items-center gap-2">
+          <span className="text-base font-bold text-[#e07a5f]">€{total.toFixed(2)}</span>
+          {invoice.status === 'sent' && onPay && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                onPay();
+              }}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#e07a5f] text-white text-xs font-semibold rounded-lg hover:bg-[#d06a4f] transition-colors"
+              aria-label="Pagar factura"
+            >
+              <CreditCard className="w-3.5 h-3.5" />
+              Pagar
+            </button>
+          )}
+        </div>
       </div>
     </div>
   );

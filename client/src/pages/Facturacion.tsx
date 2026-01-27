@@ -11,6 +11,7 @@ import { InvoiceCard } from '@/components/InvoiceCard';
 import { Plus, Search } from 'lucide-react';
 import InvoiceFormModal from '@/components/InvoiceFormModal';
 import DeleteConfirmModal from '@/components/DeleteConfirmModal';
+import { toast } from 'sonner';
 
 type FilterType = 'all' | 'draft' | 'sent' | 'paid' | 'cancelled';
 type PeriodType = 'all' | 'thisMonth' | 'lastMonth' | 'thisYear';
@@ -32,6 +33,26 @@ export default function Facturacion() {
       setDeletingInvoiceId(null);
     },
   });
+
+  // Mutación para crear sesión de pago con Stripe
+  const createCheckoutSessionMutation = trpc.stripe.createCheckoutSession.useMutation({
+    onSuccess: (data) => {
+      // Redirigir a Stripe Checkout
+      if (data.url) {
+        window.location.href = data.url;
+      }
+    },
+    onError: (error) => {
+      toast.error('Error al procesar el pago', {
+        description: error.message,
+      });
+    },
+  });
+
+  // Handler para iniciar el pago
+  const handlePay = (invoiceId: number) => {
+    createCheckoutSessionMutation.mutate({ invoiceId });
+  };
 
   // Obtener estadísticas
   const { data: stats, isLoading: statsLoading } = trpc.invoices.getStats.useQuery();
@@ -249,6 +270,7 @@ export default function Facturacion() {
                 invoice={invoice}
                 onEdit={() => setEditingInvoiceId(invoice.id)}
                 onDelete={() => setDeletingInvoiceId(invoice.id)}
+                onPay={() => handlePay(invoice.id)}
               />
             ))}
           </div>

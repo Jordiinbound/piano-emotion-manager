@@ -9,6 +9,7 @@ import { pianosRouter } from "./routers/pianos.router";
 import { appointmentsRouter } from "./routers/appointments.router";
 import { invoicesRouter } from "./routers/invoices.router";
 import { inventoryRouter } from "./routers/inventory.router";
+import { stripeRouter } from "./routers/stripe.router";
 
 export const appRouter = router({
     // if you need to use socket.io, read and register route in server/_core/index.ts, all api should start with '/api/' so that the gateway can route correctly
@@ -32,6 +33,7 @@ export const appRouter = router({
   appointments: appointmentsRouter,
   invoices: invoicesRouter,
   inventory: inventoryRouter,
+  stripe: stripeRouter,
 
   // TODO: add more feature routers here
 });
