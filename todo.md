@@ -543,3 +543,11 @@
 - [x] Dashboard de estadísticas de pagos y facturación (/facturacion/estadisticas)
 - [x] Exportación de facturas a Excel/CSV (botones flotantes en /facturacion)
 - [x] Conectar sistema de alertas a la base de datos (barra verde/roja en dashboard)
+
+
+## Próximos Pasos Recomendados
+- [x] Agregar botón de descarga de recibo en facturas pagadas
+- [x] Documentar configuración de URIs de OAuth2 para producción (OAUTH2_PRODUCTION_SETUP.md)
+- [x] Clonar y analizar el repositorio original de Piano Emotion Manager
+- [ ] Identificar funcionalidades prioritarias a migrar (requiere input del usuario)
+- [ ] Planificar y ejecutar la migración incremental

@@ -77,6 +77,32 @@ export default function Facturacion() {
     sendInvoiceEmailMutation.mutate({ invoiceId });
   };
 
+  // Handler para descargar recibo
+  const handleDownloadReceipt = async (invoiceId: number) => {
+    try {
+      const response = await fetch(`/api/trpc/invoices.generateReceipt?input=${encodeURIComponent(JSON.stringify({ invoiceId }))}`);
+      if (!response.ok) throw new Error('Error al generar recibo');
+      
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `recibo-${invoiceId}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+      
+      toast.success('Recibo descargado', {
+        description: 'El recibo ha sido descargado exitosamente',
+      });
+    } catch (error) {
+      toast.error('Error al descargar recibo', {
+        description: error instanceof Error ? error.message : 'Error desconocido',
+      });
+    }
+  };
+
   // Handlers para exportación
   const handleExportExcel = () => {
     if (!invoices || invoices.length === 0) {
@@ -328,6 +354,7 @@ export default function Facturacion() {
                 onDelete={() => setDeletingInvoiceId(invoice.id)}
                 onPay={() => handlePay(invoice.id)}
                 onSendEmail={() => handleSendEmail(invoice.id)}
+                onDownloadReceipt={() => handleDownloadReceipt(invoice.id)}
               />
             ))}
           </div>

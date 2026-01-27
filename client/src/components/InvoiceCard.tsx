@@ -5,7 +5,7 @@
  * Diseño profesional y minimalista para mostrar información de facturas
  */
 
-import { Edit2, Trash2, CreditCard, Mail } from 'lucide-react';
+import { Edit2, Trash2, CreditCard, Mail, FileText } from 'lucide-react';
 
 interface InvoiceCardProps {
   invoice: {
@@ -21,9 +21,10 @@ interface InvoiceCardProps {
   onDelete: () => void;
   onPay?: () => void;
   onSendEmail?: () => void;
+  onDownloadReceipt?: () => void;
 }
 
-export function InvoiceCard({ invoice, onEdit, onDelete, onPay, onSendEmail }: InvoiceCardProps) {
+export function InvoiceCard({ invoice, onEdit, onDelete, onPay, onSendEmail, onDownloadReceipt }: InvoiceCardProps) {
   // Formatear fecha
   const date = new Date(invoice.date);
   const dateString = date.toLocaleDateString('es-ES', { 
@@ -64,6 +65,19 @@ export function InvoiceCard({ invoice, onEdit, onDelete, onPay, onSendEmail }: I
           </span>
 
           {/* Botones de acción */}
+          {invoice.status === 'paid' && onDownloadReceipt && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                onDownloadReceipt();
+              }}
+              className="p-2 text-purple-600 hover:bg-purple-50 rounded-lg transition-colors"
+              aria-label="Descargar recibo"
+              title="Descargar recibo"
+            >
+              <FileText className="w-4 h-4" />
+            </button>
+          )}
           {invoice.clientEmail && onSendEmail && (
             <button
               onClick={(e) => {
