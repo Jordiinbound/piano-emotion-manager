@@ -5,13 +5,14 @@
  * Diseño profesional y minimalista para mostrar información de facturas
  */
 
-import { Edit2, Trash2, CreditCard } from 'lucide-react';
+import { Edit2, Trash2, CreditCard, Mail } from 'lucide-react';
 
 interface InvoiceCardProps {
   invoice: {
     id: number;
     invoiceNumber: string;
     clientName: string;
+    clientEmail?: string | null;
     date: string; // ISO timestamp
     status: 'draft' | 'sent' | 'paid' | 'cancelled';
     total: string | number;
@@ -19,9 +20,10 @@ interface InvoiceCardProps {
   onEdit: () => void;
   onDelete: () => void;
   onPay?: () => void;
+  onSendEmail?: () => void;
 }
 
-export function InvoiceCard({ invoice, onEdit, onDelete, onPay }: InvoiceCardProps) {
+export function InvoiceCard({ invoice, onEdit, onDelete, onPay, onSendEmail }: InvoiceCardProps) {
   // Formatear fecha
   const date = new Date(invoice.date);
   const dateString = date.toLocaleDateString('es-ES', { 
@@ -62,6 +64,19 @@ export function InvoiceCard({ invoice, onEdit, onDelete, onPay }: InvoiceCardPro
           </span>
 
           {/* Botones de acción */}
+          {invoice.clientEmail && onSendEmail && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                onSendEmail();
+              }}
+              className="p-2 text-green-600 hover:bg-green-50 rounded-lg transition-colors"
+              aria-label="Enviar factura por email"
+              title="Enviar factura por email"
+            >
+              <Mail className="w-4 h-4" />
+            </button>
+          )}
           <button
             onClick={(e) => {
               e.stopPropagation();

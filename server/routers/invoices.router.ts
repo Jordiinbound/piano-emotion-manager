@@ -6,10 +6,12 @@
  */
 
 import { z } from 'zod';
-import { publicProcedure, router } from '../_core/trpc';
+import { publicProcedure, protectedProcedure, router } from '../_core/trpc';
 import { getDb } from '../db';
-import { invoices } from '../../drizzle/schema';
+import { invoices, users } from '../../drizzle/schema';
 import { eq, sql } from 'drizzle-orm';
+import { generatePaymentToken } from '../utils/paymentToken';
+import { sendInvoiceEmail } from '../utils/emailService';
 
 export const invoicesRouter = router({
   // Obtener estadísticas de facturas
@@ -249,6 +251,107 @@ export const invoicesRouter = router({
       return {
         success: true,
         deleted: (result as any).rowsAffected || 0,
+      };
+    }),
+
+  // Obtener factura por token de pago (público)
+  getByPaymentToken: publicProcedure
+    .input(z.object({ token: z.string() }))
+    .query(async ({ input }) => {
+      const db = await getDb();
+      if (!db) throw new Error('Database not available');
+
+      const result = await db.select().from(invoices).where(eq(invoices.paymentToken, input.token));
+      
+      if (!result || result.length === 0) {
+        throw new Error('Factura no encontrada');
+      }
+
+      return result[0];
+    }),
+
+  // Enviar factura por email
+  sendInvoiceEmail: protectedProcedure
+    .input(z.object({ invoiceId: z.number() }))
+    .mutation(async ({ input, ctx }) => {
+      const db = await getDb();
+      if (!db) throw new Error('Database not available');
+
+      // Obtener la factura
+      const invoiceResult = await db.select().from(invoices).where(eq(invoices.id, input.invoiceId));
+      
+      if (!invoiceResult || invoiceResult.length === 0) {
+        throw new Error('Factura no encontrada');
+      }
+
+      const invoice = invoiceResult[0];
+
+      // Verificar que la factura tenga email del cliente
+      if (!invoice.clientEmail) {
+        throw new Error('La factura no tiene email del cliente');
+      }
+
+      // Generar token de pago si no existe
+      let paymentToken = invoice.paymentToken;
+      if (!paymentToken) {
+        paymentToken = generatePaymentToken();
+        await db.update(invoices).set({ paymentToken }).where(eq(invoices.id, input.invoiceId));
+      }
+
+      // Obtener configuración SMTP del usuario
+      const userResult = await db.select().from(users).where(eq(users.id, ctx.user.id));
+      
+      if (!userResult || userResult.length === 0) {
+        throw new Error('Usuario no encontrado');
+      }
+
+      const user = userResult[0];
+
+      // Verificar que el usuario tenga configuración SMTP
+      if (!user.smtpHost || !user.smtpUser || !user.smtpPassword) {
+        throw new Error('Debe configurar su servidor SMTP en Configuración antes de enviar emails');
+      }
+
+      // Preparar URLs
+      const paymentUrl = `${ctx.req.headers.origin}/pay/${paymentToken}`;
+      const portalUrl = `${ctx.req.headers.origin}/client-portal`;
+
+      // Enviar email
+      const success = await sendInvoiceEmail(
+        {
+          host: user.smtpHost,
+          port: user.smtpPort || 587,
+          secure: user.smtpSecure === 1,
+          user: user.smtpUser,
+          password: user.smtpPassword,
+          fromName: user.smtpFromName || user.name || 'Piano Emotion',
+        },
+        {
+          invoiceNumber: invoice.invoiceNumber,
+          date: invoice.date,
+          dueDate: invoice.dueDate,
+          clientName: invoice.clientName,
+          clientEmail: invoice.clientEmail,
+          clientAddress: invoice.clientAddress,
+          items: invoice.items as any || [],
+          subtotal: invoice.subtotal,
+          taxAmount: invoice.taxAmount,
+          total: invoice.total,
+          notes: invoice.notes,
+          businessInfo: invoice.businessInfo,
+          paymentToken,
+          paymentUrl,
+          portalUrl,
+        }
+      );
+
+      if (!success) {
+        throw new Error('Error al enviar el email. Verifique su configuración SMTP.');
+      }
+
+      return {
+        success: true,
+        message: 'Factura enviada por email correctamente',
       };
     }),
 });

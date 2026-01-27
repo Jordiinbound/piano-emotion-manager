@@ -15,6 +15,13 @@
       "when": 1769535479498,
       "tag": "0001_shallow_ser_duncan",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1769541001601,
+      "tag": "0002_silly_karen_page",
+      "breakpoints": true
     }
   ]
 }

@@ -32,10 +32,14 @@ import HerramientasAvanzadas from "./pages/HerramientasAvanzadas";
 import Configuracion from "./pages/Configuracion";
 import SignIn from "./pages/SignIn";
 import SignUp from "./pages/SignUp";
+import PayInvoice from "./pages/PayInvoice";
 
 function Router() {
   return (
     <Switch>
+      {/* Rutas públicas sin autenticación */}
+      <Route path="/pay/:token" component={PayInvoice} />
+      
       {/* Rutas de autenticación sin layout */}
       <Route path="/sign-in" component={SignIn} />
       <Route path="/sign-up" component={SignUp} />

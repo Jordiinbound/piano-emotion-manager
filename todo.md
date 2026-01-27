@@ -507,3 +507,17 @@
 - [x] Agregar logs de depuración en el flujo completo
 - [x] Verificar que la mutación createCheckoutSession devuelve la URL correctamente
 - [x] Corregir campo partnerId en TiDB con valor por defecto
+
+
+## Sistema de Pagos para Clientes (PRIORITARIO)
+- [x] Crear página pública de pago con enlace único por factura (/pay/[token])
+- [x] Generar token seguro para cada factura
+- [x] Implementar sistema de envío de emails con enlace de pago
+- [x] Agregar enlace al portal del cliente en emails de facturas
+- [ ] Crear portal del cliente con autenticación (login/registro)
+- [ ] Implementar historial de facturas en portal del cliente
+- [ ] Agregar historial de pagos realizados en portal del cliente
+- [x] Implementar generación de PDF de facturas
+- [ ] Implementar descarga de recibos en PDF
+- [x] Agregar botón "Enviar factura por email" en la app del técnico
+- [ ] Actualizar webhook de Stripe para producción (https://www.pianoemotion.com/api/stripe/webhook)

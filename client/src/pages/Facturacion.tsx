@@ -52,9 +52,28 @@ export default function Facturacion() {
     },
   });
 
+  // Mutación para enviar factura por email
+  const sendInvoiceEmailMutation = trpc.invoices.sendInvoiceEmail.useMutation({
+    onSuccess: () => {
+      toast.success('Factura enviada', {
+        description: 'La factura ha sido enviada por email al cliente',
+      });
+    },
+    onError: (error) => {
+      toast.error('Error al enviar factura', {
+        description: error.message,
+      });
+    },
+  });
+
   // Handler para iniciar el pago
   const handlePay = (invoiceId: number) => {
     createCheckoutSessionMutation.mutate({ invoiceId });
+  };
+
+  // Handler para enviar factura por email
+  const handleSendEmail = (invoiceId: number) => {
+    sendInvoiceEmailMutation.mutate({ invoiceId });
   };
 
   // Obtener estadísticas
@@ -274,6 +293,7 @@ export default function Facturacion() {
                 onEdit={() => setEditingInvoiceId(invoice.id)}
                 onDelete={() => setDeletingInvoiceId(invoice.id)}
                 onPay={() => handlePay(invoice.id)}
+                onSendEmail={() => handleSendEmail(invoice.id)}
               />
             ))}
           </div>
