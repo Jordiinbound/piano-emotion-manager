@@ -551,3 +551,34 @@
 - [x] Clonar y analizar el repositorio original de Piano Emotion Manager
 - [ ] Identificar funcionalidades prioritarias a migrar (requiere input del usuario)
 - [ ] Planificar y ejecutar la migración incremental
+
+
+## Migración del Proyecto Original (React Native → PWA)
+- [ ] Implementar gestión de inventario con control de stock
+  - [ ] Crear tabla inventory en schema
+  - [ ] Crear router tRPC para inventario
+  - [ ] Crear página de gestión de inventario (/inventario)
+  - [ ] Implementar alertas de stock bajo
+  - [ ] Implementar registro de movimientos (entradas/salidas)
+- [ ] Implementar sistema de presupuestos
+  - [ ] Crear tabla quotes en schema
+  - [ ] Crear tabla quoteTemplates en schema
+  - [ ] Crear router tRPC para presupuestos
+  - [ ] Crear página de gestión de presupuestos (/presupuestos)
+  - [ ] Implementar plantillas personalizables
+  - [ ] Implementar conversión de presupuesto a factura
+  - [ ] Implementar estados (borrador/enviado/aceptado/rechazado)
+  - [ ] Implementar envío por email con PDF
+- [ ] Implementar tipos de servicio y tarifas
+  - [ ] Crear tabla serviceTypes en schema
+  - [ ] Crear tabla serviceRates en schema
+  - [ ] Crear router tRPC para tipos de servicio
+  - [ ] Crear página de configuración de servicios (/configuracion/servicios)
+  - [ ] Implementar catálogo de servicios predefinidos
+  - [ ] Implementar tarifas personalizadas por cliente/zona
+
+
+## Migración del Proyecto Original (COMPLETADA)
+- [x] Gestión de inventario con control de stock y alertas (ya existía)
+- [x] Sistema de presupuestos con plantillas y conversión a factura (router + UI completa)
+- [x] Tipos de servicio y tarifas predefinidas (router + UI completa con gestión de tareas)

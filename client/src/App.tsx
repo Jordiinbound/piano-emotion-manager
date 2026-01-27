@@ -39,6 +39,9 @@ import ClientPortalDashboard from "./pages/ClientPortalDashboard";
 import ConfiguracionSMTP from "./pages/ConfiguracionSMTP";
 import EmailConfig from "./pages/EmailConfig";
 import PaymentStats from "./pages/PaymentStats";
+import Presupuestos from "./pages/Presupuestos";
+import PresupuestoNuevo from "./pages/PresupuestoNuevo";
+import TiposServicio from "./pages/TiposServicio";
 
 function Router() {
   return (
@@ -204,6 +207,27 @@ function Router() {
         <ProtectedRoute>
           <Layout>
             <InventarioEditar />
+          </Layout>
+        </ProtectedRoute>
+      </Route>
+      <Route path="/presupuestos">
+        <ProtectedRoute>
+          <Layout>
+            <Presupuestos />
+          </Layout>
+        </ProtectedRoute>
+      </Route>
+      <Route path="/presupuestos/nuevo">
+        <ProtectedRoute>
+          <Layout>
+            <PresupuestoNuevo />
+          </Layout>
+        </ProtectedRoute>
+      </Route>
+      <Route path="/tipos-servicio">
+        <ProtectedRoute>
+          <Layout>
+            <TiposServicio />
           </Layout>
         </ProtectedRoute>
       </Route>
