@@ -1,10 +1,10 @@
 import { ConfidentialClientApplication } from '@azure/msal-node';
 import nodemailer from 'nodemailer';
 
-const OUTLOOK_CLIENT_ID = process.env.OUTLOOK_OAUTH_CLIENT_ID || '';
-const OUTLOOK_CLIENT_SECRET = process.env.OUTLOOK_OAUTH_CLIENT_SECRET || '';
-const OUTLOOK_TENANT_ID = process.env.OUTLOOK_OAUTH_TENANT_ID || 'common';
-const OUTLOOK_REDIRECT_URI = process.env.OUTLOOK_OAUTH_REDIRECT_URI || 'http://localhost:3000/api/auth/outlook/callback';
+const OUTLOOK_CLIENT_ID = process.env.AZURE_CLIENT_ID || '';
+const OUTLOOK_CLIENT_SECRET = process.env.AZURE_CLIENT_SECRET || '';
+const OUTLOOK_TENANT_ID = process.env.AZURE_TENANT_ID || 'common';
+const OUTLOOK_REDIRECT_URI = process.env.AZURE_REDIRECT_URI || 'https://www.pianoemotion.com/api/oauth/outlook/callback';
 
 const msalConfig = {
   auth: {

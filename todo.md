@@ -537,7 +537,7 @@
 
 
 ## Funcionalidades Avanzadas de Facturación (COMPLETADAS)
-- [x] Implementar OAuth2 para Gmail y Outlook 365 (backend completo)
+- [x] Implementar OAuth2 para Gmail y Outlook 365 (backend completo + credenciales configuradas y validadas)
 - [x] Generación de recibos en PDF para facturas pagadas (backend completo)
 - [x] Crear interfaz de configuración de email con OAuth2 (/configuracion/email)
 - [x] Dashboard de estadísticas de pagos y facturación (/facturacion/estadisticas)
