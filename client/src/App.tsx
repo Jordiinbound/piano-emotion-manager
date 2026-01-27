@@ -33,12 +33,20 @@ import Configuracion from "./pages/Configuracion";
 import SignIn from "./pages/SignIn";
 import SignUp from "./pages/SignUp";
 import PayInvoice from "./pages/PayInvoice";
+import ClientPortalLogin from "./pages/ClientPortalLogin";
+import ClientPortalRegister from "./pages/ClientPortalRegister";
+import ClientPortalDashboard from "./pages/ClientPortalDashboard";
 
 function Router() {
   return (
     <Switch>
       {/* Rutas públicas sin autenticación */}
       <Route path="/pay/:token" component={PayInvoice} />
+      
+      {/* Rutas del portal del cliente */}
+      <Route path="/client-portal/login" component={ClientPortalLogin} />
+      <Route path="/client-portal/register" component={ClientPortalRegister} />
+      <Route path="/client-portal/dashboard" component={ClientPortalDashboard} />
       
       {/* Rutas de autenticación sin layout */}
       <Route path="/sign-in" component={SignIn} />

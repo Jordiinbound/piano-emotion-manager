@@ -514,9 +514,9 @@
 - [x] Generar token seguro para cada factura
 - [x] Implementar sistema de envío de emails con enlace de pago
 - [x] Agregar enlace al portal del cliente en emails de facturas
-- [ ] Crear portal del cliente con autenticación (login/registro)
-- [ ] Implementar historial de facturas en portal del cliente
-- [ ] Agregar historial de pagos realizados en portal del cliente
+- [x] Crear portal del cliente con autenticación (login/registro)
+- [x] Implementar historial de facturas en portal del cliente
+- [x] Agregar historial de pagos realizados en portal del cliente
 - [x] Implementar generación de PDF de facturas
 - [ ] Implementar descarga de recibos en PDF
 - [x] Agregar botón "Enviar factura por email" en la app del técnico
