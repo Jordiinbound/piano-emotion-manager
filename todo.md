@@ -415,3 +415,23 @@
 - [x] Botones de editar y eliminar en InventoryCard con mutación tRPC
 - [x] Integración completa en todas las páginas con modales de edición y eliminación
 - [x] Actualización optimista de queries tras eliminación exitosa
+
+
+## Fase 17: Sistema de autenticación real con Clerk
+- [ ] Revisar configuración actual de Clerk y credenciales disponibles
+- [ ] Instalar dependencias de Clerk (@clerk/clerk-react)
+- [ ] Configurar ClerkProvider en el frontend
+- [ ] Implementar componentes de autenticación (SignIn, SignUp, UserButton)
+- [ ] Proteger rutas con middleware de autenticación
+- [ ] Actualizar backend para validar tokens de Clerk
+- [ ] Implementar gestión de roles (admin/user)
+- [ ] Verificar funcionamiento completo del sistema de autenticación
+
+## Fase 17: Sistema de autenticación con Clerk - ✅ COMPLETADO
+- [x] Instalar @clerk/backend para validación de tokens en el servidor
+- [x] Crear archivo clerkAuth.ts con funciones de autenticación de Clerk
+- [x] Actualizar context.ts para usar autenticación de Clerk
+- [x] Crear componente ProtectedRoute para proteger rutas en el frontend
+- [x] Actualizar App.tsx para envolver todas las rutas protegidas con ProtectedRoute
+- [x] Actualizar useAuth para incluir el rol del usuario desde el backend
+- [x] Verificar funcionamiento completo del sistema de autenticación con Clerk

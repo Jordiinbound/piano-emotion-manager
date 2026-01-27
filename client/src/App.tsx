@@ -4,6 +4,7 @@ import NotFound from "@/pages/NotFound";
 import { Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import Layout from "./components/Layout";
+import { ProtectedRoute } from "./components/ProtectedRoute";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import Home from "./pages/Home";
 import Agenda from "./pages/Agenda";
@@ -29,70 +30,94 @@ function Router() {
       
       {/* Rutas con layout */}
       <Route path="/">
-        <Layout>
-          <Home />
-        </Layout>
+        <ProtectedRoute>
+          <Layout>
+            <Home />
+          </Layout>
+        </ProtectedRoute>
       </Route>
       
       {/* MAIN */}
       <Route path="/agenda">
-        <Layout>
-          <Agenda />
-        </Layout>
+        <ProtectedRoute>
+          <Layout>
+            <Agenda />
+          </Layout>
+        </ProtectedRoute>
       </Route>
       <Route path="/clientes">
-        <Layout>
-          <Clientes />
-        </Layout>
+        <ProtectedRoute>
+          <Layout>
+            <Clientes />
+          </Layout>
+        </ProtectedRoute>
       </Route>
       <Route path="/pianos">
-        <Layout>
-          <Pianos />
-        </Layout>
+        <ProtectedRoute>
+          <Layout>
+            <Pianos />
+          </Layout>
+        </ProtectedRoute>
       </Route>
       <Route path="/servicios">
-        <Layout>
-          <Servicios />
-        </Layout>
+        <ProtectedRoute>
+          <Layout>
+            <Servicios />
+          </Layout>
+        </ProtectedRoute>
       </Route>
       <Route path="/facturacion">
-        <Layout>
-          <Facturacion />
-        </Layout>
+        <ProtectedRoute>
+          <Layout>
+            <Facturacion />
+          </Layout>
+        </ProtectedRoute>
       </Route>
       <Route path="/inventario">
-        <Layout>
-          <Inventario />
-        </Layout>
+        <ProtectedRoute>
+          <Layout>
+            <Inventario />
+          </Layout>
+        </ProtectedRoute>
       </Route>
 
       {/* COMERCIAL */}
       <Route path="/store">
-        <Layout>
-          <Store />
-        </Layout>
+        <ProtectedRoute>
+          <Layout>
+            <Store />
+          </Layout>
+        </ProtectedRoute>
       </Route>
       <Route path="/reportes">
-        <Layout>
-          <Reportes />
-        </Layout>
+        <ProtectedRoute>
+          <Layout>
+            <Reportes />
+          </Layout>
+        </ProtectedRoute>
       </Route>
 
       {/* HERRAMIENTAS */}
       <Route path="/accesos-rapidos">
-        <Layout>
-          <AccesosRapidos />
-        </Layout>
+        <ProtectedRoute>
+          <Layout>
+            <AccesosRapidos />
+          </Layout>
+        </ProtectedRoute>
       </Route>
       <Route path="/herramientas-avanzadas">
-        <Layout>
-          <HerramientasAvanzadas />
-        </Layout>
+        <ProtectedRoute>
+          <Layout>
+            <HerramientasAvanzadas />
+          </Layout>
+        </ProtectedRoute>
       </Route>
       <Route path="/configuracion">
-        <Layout>
-          <Configuracion />
-        </Layout>
+        <ProtectedRoute>
+          <Layout>
+            <Configuracion />
+          </Layout>
+        </ProtectedRoute>
       </Route>
       
       <Route path="/404" component={NotFound} />

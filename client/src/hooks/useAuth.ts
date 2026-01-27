@@ -1,17 +1,25 @@
 import { useUser, useClerk } from '@clerk/clerk-react';
 import { useEffect, useState } from 'react';
+import { trpc } from '@/lib/trpc';
 
 export interface User {
   id: string;
   email: string | null;
   name: string | null;
   imageUrl: string | null;
+  role?: 'user' | 'admin';
 }
 
 export function useAuth() {
   const { user: clerkUser, isLoaded, isSignedIn } = useUser();
   const { signOut } = useClerk();
   const [timedOut, setTimedOut] = useState(false);
+
+  // Get user role from backend
+  const { data: backendUser } = trpc.auth.me.useQuery(undefined, {
+    enabled: isSignedIn,
+    retry: false,
+  });
 
   // Timeout de 5 segundos para evitar spinner infinito
   useEffect(() => {
@@ -31,6 +39,7 @@ export function useAuth() {
         email: clerkUser.primaryEmailAddress?.emailAddress || null,
         name: clerkUser.fullName || clerkUser.firstName || null,
         imageUrl: clerkUser.imageUrl || null,
+        role: backendUser?.role || 'user',
       }
     : null;
 
