@@ -582,3 +582,18 @@
 - [x] Gestión de inventario con control de stock y alertas (ya existía)
 - [x] Sistema de presupuestos con plantillas y conversión a factura (router + UI completa)
 - [x] Tipos de servicio y tarifas predefinidas (router + UI completa con gestión de tareas)
+
+
+## Próximos Pasos - Fase Avanzada
+- [x] Implementar formulario completo de creación/edición de presupuestos con items dinámicos (ya existía)
+- [x] Implementar formulario de creación/edición de tipos de servicio con gestión de tareas (ya existía en TiposServicio.tsx)
+- [x] Implementar formulario de creación/edición de tarifas de servicio (ya existía en TiposServicio.tsx)
+- [x] Implementar sistema multi-tenant (organizaciones y workspaces) - Router completo
+- [x] Implementar gestión de partners/técnicos con permisos - Router completo
+- [x] Implementar métricas de rendimiento por técnico - Router completo
+- [ ] Crear interfaces de usuario para organizaciones
+- [ ] Crear interfaces de usuario para partners
+- [ ] Crear dashboard de métricas de técnicos
+- [ ] Implementar conversión automática de presupuesto aceptado a factura
+- [ ] Vincular servicios con tipos de servicio predefinidos
+- [ ] Aplicar tarifas automáticamente al crear servicios desde tipos

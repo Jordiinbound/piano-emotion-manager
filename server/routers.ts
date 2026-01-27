@@ -16,6 +16,9 @@ import { emailConfigRouter } from "./routers/emailConfig.router";
 import { alertsRouter } from "./routers/alerts.router";
 import { quotesRouter } from "./routers/quotes.router";
 import { serviceTypesRouter } from "./routers/serviceTypes.router";
+import { organizationsRouter } from "./routers/organizations.router";
+import { partnersRouter } from "./routers/partners.router";
+import { technicianMetricsRouter } from "./routers/technicianMetrics.router";
 
 export const appRouter = router({
     // if you need to use socket.io, read and register route in server/_core/index.ts, all api should start with '/api/' so that the gateway can route correctly
@@ -46,6 +49,9 @@ export const appRouter = router({
   alerts: alertsRouter,
   quotes: quotesRouter,
   serviceTypes: serviceTypesRouter,
+  organizations: organizationsRouter,
+  partners: partnersRouter,
+  technicianMetrics: technicianMetricsRouter,
 
   // TODO: add more feature routers here
 });

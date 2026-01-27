@@ -31,35 +31,25 @@ export default function EmailConfig() {
   // Mutaciones
   const configureSMTP = trpc.emailConfig.configureSMTP.useMutation({
     onSuccess: () => {
-      toast({
-        title: 'Configuración guardada',
+      toast.success('Configuración guardada', {
         description: 'La configuración SMTP se ha guardado correctamente',
       });
       refetch();
     },
     onError: (error) => {
-      toast({
-        title: 'Error',
-        description: error.message,
-        variant: 'destructive',
-      });
+      toast.error(error.message);
     },
   });
 
   const disconnect = trpc.emailConfig.disconnect.useMutation({
     onSuccess: () => {
-      toast({
-        title: 'Desconectado',
+      toast.success('Desconectado', {
         description: 'La configuración de email se ha eliminado',
       });
       refetch();
     },
     onError: (error) => {
-      toast({
-        title: 'Error',
-        description: error.message,
-        variant: 'destructive',
-      });
+      toast.error(error.message);
     },
   });
 

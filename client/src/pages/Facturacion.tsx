@@ -110,10 +110,10 @@ export default function Facturacion() {
       return;
     }
     const filename = generateFilename('facturas');
-    const success = exportToExcel(filteredInvoices, filename);
+    const success = exportToExcel(invoices, filename);
     if (success) {
       toast.success('Facturas exportadas a Excel', {
-        description: `Se han exportado ${filteredInvoices.length} facturas`,
+        description: `Se han exportado ${invoices.length} facturas`,
       });
     } else {
       toast.error('Error al exportar a Excel');
@@ -126,10 +126,10 @@ export default function Facturacion() {
       return;
     }
     const filename = generateFilename('facturas');
-    const success = exportToCSV(filteredInvoices, filename);
+    const success = exportToCSV(invoices, filename);
     if (success) {
       toast.success('Facturas exportadas a CSV', {
-        description: `Se han exportado ${filteredInvoices.length} facturas`,
+        description: `Se han exportado ${invoices.length} facturas`,
       });
     } else {
       toast.error('Error al exportar a CSV');

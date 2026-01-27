@@ -25,13 +25,16 @@ export default function PaymentStats() {
     );
   }
 
-  const totalRevenue = stats?.totalRevenue || 0;
-  const pendingAmount = stats?.pendingAmount || 0;
-  const overdueAmount = stats?.overdueAmount || 0;
-  const paidCount = stats?.paidCount || 0;
-  const sentCount = stats?.sentCount || 0;
-  const draftCount = stats?.draftCount || 0;
-  const totalCount = stats?.totalCount || 0;
+  const totalRevenue = stats?.total || 0;
+  const pendingAmount = stats?.pending || 0;
+  const paidAmount = stats?.paid || 0;
+  const draftCount = stats?.draft || 0;
+  const totalCount = stats?.count || 0;
+  
+  // Calcular valores derivados
+  const overdueAmount = 0; // No tenemos esta métrica aún
+  const paidCount = 0; // No tenemos contadores por estado
+  const sentCount = 0;
 
   // Calcular porcentajes
   const paidPercentage = totalCount > 0 ? (paidCount / totalCount) * 100 : 0;

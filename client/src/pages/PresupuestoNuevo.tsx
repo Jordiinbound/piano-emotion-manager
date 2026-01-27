@@ -52,12 +52,12 @@ export default function PresupuestoNuevo() {
 
   const { data: clients } = trpc.clients.getClients.useQuery({
     page: 1,
-    limit: 1000,
+    pageSize: 1000,
   });
 
   const { data: pianos } = trpc.pianos.getPianos.useQuery({
     page: 1,
-    limit: 1000,
+    pageSize: 1000,
     clientId: clientId || undefined,
   });
 
@@ -196,7 +196,7 @@ export default function PresupuestoNuevo() {
                     <SelectValue placeholder="Selecciona un cliente" />
                   </SelectTrigger>
                   <SelectContent>
-                    {clients?.items.map((client) => (
+                    {clients?.clients.map((client) => (
                       <SelectItem key={client.id} value={client.id.toString()}>
                         {client.name}
                       </SelectItem>
@@ -215,7 +215,7 @@ export default function PresupuestoNuevo() {
                     <SelectValue placeholder="Selecciona un piano" />
                   </SelectTrigger>
                   <SelectContent>
-                    {pianos?.items.map((piano) => (
+                    {pianos?.pianos.map((piano) => (
                       <SelectItem key={piano.id} value={piano.id.toString()}>
                         {piano.brand} {piano.model}
                       </SelectItem>
