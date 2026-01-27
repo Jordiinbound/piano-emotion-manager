@@ -496,5 +496,14 @@
 ## Stripe Integration Issues (URGENTE)
 - [x] Corregir error de autenticación que redirige a /sign-in al hacer clic en botón Pagar
 - [x] Verificar que el middleware de autenticación funciona correctamente con tRPC
-- [ ] Probar flujo completo de pago con Stripe Checkout
-- [ ] Verificar que el webhook actualiza el estado de la factura correctamente
+- [x] Probar flujo completo de pago con Stripe Checkout
+- [x] Verificar que el webhook actualiza el estado de la factura correctamente
+
+
+## Stripe Payment Flow Issue (CRÍTICO)
+- [x] Botón "Pagar" redirige al dashboard en lugar de abrir Stripe Checkout
+- [x] Revisar logs del servidor para identificar errores
+- [x] Verificar que el handler onPay se está ejecutando correctamente
+- [x] Agregar logs de depuración en el flujo completo
+- [x] Verificar que la mutación createCheckoutSession devuelve la URL correctamente
+- [x] Corregir campo partnerId en TiDB con valor por defecto

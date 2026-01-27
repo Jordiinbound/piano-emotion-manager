@@ -1,0 +1,8 @@
+{
+  "query": "SELECT id, invoiceNumber, status, stripePaymentIntentId, totalAmount FROM invoices WHERE invoiceNumber = 'INV-TEST-1769538616145';",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2ghn282qNtTBYRw.2c60fb684332 --database U7erxBowPGSR3wjYQtQi9z --execute SELECT id, invoiceNumber, status, stripePaymentIntentId, totalAmount FROM invoices WHERE invoiceNumber = 'INV-TEST-1769538616145';",
+  "returncode": 1,
+  "logs": [
+    "ERROR 1054 (42S22) at line 1: Unknown column 'totalamount' in 'field list'"
+  ]
+}
