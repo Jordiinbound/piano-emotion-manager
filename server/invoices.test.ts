@@ -25,6 +25,7 @@ describe('Invoices Router', () => {
       address: 'Test Address',
       city: 'Madrid',
       region: 'Madrid',
+      partnerId: 1,
     } as any);
 
     testClientId = (clientResult as any).insertId;

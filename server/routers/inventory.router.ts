@@ -168,7 +168,8 @@ export const inventoryRouter = router({
       const odId = `INV-${Date.now()}-${Math.random().toString(36).substring(7)}`;
       const result = await db.insert(inventory).values({ 
         ...input, 
-        odId 
+        odId,
+        partnerId: 1 
       } as any);
 
       return {

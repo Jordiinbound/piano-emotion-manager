@@ -198,7 +198,7 @@ export const appointmentsRouter = router({
       if (!db) throw new Error('Database not available');
 
       const odId = `APPT-${Date.now()}-${Math.random().toString(36).substring(7)}`;
-      const result = await db.insert(appointments).values({ ...input, odId } as any);
+      const result = await db.insert(appointments).values({ ...input, odId, partnerId: 1 } as any);
 
       return {
         success: true,

@@ -157,6 +157,7 @@ export const servicesRouter = router({
         cost: input.cost,
         duration: input.duration,
         notes: input.notes,
+        partnerId: 1, // Required by TiDB schema
       } as any);
       
       return { 

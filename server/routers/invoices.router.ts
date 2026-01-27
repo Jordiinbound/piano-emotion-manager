@@ -193,7 +193,8 @@ export const invoicesRouter = router({
       const result = await db.insert(invoices).values({ 
         ...input, 
         odId, 
-        invoiceNumber 
+        invoiceNumber,
+        partnerId: 1 
       } as any);
 
       return {

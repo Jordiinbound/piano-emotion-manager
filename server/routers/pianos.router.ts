@@ -124,7 +124,7 @@ export const pianosRouter = router({
       if (!db) throw new Error('Database not available');
 
       const odId = `PIANO-${Date.now()}-${Math.random().toString(36).substring(7)}`;
-      const result = await db.insert(pianos).values({ ...input, odId } as any);
+      const result = await db.insert(pianos).values({ ...input, odId, partnerId: 1 } as any);
 
       return {
         success: true,

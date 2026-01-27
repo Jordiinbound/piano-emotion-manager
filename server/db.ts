@@ -7,9 +7,16 @@ let _db: ReturnType<typeof drizzle> | null = null;
 
 // Lazily create the drizzle instance so local tooling can run without a DB.
 export async function getDb() {
-  if (!_db && process.env.DATABASE_URL) {
+  if (!_db) {
     try {
-      _db = drizzle(process.env.DATABASE_URL);
+      // Usar TiDB de producción
+      const tidbUrl = 'mysql://2GeAqAcm5LrcHRv.root:PianoEmotion2026@gateway01.eu-central-1.prod.aws.tidbcloud.com:4000/piano_emotion_db?ssl={"rejectUnauthorized":true}';
+      const connectionUrl = tidbUrl || process.env.DATABASE_URL;
+      
+      if (connectionUrl) {
+        _db = drizzle(connectionUrl);
+        console.log('[Database] Connected to TiDB production database');
+      }
     } catch (error) {
       console.warn("[Database] Failed to connect:", error);
       _db = null;

@@ -18,6 +18,7 @@ describe('Pianos Router', () => {
       email: 'test-pianos@example.com',
       phone: '+34 123 456 789',
       clientType: 'particular',
+      partnerId: 1,
     } as any);
 
     testClientId = (clientResult as any).insertId || 1;

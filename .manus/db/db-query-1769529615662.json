@@ -1,0 +1,38 @@
+{
+  "query": "SELECT 'clients' as tabla, COUNT(*) as total FROM clients UNION ALL SELECT 'services', COUNT(*) FROM services UNION ALL SELECT 'pianos', COUNT(*) FROM pianos UNION ALL SELECT 'appointments', COUNT(*) FROM appointments UNION ALL SELECT 'invoices', COUNT(*) FROM invoices UNION ALL SELECT 'inventory', COUNT(*) FROM inventory UNION ALL SELECT 'users', COUNT(*) FROM users;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2ghn282qNtTBYRw.2c60fb684332 --database U7erxBowPGSR3wjYQtQi9z --execute SELECT 'clients' as tabla, COUNT(*) as total FROM clients UNION ALL SELECT 'services', COUNT(*) FROM services UNION ALL SELECT 'pianos', COUNT(*) FROM pianos UNION ALL SELECT 'appointments', COUNT(*) FROM appointments UNION ALL SELECT 'invoices', COUNT(*) FROM invoices UNION ALL SELECT 'inventory', COUNT(*) FROM inventory UNION ALL SELECT 'users', COUNT(*) FROM users;",
+  "rows": [
+    {
+      "tabla": "pianos",
+      "total": "3"
+    },
+    {
+      "tabla": "services",
+      "total": "12"
+    },
+    {
+      "tabla": "clients",
+      "total": "12"
+    },
+    {
+      "tabla": "appointments",
+      "total": "0"
+    },
+    {
+      "tabla": "invoices",
+      "total": "0"
+    },
+    {
+      "tabla": "inventory",
+      "total": "1"
+    },
+    {
+      "tabla": "users",
+      "total": "0"
+    }
+  ],
+  "messages": [],
+  "stdout": "tabla\ttotal\npianos\t3\nservices\t12\nclients\t12\nappointments\t0\ninvoices\t0\ninventory\t1\nusers\t0\n",
+  "stderr": "",
+  "execution_time_ms": 180
+}
