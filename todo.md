@@ -492,3 +492,9 @@
 - [ ] Probar creación de item de inventario
 - [ ] Probar edición de item de inventario
 - [ ] Probar eliminación de item de inventario
+
+## Stripe Integration Issues (URGENTE)
+- [x] Corregir error de autenticación que redirige a /sign-in al hacer clic en botón Pagar
+- [x] Verificar que el middleware de autenticación funciona correctamente con tRPC
+- [ ] Probar flujo completo de pago con Stripe Checkout
+- [ ] Verificar que el webhook actualiza el estado de la factura correctamente

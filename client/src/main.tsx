@@ -6,7 +6,8 @@ import { createRoot } from "react-dom/client";
 import superjson from "superjson";
 import App from "./App";
 import { getLoginUrl } from "./const";
-import { ClerkProvider } from "./providers/ClerkProvider";
+import { ClerkProvider, useAuth } from "@clerk/clerk-react";
+import { useMemo } from "react";
 import "./index.css";
 
 const queryClient = new QueryClient();
@@ -38,27 +39,49 @@ queryClient.getMutationCache().subscribe(event => {
   }
 });
 
-const trpcClient = trpc.createClient({
-  links: [
-    httpBatchLink({
-      url: "/api/trpc",
-      transformer: superjson,
-      fetch(input, init) {
-        return globalThis.fetch(input, {
-          ...(init ?? {}),
-          credentials: "include",
-        });
-      },
-    }),
-  ],
-});
+const publishableKey = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY || 'pk_live_Y2xlcmsucGlhbm9lbW90aW9uLmNvbSQ';
 
-createRoot(document.getElementById("root")!).render(
-  <ClerkProvider>
+function TRPCProvider({ children }: { children: React.ReactNode }) {
+  const { getToken } = useAuth();
+
+  const trpcClient = useMemo(
+    () =>
+      trpc.createClient({
+        links: [
+          httpBatchLink({
+            url: "/api/trpc",
+            transformer: superjson,
+            async headers() {
+              const token = await getToken();
+              return {
+                authorization: token ? `Bearer ${token}` : undefined,
+              };
+            },
+            fetch(input, init) {
+              return globalThis.fetch(input, {
+                ...(init ?? {}),
+                credentials: "include",
+              });
+            },
+          }),
+        ],
+      }),
+    [getToken]
+  );
+
+  return (
     <trpc.Provider client={trpcClient} queryClient={queryClient}>
       <QueryClientProvider client={queryClient}>
-        <App />
+        {children}
       </QueryClientProvider>
     </trpc.Provider>
+  );
+}
+
+createRoot(document.getElementById("root")!).render(
+  <ClerkProvider publishableKey={publishableKey}>
+    <TRPCProvider>
+      <App />
+    </TRPCProvider>
   </ClerkProvider>
 );
