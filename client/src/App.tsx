@@ -8,11 +8,23 @@ import { ProtectedRoute } from "./components/ProtectedRoute";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import Home from "./pages/Home";
 import Agenda from "./pages/Agenda";
+import CitaNueva from "./pages/CitaNueva";
+import CitaEditar from "./pages/CitaEditar";
 import Clientes from "./pages/Clientes";
+import ClienteNuevo from "./pages/ClienteNuevo";
+import ClienteEditar from "./pages/ClienteEditar";
 import Pianos from "./pages/Pianos";
+import PianoNuevo from "./pages/PianoNuevo";
+import PianoEditar from "./pages/PianoEditar";
 import Servicios from "./pages/Servicios";
+import ServicioNuevo from "./pages/ServicioNuevo";
+import ServicioEditar from "./pages/ServicioEditar";
 import Facturacion from "./pages/Facturacion";
+import FacturaNueva from "./pages/FacturaNueva";
+import FacturaEditar from "./pages/FacturaEditar";
 import Inventario from "./pages/Inventario";
+import InventarioNuevo from "./pages/InventarioNuevo";
+import InventarioEditar from "./pages/InventarioEditar";
 import Store from "./pages/Store";
 import Reportes from "./pages/Reportes";
 import AccesosRapidos from "./pages/AccesosRapidos";
@@ -45,10 +57,38 @@ function Router() {
           </Layout>
         </ProtectedRoute>
       </Route>
+      <Route path="/agenda/nueva">
+        <ProtectedRoute>
+          <Layout>
+            <CitaNueva />
+          </Layout>
+        </ProtectedRoute>
+      </Route>
+      <Route path="/agenda/:id/editar">
+        <ProtectedRoute>
+          <Layout>
+            <CitaEditar />
+          </Layout>
+        </ProtectedRoute>
+      </Route>
       <Route path="/clientes">
         <ProtectedRoute>
           <Layout>
             <Clientes />
+          </Layout>
+        </ProtectedRoute>
+      </Route>
+      <Route path="/clientes/nuevo">
+        <ProtectedRoute>
+          <Layout>
+            <ClienteNuevo />
+          </Layout>
+        </ProtectedRoute>
+      </Route>
+      <Route path="/clientes/:id/editar">
+        <ProtectedRoute>
+          <Layout>
+            <ClienteEditar />
           </Layout>
         </ProtectedRoute>
       </Route>
@@ -59,10 +99,38 @@ function Router() {
           </Layout>
         </ProtectedRoute>
       </Route>
+      <Route path="/pianos/nuevo">
+        <ProtectedRoute>
+          <Layout>
+            <PianoNuevo />
+          </Layout>
+        </ProtectedRoute>
+      </Route>
+      <Route path="/pianos/:id/editar">
+        <ProtectedRoute>
+          <Layout>
+            <PianoEditar />
+          </Layout>
+        </ProtectedRoute>
+      </Route>
       <Route path="/servicios">
         <ProtectedRoute>
           <Layout>
             <Servicios />
+          </Layout>
+        </ProtectedRoute>
+      </Route>
+      <Route path="/servicios/nuevo">
+        <ProtectedRoute>
+          <Layout>
+            <ServicioNuevo />
+          </Layout>
+        </ProtectedRoute>
+      </Route>
+      <Route path="/servicios/:id/editar">
+        <ProtectedRoute>
+          <Layout>
+            <ServicioEditar />
           </Layout>
         </ProtectedRoute>
       </Route>
@@ -73,10 +141,38 @@ function Router() {
           </Layout>
         </ProtectedRoute>
       </Route>
+      <Route path="/facturacion/nueva">
+        <ProtectedRoute>
+          <Layout>
+            <FacturaNueva />
+          </Layout>
+        </ProtectedRoute>
+      </Route>
+      <Route path="/facturacion/:id/editar">
+        <ProtectedRoute>
+          <Layout>
+            <FacturaEditar />
+          </Layout>
+        </ProtectedRoute>
+      </Route>
       <Route path="/inventario">
         <ProtectedRoute>
           <Layout>
             <Inventario />
+          </Layout>
+        </ProtectedRoute>
+      </Route>
+      <Route path="/inventario/nuevo">
+        <ProtectedRoute>
+          <Layout>
+            <InventarioNuevo />
+          </Layout>
+        </ProtectedRoute>
+      </Route>
+      <Route path="/inventario/:id/editar">
+        <ProtectedRoute>
+          <Layout>
+            <InventarioEditar />
           </Layout>
         </ProtectedRoute>
       </Route>

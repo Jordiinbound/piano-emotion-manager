@@ -435,3 +435,60 @@
 - [x] Actualizar App.tsx para envolver todas las rutas protegidas con ProtectedRoute
 - [x] Actualizar useAuth para incluir el rol del usuario desde el backend
 - [x] Verificar funcionamiento completo del sistema de autenticación con Clerk
+
+
+## Fase 16: Implementar formularios CRUD para todos los módulos
+
+[x] Identificar páginas de formularios faltantes (12 páginas: 6 crear + 6 editar)
+[x] Crear página /clientes/nuevo (formulario de creación)
+
+### Clientes
+- [ ] Crear página /clientes/nuevo (formulario de creación)
+- [ ] Crear página /clientes/[id]/editar (formulario de edición)
+- [ ] Agregar rutas en App.tsx para formularios de clientes
+
+### Pianos
+- [ ] Crear página /pianos/nuevo (formulario de creación)
+- [ ] Crear página /pianos/[id]/editar (formulario de edición)
+- [ ] Agregar rutas en App.tsx para formularios de pianos
+
+### Servicios
+- [ ] Crear página /servicios/nuevo (formulario de creación)
+- [ ] Crear página /servicios/[id]/editar (formulario de edición)
+- [ ] Agregar rutas en App.tsx para formularios de servicios
+
+### Citas (Agenda)
+- [ ] Crear página /agenda/nuevo (formulario de creación)
+- [ ] Crear página /agenda/[id]/editar (formulario de edición)
+- [ ] Agregar rutas en App.tsx para formularios de citas
+
+### Facturas
+- [ ] Crear página /facturacion/nuevo (formulario de creación)
+- [ ] Crear página /facturacion/[id]/editar (formulario de edición)
+- [ ] Agregar rutas en App.tsx para formularios de facturas
+
+### Inventario
+- [ ] Crear página /inventario/nuevo (formulario de creación)
+- [ ] Crear página /inventario/[id]/editar (formulario de edición)
+- [ ] Agregar rutas en App.tsx para formularios de inventario
+
+## Fase 17: Pruebas CRUD completas
+
+- [ ] Probar creación de cliente
+- [ ] Probar edición de cliente
+- [ ] Probar eliminación de cliente
+- [ ] Probar creación de piano
+- [ ] Probar edición de piano
+- [ ] Probar eliminación de piano
+- [ ] Probar creación de servicio
+- [ ] Probar edición de servicio
+- [ ] Probar eliminación de servicio
+- [ ] Probar creación de cita
+- [ ] Probar edición de cita
+- [ ] Probar eliminación de cita
+- [ ] Probar creación de factura
+- [ ] Probar edición de factura
+- [ ] Probar eliminación de factura
+- [ ] Probar creación de item de inventario
+- [ ] Probar edición de item de inventario
+- [ ] Probar eliminación de item de inventario
