@@ -705,3 +705,12 @@
 - [x] Sistema de progreso con porcentaje
 - [x] Navegación automática a pasos pendientes organización
 - [ ] Implementar sistema de progreso de onboarding
+
+## Implementar Sección de Administración y Búsqueda Global
+- [x] Identificar todas las páginas y rutas administrativas existentes
+- [x] Crear sección "ADMINISTRACIÓN" en el sidebar del Layout
+- [x] Agregar enlaces a todas las funcionalidades administrativas (7 items)
+- [x] Implementar componente GlobalSearch con CommandDialog
+- [x] Integrar búsqueda global en el header
+- [x] Configurar atajos de teclado (Cmd+K / Ctrl+K)
+- [x] Conectar búsqueda con todas las entidades (clientes, pianos, servicios, facturas, inventario)

@@ -17,10 +17,18 @@ import {
   Menu,
   X,
   LogOut,
+  Shield,
+  Key,
+  FileText,
+  Building2,
+  Bell,
+  TrendingUp,
+  UserCog,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { LicenseNotificationBadge } from '@/components/LicenseNotificationBadge';
 import { OnboardingWizard } from '@/components/OnboardingWizard';
+import { GlobalSearch } from '@/components/GlobalSearch';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -63,6 +71,18 @@ const menuSections: MenuSection[] = [
       { name: 'Accesos Rápidos', href: '/accesos-rapidos', icon: Zap },
       { name: 'Herramientas Avanzadas', href: '/herramientas-avanzadas', icon: Hammer },
       { name: 'Configuración', href: '/configuracion', icon: Settings },
+    ],
+  },
+  {
+    title: 'ADMINISTRACIÓN',
+    items: [
+      { name: 'Partners', href: '/admin/partners', icon: Building2 },
+      { name: 'Códigos de Activación', href: '/admin/activation-codes', icon: Key },
+      { name: 'Licencias', href: '/admin/licenses', icon: FileText },
+      { name: 'Roles y Permisos', href: '/admin/roles', icon: Shield },
+      { name: 'Analytics', href: '/admin/analytics', icon: TrendingUp },
+      { name: 'Organización', href: '/organization/settings', icon: UserCog },
+      { name: 'Notificaciones', href: '/licenses/notifications', icon: Bell },
     ],
   },
 ];
@@ -263,9 +283,12 @@ export default function Layout({ children }: LayoutProps) {
             <Menu className="h-6 w-6" aria-hidden="true" />
           </button>
           <div className="flex flex-1 gap-x-4 self-stretch lg:gap-x-6">
-            <div className="flex flex-1 items-center gap-3">
+            <div className="hidden sm:flex flex-1 items-center gap-3">
               <Music className="h-6 w-6 text-primary" />
               <h1 className="text-base font-semibold text-foreground">Piano Emotion</h1>
+            </div>
+            <div className="flex flex-1 items-center">
+              <GlobalSearch />
             </div>
             <div className="flex items-center gap-2">
               <LicenseNotificationBadge />
