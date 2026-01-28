@@ -34,6 +34,7 @@ import { alertSettingsRouter } from "./routers/alertSettings.router";
 import { languageRouter } from "./routers/language.router";
 import { translationsRouter } from "./routers/translations.router";
 import { exportRouter } from "./routers/export.router";
+import { whatsappRouter } from "./routers/whatsapp.router";
 
 export const appRouter = router({
     // if you need to use socket.io, read and register route in server/_core/index.ts, all api should start with '/api/' so that the gateway can route correctly
@@ -84,6 +85,7 @@ export const appRouter = router({
   language: languageRouter,
   translations: translationsRouter,
   export: exportRouter,
+  whatsapp: whatsappRouter,
 
   // TODO: add more feature routers here
 });

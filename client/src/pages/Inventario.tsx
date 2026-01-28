@@ -8,7 +8,7 @@
 import { useState } from 'react';
 import { trpc } from '@/lib/trpc';
 import { InventoryCard } from '@/components/InventoryCard';
-import { Plus, Search, AlertTriangle } from 'lucide-react';
+import { Plus, Search, AlertTriangle, Download, Loader2 } from 'lucide-react';
 import InventoryFormModal from '@/components/InventoryFormModal';
 import DeleteConfirmModal from '@/components/DeleteConfirmModal';
 import { useTranslation } from '@/hooks/use-translation';
@@ -22,6 +22,33 @@ export default function Inventario() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingItemId, setEditingItemId] = useState<number | null>(null);
   const [deletingItemId, setDeletingItemId] = useState<number | null>(null);
+
+  const exportMutation = trpc.export.exportInventory.useMutation();
+
+  const handleExport = async () => {
+    try {
+      const result = await exportMutation.mutateAsync({
+        format: 'excel',
+      });
+
+      // Crear blob y descargar archivo
+      const blob = new Blob(
+        [Uint8Array.from(atob(result.base64), c => c.charCodeAt(0))],
+        { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }
+      );
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = result.filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error('Error al exportar inventario:', error);
+      alert('Error al exportar inventario. Por favor, inténtelo de nuevo.');
+    }
+  };
 
   // Mutación para eliminar item
   const utils = trpc.useUtils();
@@ -147,9 +174,9 @@ export default function Inventario() {
         </div>
       )}
 
-      {/* Barra de búsqueda */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-4">
-        <div className="relative">
+      {/* Barra de búsqueda y exportación */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-4 flex gap-2">
+        <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
           <input
             type="text"
@@ -159,6 +186,18 @@ export default function Inventario() {
             className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#003a8c] focus:border-transparent"
           />
         </div>
+        <button
+          onClick={handleExport}
+          disabled={exportMutation.isPending}
+          className="flex items-center gap-2 px-4 py-2 bg-[#003a8c] hover:bg-[#002a6c] text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {exportMutation.isPending ? (
+            <Loader2 className="w-4 h-4 animate-spin" />
+          ) : (
+            <Download size={16} />
+          )}
+          <span className="whitespace-nowrap">Exportar</span>
+        </button>
       </div>
 
       {/* Filtros por categoría */}

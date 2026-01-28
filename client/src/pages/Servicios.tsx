@@ -2,7 +2,7 @@ import { useState, useMemo } from "react";
 import { trpc } from "@/lib/trpc";
 import { ServiceCard } from "@/components/ServiceCard";
 import { Input } from "@/components/ui/input";
-import { Search, Plus, Loader2 } from "lucide-react";
+import { Search, Plus, Loader2, Download } from "lucide-react";
 import ServiceFormModal from "@/components/ServiceFormModal";
 import DeleteConfirmModal from "@/components/DeleteConfirmModal";
 import { useTranslation } from "@/hooks/use-translation";
@@ -77,6 +77,34 @@ export default function Servicios() {
     setIsModalOpen(true);
   };
 
+  const exportMutation = trpc.export.exportServices.useMutation();
+
+  const handleExport = async () => {
+    try {
+      const result = await exportMutation.mutateAsync({
+        format: 'excel',
+        filters: {},
+      });
+
+      // Crear blob y descargar archivo
+      const blob = new Blob(
+        [Uint8Array.from(atob(result.base64), c => c.charCodeAt(0))],
+        { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }
+      );
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = result.filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error('Error al exportar servicios:', error);
+      alert('Error al exportar servicios. Por favor, inténtelo de nuevo.');
+    }
+  };
+
   if (statsLoading || servicesLoading) {
     return (
       <div className="flex items-center justify-center h-full">
@@ -107,9 +135,9 @@ export default function Servicios() {
         </div>
       </div>
 
-      {/* Search Bar */}
-      <div className="px-6 mb-4">
-        <div className="relative">
+      {/* Search Bar and Export Button */}
+      <div className="px-6 mb-4 flex gap-2">
+        <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
           <Input
             type="text"
@@ -119,6 +147,18 @@ export default function Servicios() {
             className="pl-10"
           />
         </div>
+        <button
+          onClick={handleExport}
+          disabled={exportMutation.isPending}
+          className="flex items-center gap-2 px-4 py-2 bg-blue-900 hover:bg-blue-800 text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {exportMutation.isPending ? (
+            <Loader2 className="w-4 h-4 animate-spin" />
+          ) : (
+            <Download size={16} />
+          )}
+          <span className="whitespace-nowrap">Exportar</span>
+        </button>
       </div>
 
       {/* Filters */}

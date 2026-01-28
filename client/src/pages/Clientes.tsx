@@ -76,9 +76,34 @@ export default function ClientesPage() {
     console.log('Importar clientes');
   };
 
-  const handleExport = () => {
-    // TODO: Implementar exportación de clientes
-    console.log('Exportar clientes');
+  const exportMutation = trpc.export.exportClients.useMutation();
+
+  const handleExport = async () => {
+    try {
+      const result = await exportMutation.mutateAsync({
+        format: 'excel',
+        filters: {
+          search: search || undefined,
+        },
+      });
+
+      // Crear blob y descargar archivo
+      const blob = new Blob(
+        [Uint8Array.from(atob(result.base64), c => c.charCodeAt(0))],
+        { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }
+      );
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = result.filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error('Error al exportar clientes:', error);
+      alert('Error al exportar clientes. Por favor, inténtelo de nuevo.');
+    }
   };
 
   const totalPages = clientsData?.totalPages || 1;

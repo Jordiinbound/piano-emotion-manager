@@ -8,7 +8,7 @@
 import { useState } from 'react';
 import { trpc } from '@/lib/trpc';
 import { PianoCard } from '@/components/PianoCard';
-import { Plus } from 'lucide-react';
+import { Plus, Download, Loader2 } from 'lucide-react';
 import PianoFormModal from '@/components/PianoFormModal';
 import DeleteConfirmModal from '@/components/DeleteConfirmModal';
 import { useTranslation } from '@/hooks/use-translation';
@@ -24,6 +24,34 @@ export default function Pianos() {
   const [editingPianoId, setEditingPianoId] = useState<number | null>(null);
   const [deletingPianoId, setDeletingPianoId] = useState<number | null>(null);
   const pageSize = 50;
+
+  const exportMutation = trpc.export.exportPianos.useMutation();
+
+  const handleExport = async () => {
+    try {
+      const result = await exportMutation.mutateAsync({
+        format: 'excel',
+        filters: {},
+      });
+
+      // Crear blob y descargar archivo
+      const blob = new Blob(
+        [Uint8Array.from(atob(result.base64), c => c.charCodeAt(0))],
+        { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }
+      );
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = result.filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error('Error al exportar pianos:', error);
+      alert('Error al exportar pianos. Por favor, inténtelo de nuevo.');
+    }
+  };
 
   // Obtener estadísticas
   const { data: stats, isLoading: statsLoading } = trpc.pianos.getStats.useQuery();
@@ -93,8 +121,8 @@ export default function Pianos() {
         </div>
       </div>
 
-      {/* Barra de búsqueda */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-4">
+      {/* Barra de búsqueda y exportación */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-4 flex gap-2">
         <input
           type="text"
           value={search}
@@ -103,8 +131,20 @@ export default function Pianos() {
             setPage(1); // Reset a primera página al buscar
           }}
           placeholder={t('pianos.search.placeholder')}
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#003a8c] focus:border-transparent"
+          className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#003a8c] focus:border-transparent"
         />
+        <button
+          onClick={handleExport}
+          disabled={exportMutation.isPending}
+          className="flex items-center gap-2 px-4 py-2 bg-[#003a8c] hover:bg-[#002a6c] text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {exportMutation.isPending ? (
+            <Loader2 className="w-4 h-4 animate-spin" />
+          ) : (
+            <Download size={16} />
+          )}
+          <span className="whitespace-nowrap">Exportar</span>
+        </button>
       </div>
 
       {/* Filtros horizontales minimalistas */}

@@ -8,7 +8,7 @@
 import { useState, useMemo } from 'react';
 import { trpc } from '@/lib/trpc';
 import { InvoiceCard } from '@/components/InvoiceCard';
-import { Plus, Search, Download, FileSpreadsheet } from 'lucide-react';
+import { Plus, Search, Download, FileSpreadsheet, Loader2 } from 'lucide-react';
 import InvoiceFormModal from '@/components/InvoiceFormModal';
 import DeleteConfirmModal from '@/components/DeleteConfirmModal';
 import { toast } from 'sonner';
@@ -105,24 +105,47 @@ export default function Facturacion() {
     }
   };
 
+  // Mutación para exportar facturas
+  const exportMutation = trpc.export.exportInvoices.useMutation();
+
   // Handlers para exportación
-  const handleExportExcel = () => {
+  const handleExportExcel = async () => {
     if (!invoices || invoices.length === 0) {
       toast.error(t('invoices.noInvoicesToExport'));
       return;
     }
-    const filename = generateFilename('facturas');
-    const success = exportToExcel(invoices, filename);
-    if (success) {
+    
+    try {
+      const result = await exportMutation.mutateAsync({
+        format: 'excel',
+        filters: {},
+      });
+
+      // Crear blob y descargar archivo
+      const blob = new Blob(
+        [Uint8Array.from(atob(result.base64), c => c.charCodeAt(0))],
+        { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }
+      );
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = result.filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+
       toast.success(t('invoices.exportedToExcel'), {
         description: t('invoices.exportedCount', { count: invoices.length }),
       });
-    } else {
+    } catch (error) {
+      console.error('Error al exportar facturas:', error);
       toast.error(t('invoices.exportExcelError'));
     }
   };
 
   const handleExportCSV = () => {
+    // Mantener funcionalidad CSV existente
     if (!invoices || invoices.length === 0) {
       toast.error(t('invoices.noInvoicesToExport'));
       return;

@@ -973,3 +973,17 @@
 - [ ] Crear outlookCalendarService.ts con sync bidireccional
 - [ ] Crear routers tRPC para todos los servicios migrados
 - [ ] Crear tests para todos los servicios migrados
+
+## Próximos pasos después de FASE 2.3
+- [x] Agregar botones de exportación a Excel en página de Clientes
+- [x] Agregar botones de exportación a Excel en página de Servicios
+- [x] Agregar botones de exportación a Excel en página de Facturas (actualizado para usar tRPC)
+- [x] Agregar botones de exportación a Excel en página de Inventario
+- [x] Agregar botones de exportación a Excel en página de Pianos
+- [x] Implementar descarga automática de archivos Excel generados
+- [x] Migrar servicio de WhatsApp (wa.me) del proyecto GitHub
+- [x] Crear whatsappService.ts con funciones de generación de enlaces
+- [x] Crear whatsappRouter con endpoints tRPC para WhatsApp
+- [ ] Agregar botones de WhatsApp en tarjetas de clientes
+- [ ] Optimizar relaciones en schema de Drizzle (clients-pianos-services)
+- [ ] Actualizar router de exportación para usar relaciones optimizadas
