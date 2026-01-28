@@ -27,9 +27,14 @@ export const exportRouter = router({
       const db = await getDb();
       if (!db) throw new Error('Database not available');
 
-      // Get clients
+      // Get clients with related data using Drizzle relations
       // Note: This project uses partnerId/organizationId model, not userId
-      const clients = await db.query.clients.findMany({});
+      const clients = await db.query.clients.findMany({
+        with: {
+          pianos: true,
+          services: true,
+        },
+      });
 
       // Transform data for export
       const exportData = clients.map(client => ({
@@ -38,8 +43,8 @@ export const exportRouter = router({
         email: client.email || '',
         phone: client.phone || '',
         address: client.address || '',
-        pianosCount: 0, // TODO: calculate from separate query if needed
-        servicesCount: 0, // TODO: calculate from separate query if needed
+        pianosCount: client.pianos?.length || 0,
+        servicesCount: client.services?.length || 0,
         createdAt: client.createdAt,
       }));
 
@@ -89,19 +94,23 @@ export const exportRouter = router({
       const db = await getDb();
       if (!db) throw new Error('Database not available');
 
-      // Get services
-      const services = await db.query.services.findMany({});
+      // Get services with related data using Drizzle relations
+      const services = await db.query.services.findMany({
+        with: {
+          client: true,
+          piano: true,
+        },
+      });
 
       // Transform data for export
       let exportData = services.map(service => ({
         id: service.id,
-        serviceDate: service.serviceDate,
-        clientName: 'N/A', // TODO: join with clients table if needed
-        pianoInfo: 'N/A', // TODO: join with pianos table if needed
+        serviceDate: service.date,
+        clientName: service.client?.name || 'N/A',
+        pianoInfo: service.piano ? `${service.piano.brand} ${service.piano.model || ''}`.trim() : 'N/A',
         serviceType: service.serviceType,
         duration: service.duration || 0,
-        cost: service.cost || 0,
-        status: service.status,
+        cost: service.cost ? parseFloat(service.cost.toString()) : 0,
         notes: service.notes || '',
       }));
 
@@ -274,8 +283,16 @@ export const exportRouter = router({
       const db = await getDb();
       if (!db) throw new Error('Database not available');
 
-      // Get pianos
-      const pianos = await db.query.pianos.findMany({});
+      // Get pianos with related data using Drizzle relations
+      const pianos = await db.query.pianos.findMany({
+        with: {
+          client: true,
+          services: {
+            orderBy: (services, { desc }) => [desc(services.date)],
+            limit: 1,
+          },
+        },
+      });
 
       // Transform data for export
       let exportData = pianos.map(piano => ({
@@ -283,12 +300,12 @@ export const exportRouter = router({
         brand: piano.brand || '',
         model: piano.model || '',
         serialNumber: piano.serialNumber || '',
-        type: piano.type || '',
+        category: piano.category || '',
         year: piano.year || 0,
-        clientName: 'N/A', // TODO: join with clients table if needed
+        clientName: piano.client?.name || 'N/A',
         location: piano.location || '',
         condition: piano.condition || '',
-        lastServiceDate: piano.lastServiceDate,
+        lastServiceDate: piano.services?.[0]?.date || null,
         createdAt: piano.createdAt,
       }));
 

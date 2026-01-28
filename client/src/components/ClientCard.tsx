@@ -1,4 +1,4 @@
-import { Users, Phone, Edit2, Trash2 } from 'lucide-react';
+import { Users, Phone, Edit2, Trash2, MessageCircle } from 'lucide-react';
 
 // Paleta profesional minimalista (del drawer original)
 const COLORS = {
@@ -87,6 +87,23 @@ export function ClientCard({ client, pianoCount, onEdit, onDelete }: ClientCardP
         
         {/* Botones de acción */}
         <div className="flex items-center gap-2">
+          {client.phone && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                // Generar enlace de WhatsApp con mensaje general
+                const phoneFormatted = client.phone.replace(/[\s\-\(\)\+]/g, '');
+                const message = encodeURIComponent(`Hola ${client.name},\n\n`);
+                const whatsappUrl = `https://wa.me/${phoneFormatted.startsWith('34') ? phoneFormatted : '34' + phoneFormatted}?text=${message}`;
+                window.open(whatsappUrl, '_blank');
+              }}
+              className="p-2 text-green-600 hover:bg-green-50 rounded-lg transition-colors"
+              aria-label="Enviar mensaje de WhatsApp"
+              title="Enviar WhatsApp"
+            >
+              <MessageCircle className="w-4 h-4" />
+            </button>
+          )}
           <button
             onClick={(e) => {
               e.stopPropagation();

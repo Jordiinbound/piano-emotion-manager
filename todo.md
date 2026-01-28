@@ -987,3 +987,14 @@
 - [ ] Agregar botones de WhatsApp en tarjetas de clientes
 - [ ] Optimizar relaciones en schema de Drizzle (clients-pianos-services)
 - [ ] Actualizar router de exportación para usar relaciones optimizadas
+
+## Continuación: Integración completa de WhatsApp y optimizaciones
+- [x] Agregar botón de WhatsApp en ClientCard para mensajes directos
+- [ ] Agregar menú contextual de WhatsApp con plantillas (cita, seguimiento, recordatorio)
+- [x] Definir relaciones de Drizzle en schema.ts (clients-pianos, services-clients, invoices-clients, appointments, alertHistory)
+- [x] Actualizar router de exportación para usar relaciones y mostrar nombres en lugar de IDs (exportClients, exportServices, exportPianos)
+- [x] Crear sistema de notificaciones automáticas de WhatsApp para recordatorios de citas
+- [x] Crear sistema de notificaciones automáticas de WhatsApp para vencimientos de pago
+- [x] Crear sistema de notificaciones automáticas de WhatsApp para mantenimiento de pianos
+- [x] Crear router de notificaciones con 4 endpoints (citas, pagos, mantenimiento, todos)
+- [x] Agregar tests para las nuevas funcionalidades (whatsappNotifications.test.ts - 9 tests pasando)

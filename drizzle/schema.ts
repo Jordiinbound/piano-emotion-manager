@@ -1317,3 +1317,89 @@ export * from './accounting-schema';
 export * from './distributor-schema';
 export * from './crm-schema';
 export * from './onboarding-schema';
+
+// ============================================================================
+// RELACIONES DE DRIZZLE
+// ============================================================================
+
+import { relations } from 'drizzle-orm';
+
+/**
+ * Relaciones de la tabla clients
+ * Un cliente puede tener múltiples pianos, servicios, facturas y citas
+ */
+export const clientsRelations = relations(clients, ({ many }) => ({
+  pianos: many(pianos),
+  services: many(services),
+  invoices: many(invoices),
+  appointments: many(appointments),
+}));
+
+/**
+ * Relaciones de la tabla pianos
+ * Un piano pertenece a un cliente y puede tener múltiples servicios y alertas
+ */
+export const pianosRelations = relations(pianos, ({ one, many }) => ({
+  client: one(clients, {
+    fields: [pianos.clientId],
+    references: [clients.id],
+  }),
+  services: many(services),
+  alertHistory: many(alertHistory),
+}));
+
+/**
+ * Relaciones de la tabla services
+ * Un servicio pertenece a un piano y a un cliente
+ */
+export const servicesRelations = relations(services, ({ one }) => ({
+  piano: one(pianos, {
+    fields: [services.pianoId],
+    references: [pianos.id],
+  }),
+  client: one(clients, {
+    fields: [services.clientId],
+    references: [clients.id],
+  }),
+}));
+
+/**
+ * Relaciones de la tabla invoices
+ * Una factura pertenece a un cliente
+ */
+export const invoicesRelations = relations(invoices, ({ one }) => ({
+  client: one(clients, {
+    fields: [invoices.clientId],
+    references: [clients.id],
+  }),
+}));
+
+/**
+ * Relaciones de la tabla appointments
+ * Una cita pertenece a un cliente y a un piano
+ */
+export const appointmentsRelations = relations(appointments, ({ one }) => ({
+  client: one(clients, {
+    fields: [appointments.clientId],
+    references: [clients.id],
+  }),
+  piano: one(pianos, {
+    fields: [appointments.pianoId],
+    references: [pianos.id],
+  }),
+}));
+
+/**
+ * Relaciones de la tabla alertHistory
+ * Una alerta pertenece a un piano y a un cliente
+ */
+export const alertHistoryRelations = relations(alertHistory, ({ one }) => ({
+  piano: one(pianos, {
+    fields: [alertHistory.pianoId],
+    references: [pianos.id],
+  }),
+  client: one(clients, {
+    fields: [alertHistory.clientId],
+    references: [clients.id],
+  }),
+}));
