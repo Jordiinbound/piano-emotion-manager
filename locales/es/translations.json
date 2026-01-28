@@ -130,7 +130,8 @@
     "select": "Seleccionar",
     "sort": "Ordenar",
     "success": "Éxito",
-    "yes": "Sí"
+    "yes": "Sí",
+    "test": "Valor de prueba actualizado"
   },
   "contracts": {
     "addFirstContract": "Crea tu primer contrato",

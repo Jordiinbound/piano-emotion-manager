@@ -24,6 +24,7 @@ import {
   Bell,
   TrendingUp,
   UserCog,
+  Languages,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { LicenseNotificationBadge } from '@/components/LicenseNotificationBadge';
@@ -88,6 +89,7 @@ const menuSections: MenuSection[] = [
       { name: 'Analytics', href: '/admin/analytics', icon: TrendingUp },
       { name: 'Organización', href: '/organization/settings', icon: UserCog },
       { name: 'Notificaciones', href: '/licenses/notifications', icon: Bell },
+      { name: 'Gestor de Traducciones', href: '/translation-manager', icon: Languages },
     ],
   },
 ];

@@ -57,6 +57,7 @@ import { RolesManagement } from "./pages/RolesManagement";
 import { GlobalAnalytics } from "./pages/GlobalAnalytics";
 import Contabilidad from "./pages/Contabilidad";
 import Workflows from "./pages/Workflows";
+import TranslationManager from "./pages/TranslationManager";
 
 function Router() {
   return (
@@ -395,6 +396,13 @@ function Router() {
         <ProtectedRoute>
           <Layout>
             <Configuracion />
+          </Layout>
+        </ProtectedRoute>
+      </Route>
+      <Route path="/translation-manager">
+        <ProtectedRoute>
+          <Layout>
+            <TranslationManager />
           </Layout>
         </ProtectedRoute>
       </Route>

@@ -892,3 +892,20 @@
 - [x] TiposServicio.tsx traducido manualmente con perfección absoluta (52/53 páginas - 98%)
 - [x] Traducción i18n completada al 100% (52 de 52 páginas funcionales traducidas, ComponentShowcase omitido por ser página técnica de demostración)
 - [ ] Implementar TranslationManager para gestionar las 872 claves desde la interfaz de administración
+
+## Implementación de TranslationManager y optimización i18n
+- [ ] Crear router tRPC de translations con endpoints (getTranslations, updateTranslation, getLanguages, getTranslationKeys)
+- [ ] Crear tests para el router de translations
+- [ ] Crear página TranslationManager.tsx con interfaz de administración
+- [ ] Implementar tabla de traducciones con filtros por idioma y búsqueda por clave
+- [ ] Implementar formulario de edición inline de traducciones
+- [ ] Probar exhaustivamente el cambio de idioma en las 52 páginas traducidas
+- [ ] Implementar lazy loading de archivos de idioma para optimizar rendimiento
+- [ ] Verificar que todas las traducciones funcionan correctamente en los 9 idiomas
+- [x] Crear router tRPC de translations con endpoints (getTranslations, updateTranslation, getLanguages, getTranslationKeys, getTranslationStats)
+- [x] Crear página TranslationManager.tsx con interfaz de administración completa
+- [x] Implementar tabla de traducciones con filtros por idioma y búsqueda por clave
+- [x] Implementar formulario de edición inline de traducciones
+- [x] Agregar enlace de TranslationManager en el sidebar (sección HERRAMIENTAS)
+- [x] Agregar traducciones de TranslationManager en es.json
+- [x] Mover enlace de TranslationManager de sección HERRAMIENTAS a sección ADMINISTRACIÓN en Layout.tsx
