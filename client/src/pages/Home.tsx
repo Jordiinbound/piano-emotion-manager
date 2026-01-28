@@ -62,8 +62,10 @@ export default function Home() {
 
   // Obtener alertas desde la base de datos
   const { data: alertsData } = trpc.alerts.getSummary.useQuery();
-  const hasAlerts = alertsData?.hasAlerts || false;
-  const alertCount = alertsData?.total || 0;
+  const { data: remindersStats } = trpc.reminders.getStats.useQuery();
+  
+  const alertCount = (alertsData?.total || 0) + (remindersStats?.pending || 0);
+  const hasAlerts = alertCount > 0;
 
   // Función helper para formatear fechas
   const formatDate = (date: Date | string | null) => {
@@ -112,7 +114,7 @@ export default function Home() {
           )}
           <span className="font-medium">
             {hasAlerts
-              ? `${alertCount} ${alertCount === 1 ? t('home.alerts.requireAttention') : t('home.alerts.requireAttentionPlural')} ${t('home.alerts.yourAttention')}`
+              ? `${alertCount} ${alertCount === 1 ? 'alerta/recordatorio requiere' : 'alertas/recordatorios requieren'} tu atención`
               : t('home.alerts.allGood')}
           </span>
         </div>

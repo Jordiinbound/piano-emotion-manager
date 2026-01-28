@@ -25,6 +25,7 @@ import {
   TrendingUp,
   UserCog,
   Languages,
+  ClipboardList,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { LicenseNotificationBadge } from '@/components/LicenseNotificationBadge';
@@ -75,6 +76,7 @@ const menuSections: MenuSection[] = [
     items: [
       { name: 'Accesos Rápidos', href: '/accesos-rapidos', icon: Zap },
       { name: 'Notificaciones', href: '/notificaciones', icon: Bell },
+      { name: 'Recordatorios', href: '/recordatorios', icon: ClipboardList },
       { name: 'Alertas', href: '/alertas', icon: Bell },
       { name: 'Herramientas Avanzadas', href: '/herramientas-avanzadas', icon: Hammer },
       { name: 'Configuración', href: '/configuracion', icon: Settings },
@@ -102,6 +104,11 @@ export default function Layout({ children }: LayoutProps) {
   
   // Obtener resumen de alertas para el badge
   const { data: alertsSummary } = trpc.alerts.getSummary.useQuery(undefined, {
+    refetchInterval: 60000, // Refetch cada minuto
+  });
+
+  // Obtener estadísticas de recordatorios para el badge
+  const { data: remindersStats } = trpc.reminders.getStats.useQuery(undefined, {
     refetchInterval: 60000, // Refetch cada minuto
   });
 
@@ -149,6 +156,14 @@ export default function Layout({ children }: LayoutProps) {
                     className="ml-auto"
                   >
                     {alertsSummary.total}
+                  </Badge>
+                )}
+                {item.name === 'Recordatorios' && remindersStats && (remindersStats.overdue > 0 || remindersStats.pending > 0) && (
+                  <Badge 
+                    variant={remindersStats.overdue > 0 ? "destructive" : "default"}
+                    className="ml-auto"
+                  >
+                    {remindersStats.overdue > 0 ? remindersStats.overdue : remindersStats.pending}
                   </Badge>
                 )}
               </Link>

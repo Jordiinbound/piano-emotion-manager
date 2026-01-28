@@ -1094,3 +1094,19 @@
 - [ ] Ejecutar todos los tests y verificar que pasen
 - [ ] Crear checkpoint final con todas las funcionalidades
 - [ ] Documentar funcionalidades migradas
+
+## Interfaz de Usuario para Recordatorios
+- [x] Crear página Recordatorios.tsx con layout completo
+- [x] Implementar lista de recordatorios con tarjetas responsive
+- [x] Agregar filtros (tipo, estado, búsqueda por título/cliente)
+- [x] Crear formulario modal para crear recordatorio (con validación)
+- [x] Crear formulario modal para editar recordatorio (reutilizable)
+- [x] Implementar acciones rápidas (marcar completado, eliminar con confirmación)
+- [x] Agregar indicadores visuales de vencidos (badges rojos, fondo resaltado)
+- [x] Agregar tarjetas de estadísticas (total, pendientes, vencidos, completados)
+- [x] Agregar ruta /recordatorios al App.tsx
+- [x] Agregar enlace "Recordatorios" en el menú HERRAMIENTAS del Layout
+- [x] Integrar recordatorios en barra de alertas del Dashboard
+- [x] Agregar contador de recordatorios pendientes en barra de alertas
+- [x] Barra verde si no hay alertas/recordatorios, roja si los hay
+- [x] Agregar badge de recordatorios en menú lateral (muestra vencidos en rojo o pendientes en azul)
