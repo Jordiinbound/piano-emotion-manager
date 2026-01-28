@@ -26,6 +26,7 @@ import {
 import { toast } from 'sonner';
 import { useTranslation } from '@/hooks/use-translation';
 import { trpc } from '@/lib/trpc';
+import WorkflowTemplates from '@/components/WorkflowTemplates';
 import {
   Dialog,
   DialogContent,
@@ -125,6 +126,20 @@ export default function Workflows() {
     onSuccess: () => {
       toast.success(t('workflows.toast.executed'));
       utils.workflows.list.invalidate();
+    },
+    onError: (error) => {
+      toast.error(`Error: ${error.message}`);
+    },
+  });
+
+  const createFromTemplateMutation = trpc.workflows.createFromTemplate.useMutation({
+    onSuccess: (data) => {
+      toast.success('Workflow creado desde plantilla correctamente');
+      utils.workflows.list.invalidate();
+      // Navegar al editor del nuevo workflow
+      if (data.workflowId) {
+        setLocation(`/workflows/editor/${data.workflowId}`);
+      }
     },
     onError: (error) => {
       toast.error(`Error: ${error.message}`);
@@ -290,6 +305,16 @@ export default function Workflows() {
             <Clock className="h-8 w-8 text-blue-500" />
           </div>
         </Card>
+      </div>
+
+      {/* Plantillas de workflows */}
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <h2 className="text-2xl font-semibold">{t('workflows.templates.title')}</h2>
+        </div>
+        <WorkflowTemplates onTemplateSelect={(templateId) => {
+          createFromTemplateMutation.mutate({ templateId });
+        }} />
       </div>
 
       {/* Lista de workflows */}

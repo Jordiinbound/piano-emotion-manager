@@ -1672,3 +1672,21 @@
 - [x] Crear plantilla de workflow: Recordatorio de citas
 - [x] Crear plantilla de workflow: Seguimiento post-servicio
 - [x] Probar envío real de emails y WhatsApp desde workflows
+
+
+## FASE 9 - Sección de Ayuda
+- [x] Implementar botón flotante de ayuda con IA (Groq) - YA IMPLEMENTADO
+- [x] Crear backend para chat de ayuda con Groq - YA IMPLEMENTADO
+- [x] Implementar generación de emails y reportes con IA - YA IMPLEMENTADO
+
+## FASE 10 - Mejoras de UX y Métricas de Workflows
+- [x] Crear sección de plantillas en página de Workflows
+- [x] Implementar tarjetas de plantillas con botón "Usar plantilla"
+- [x] Agregar modal de confirmación al crear workflow desde plantilla
+- [ ] Implementar selector de variables dinámicas en formularios de nodos
+- [ ] Crear lista de variables disponibles según tipo de trigger
+- [ ] Agregar autocompletado de variables en campos de texto
+- [ ] Crear página de dashboard de métricas de workflows
+- [ ] Implementar estadísticas de ejecuciones (total, exitosas, fallidas)
+- [ ] Agregar gráficos de actividad de workflows
+- [ ] Mostrar workflows más usados y métricas de rendimiento
