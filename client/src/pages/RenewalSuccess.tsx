@@ -4,8 +4,10 @@ import { trpc } from "@/lib/trpc";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { CheckCircle, Loader2, XCircle } from "lucide-react";
+import { useTranslation } from "@/hooks/use-translation";
 
 export function RenewalSuccess() {
+  const { t } = useTranslation();
   const [, setLocation] = useLocation();
   const [sessionId, setSessionId] = useState<string | null>(null);
 
@@ -35,10 +37,10 @@ export function RenewalSuccess() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Loader2 className="h-6 w-6 animate-spin text-primary" />
-              Procesando Renovación...
+              {t('renewalSuccess.processingRenewal')}
             </CardTitle>
             <CardDescription>
-              Estamos confirmando tu pago y renovando tu licencia. Por favor espera un momento.
+              {t('renewalSuccess.confirmingPayment')}
             </CardDescription>
           </CardHeader>
         </Card>
@@ -53,10 +55,10 @@ export function RenewalSuccess() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-destructive">
               <XCircle className="h-6 w-6" />
-              Error al Procesar Renovación
+              {t('renewalSuccess.errorProcessingRenewal')}
             </CardTitle>
             <CardDescription>
-              Hubo un problema al confirmar tu renovación. Por favor contacta con soporte.
+              {t('renewalSuccess.problemConfirmingRenewal')}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -65,10 +67,10 @@ export function RenewalSuccess() {
             </p>
             <div className="flex gap-3">
               <Button onClick={() => setLocation('/licenses/notifications')}>
-                Ver Mis Licencias
+                {t('renewalSuccess.viewMyLicenses')}
               </Button>
               <Button variant="outline" onClick={() => setLocation('/')}>
-                Ir al Dashboard
+                {t('renewalSuccess.goToDashboard')}
               </Button>
             </div>
           </CardContent>
@@ -86,16 +88,16 @@ export function RenewalSuccess() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-green-600">
               <CheckCircle className="h-6 w-6" />
-              ¡Renovación Exitosa!
+              {t('renewalSuccess.renewalSuccessful')}
             </CardTitle>
             <CardDescription>
-              Tu licencia ha sido renovada correctamente
+              {t('renewalSuccess.licenseRenewedSuccessfully')}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="bg-green-50 dark:bg-green-950 border border-green-200 dark:border-green-800 rounded-lg p-4">
               <p className="text-sm font-medium text-green-800 dark:text-green-200">
-                Nueva fecha de expiración:
+                {t('renewalSuccess.newExpirationDate')}:
               </p>
               <p className="text-lg font-bold text-green-900 dark:text-green-100">
                 {newExpiration.toLocaleDateString('es-ES', {
@@ -107,15 +109,15 @@ export function RenewalSuccess() {
             </div>
 
             <p className="text-sm text-muted-foreground">
-              Tu licencia ahora está activa y podrás seguir utilizando Piano Emotion Manager sin interrupciones.
+              {t('renewalSuccess.licenseNowActive')}
             </p>
 
             <div className="flex gap-3 pt-4">
               <Button onClick={() => setLocation('/')}>
-                Ir al Dashboard
+                {t('renewalSuccess.goToDashboard')}
               </Button>
               <Button variant="outline" onClick={() => setLocation('/licenses/notifications')}>
-                Ver Mis Licencias
+                {t('renewalSuccess.viewMyLicenses')}
               </Button>
             </div>
           </CardContent>

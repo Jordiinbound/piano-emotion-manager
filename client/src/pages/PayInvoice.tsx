@@ -6,8 +6,10 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Separator } from '@/components/ui/separator';
 import { Loader2, CheckCircle2, XCircle, CreditCard } from 'lucide-react';
 import { toast } from 'sonner';
+import { useTranslation } from '@/hooks/use-translation';
 
 export default function PayInvoice() {
+  const { t } = useTranslation();
   const params = useParams();
   const [, setLocation] = useLocation();
   const token = params.token as string;
@@ -21,12 +23,12 @@ export default function PayInvoice() {
   const createCheckoutMutation = trpc.stripe.createCheckoutSessionPublic.useMutation({
     onSuccess: (data) => {
       if (data.url) {
-        toast.success('Redirigiendo a la página de pago...');
+        toast.success(t('payInvoice.redirectingToPaymentPage'));
         window.location.href = data.url;
       }
     },
     onError: (error) => {
-      toast.error('Error al procesar el pago: ' + error.message);
+      toast.error(t('payInvoice.errorProcessingPayment') + ': ' + error.message);
       setIsProcessing(false);
     },
   });
@@ -48,7 +50,7 @@ export default function PayInvoice() {
           <CardContent className="pt-6">
             <div className="flex flex-col items-center gap-4">
               <Loader2 className="h-8 w-8 animate-spin text-primary" />
-              <p className="text-sm text-muted-foreground">Cargando factura...</p>
+              <p className="text-sm text-muted-foreground">{t('payInvoice.loadingInvoice')}</p>
             </div>
           </CardContent>
         </Card>
@@ -63,15 +65,15 @@ export default function PayInvoice() {
           <CardHeader>
             <div className="flex items-center gap-2">
               <XCircle className="h-5 w-5 text-destructive" />
-              <CardTitle>Factura no encontrada</CardTitle>
+              <CardTitle>{t('payInvoice.invoiceNotFound')}</CardTitle>
             </div>
             <CardDescription>
-              El enlace de pago no es válido o ha expirado.
+              {t('payInvoice.invalidOrExpiredLink')}
             </CardDescription>
           </CardHeader>
           <CardFooter>
             <Button variant="outline" className="w-full" onClick={() => setLocation('/')}>
-              Volver al inicio
+              {t('payInvoice.backToHome')}
             </Button>
           </CardFooter>
         </Card>
@@ -86,27 +88,27 @@ export default function PayInvoice() {
           <CardHeader>
             <div className="flex items-center gap-2">
               <CheckCircle2 className="h-5 w-5 text-green-500" />
-              <CardTitle>Factura pagada</CardTitle>
+              <CardTitle>{t('payInvoice.invoicePaid')}</CardTitle>
             </div>
             <CardDescription>
-              Esta factura ya ha sido pagada.
+              {t('payInvoice.invoiceAlreadyPaid')}
             </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-2">
               <div className="flex justify-between text-sm">
-                <span className="text-muted-foreground">Número de factura:</span>
+                <span className="text-muted-foreground">{t('payInvoice.invoiceNumber')}:</span>
                 <span className="font-medium">{invoice.invoiceNumber}</span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-muted-foreground">Total pagado:</span>
+                <span className="text-muted-foreground">{t('payInvoice.totalPaid')}:</span>
                 <span className="font-medium">€{Number(invoice.total).toFixed(2)}</span>
               </div>
             </div>
           </CardContent>
           <CardFooter>
             <Button variant="outline" className="w-full" onClick={() => setLocation('/')}>
-              Volver al inicio
+              {t('payInvoice.backToHome')}
             </Button>
           </CardFooter>
         </Card>
@@ -121,9 +123,9 @@ export default function PayInvoice() {
       <div className="max-w-2xl mx-auto">
         <Card>
           <CardHeader>
-            <CardTitle className="text-2xl">Pagar Factura</CardTitle>
+            <CardTitle className="text-2xl">{t('payInvoice.title')}</CardTitle>
             <CardDescription>
-              Complete el pago de forma segura con Stripe
+              {t('payInvoice.description')}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
@@ -131,17 +133,17 @@ export default function PayInvoice() {
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <p className="text-sm text-muted-foreground">Número de factura</p>
+                  <p className="text-sm text-muted-foreground">{t('payInvoice.invoiceNumber')}</p>
                   <p className="font-medium">{invoice.invoiceNumber}</p>
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground">Fecha</p>
+                  <p className="text-sm text-muted-foreground">{t('payInvoice.date')}</p>
                   <p className="font-medium">{new Date(invoice.date).toLocaleDateString('es-ES')}</p>
                 </div>
               </div>
 
               <div>
-                <p className="text-sm text-muted-foreground">Cliente</p>
+                <p className="text-sm text-muted-foreground">{t('payInvoice.client')}</p>
                 <p className="font-medium">{invoice.clientName}</p>
                 {invoice.clientEmail && (
                   <p className="text-sm text-muted-foreground">{invoice.clientEmail}</p>
@@ -153,12 +155,12 @@ export default function PayInvoice() {
 
             {/* Items de la factura */}
             <div className="space-y-3">
-              <h3 className="font-semibold">Detalle de servicios</h3>
+              <h3 className="font-semibold">{t('payInvoice.serviceDetails')}</h3>
               {items.map((item, index) => (
                 <div key={index} className="flex justify-between text-sm">
                   <div className="flex-1">
                     <p className="font-medium">{item.description}</p>
-                    <p className="text-muted-foreground">Cantidad: {item.quantity}</p>
+                    <p className="text-muted-foreground">{t('payInvoice.quantity')}: {item.quantity}</p>
                   </div>
                   <p className="font-medium">€{(item.quantity * item.price).toFixed(2)}</p>
                 </div>
@@ -170,16 +172,16 @@ export default function PayInvoice() {
             {/* Totales */}
             <div className="space-y-2">
               <div className="flex justify-between text-sm">
-                <span className="text-muted-foreground">Subtotal</span>
+                <span className="text-muted-foreground">{t('payInvoice.subtotal')}</span>
                 <span>€{Number(invoice.subtotal).toFixed(2)}</span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-muted-foreground">IVA (21%)</span>
+                <span className="text-muted-foreground">{t('payInvoice.vat')}</span>
                 <span>€{Number(invoice.taxAmount).toFixed(2)}</span>
               </div>
               <Separator />
               <div className="flex justify-between text-lg font-bold">
-                <span>Total</span>
+                <span>{t('payInvoice.total')}</span>
                 <span>€{Number(invoice.total).toFixed(2)}</span>
               </div>
             </div>
@@ -194,12 +196,12 @@ export default function PayInvoice() {
               {isProcessing ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Procesando...
+                  {t('payInvoice.processing')}
                 </>
               ) : (
                 <>
                   <CreditCard className="mr-2 h-4 w-4" />
-                  Pagar €{Number(invoice.total).toFixed(2)}
+                  {t('payInvoice.pay')} €{Number(invoice.total).toFixed(2)}
                 </>
               )}
             </Button>
@@ -208,8 +210,8 @@ export default function PayInvoice() {
 
         {/* Información de seguridad */}
         <div className="mt-6 text-center text-sm text-muted-foreground">
-          <p>🔒 Pago seguro procesado por Stripe</p>
-          <p className="mt-1">Sus datos de pago están protegidos con encriptación de nivel bancario</p>
+          <p>{t('payInvoice.securePayment')}</p>
+          <p className="mt-1">{t('payInvoice.dataProtection')}</p>
         </div>
       </div>
     </div>
