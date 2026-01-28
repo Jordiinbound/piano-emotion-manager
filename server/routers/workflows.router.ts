@@ -3,6 +3,7 @@ import { publicProcedure, protectedProcedure, router } from '../_core/trpc';
 import { getDb } from '../db';
 import { workflows, workflowNodes, workflowConnections, workflowExecutions } from '../../drizzle/schema';
 import { eq, desc } from 'drizzle-orm';
+import { executeWorkflow } from '../workflow-engine';
 
 export const workflowsRouter = router({
   // Listar todos los workflows
@@ -167,15 +168,17 @@ export const workflowsRouter = router({
       const db = await getDb();
       
       // Crear registro de ejecución
-      const result = await db.insert(workflowExecutions).values({
-        workflowId: input.id,
-        status: 'pending',
-        triggerData: input.triggerData || null,
-        startedAt: new Date(),
-      });
-
-      // TODO: Ejecutar workflow en background
+      // Ejecutar workflow usando el motor
+      const executionResult = await executeWorkflow(input.id, input.triggerData);
       
-      return { executionId: (result as any).insertId || 0 };
+      if (!executionResult.success) {
+        throw new Error(executionResult.error || 'Failed to execute workflow');
+      }
+      
+      return { 
+        executionId: executionResult.executionId || 0,
+        success: true,
+        message: executionResult.message,
+      };
     }),
 });

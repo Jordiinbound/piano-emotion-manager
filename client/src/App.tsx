@@ -64,6 +64,7 @@ import { RolesManagement } from "./pages/RolesManagement";
 import { GlobalAnalytics } from "./pages/GlobalAnalytics";
 import Contabilidad from "./pages/Contabilidad";
 import Workflows from "./pages/Workflows";
+import WorkflowEditorPage from "./pages/WorkflowEditor";
 import TranslationManager from "./pages/TranslationManager";
 
 function Router() {
@@ -379,6 +380,12 @@ function Router() {
           <Layout>
             <Workflows />
           </Layout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/workflows/:id">
+        <ProtectedRoute>
+          <WorkflowEditorPage />
         </ProtectedRoute>
       </Route>
 

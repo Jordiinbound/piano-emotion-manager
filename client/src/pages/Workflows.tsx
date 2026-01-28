@@ -6,6 +6,7 @@
  */
 
 import { useState } from 'react';
+import { useLocation } from 'wouter';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -46,6 +47,7 @@ import {
 
 export default function Workflows() {
   const { t } = useTranslation();
+  const [, setLocation] = useLocation();
   const utils = trpc.useUtils();
   
   // Estado para diálogo de creación/edición
@@ -369,6 +371,14 @@ export default function Workflows() {
                     onClick={() => handleExecuteWorkflow(workflow.id)}
                   >
                     <Play className="h-4 w-4" />
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={() => setLocation(`/workflows/${workflow.id}`)}
+                    title="Abrir editor visual"
+                  >
+                    <Settings className="h-4 w-4" />
                   </Button>
                   <Button 
                     variant="outline" 

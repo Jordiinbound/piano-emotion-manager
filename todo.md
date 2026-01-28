@@ -1631,3 +1631,12 @@
 - [ ] Tests de ejecución de acciones
 - [ ] Tests de integración con triggers
 - [ ] Tests de endpoints tRPC
+
+
+## FASE 6 - Sistema de Workflows (continuación - avanzado)
+- [x] Ejecutar migración de base de datos (pnpm db:push) para crear tablas de workflows
+- [x] Crear componente WorkflowEditor.tsx con React Flow
+- [x] Implementar nodos personalizados (triggers, condiciones, acciones)
+- [x] Desarrollar motor de ejecución de workflows en background
+- [x] Integrar editor visual en página de workflows
+- [x] Probar funcionalidad completa de workflows
