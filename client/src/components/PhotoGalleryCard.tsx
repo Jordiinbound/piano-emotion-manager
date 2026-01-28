@@ -2,10 +2,11 @@ import React, { useState } from 'react';
 import { trpc } from '../lib/trpc';
 import { Button } from './ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
-import { Image as ImageIcon, Plus, Trash2, Upload } from 'lucide-react';
+import { Image as ImageIcon, Plus, Trash2, Upload, ArrowLeftRight, Check, X } from 'lucide-react';
 import { toast } from 'sonner';
 import { useTranslation } from '@/hooks/use-translation';
 import { PhotoLightbox } from './PhotoLightbox';
+import { ComparePhotosModal } from './ComparePhotosModal';
 
 interface PhotoGalleryCardProps {
   pianoId: number;
@@ -18,6 +19,12 @@ export default function PhotoGalleryCard({ pianoId, photos: initialPhotos }: Pho
   const [isUploading, setIsUploading] = useState(false);
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState(0);
+  
+  // Estados para modo de comparación
+  const [compareMode, setCompareMode] = useState(false);
+  const [selectedPhotos, setSelectedPhotos] = useState<number[]>([]);
+  const [compareModalOpen, setCompareModalOpen] = useState(false);
+  const [compareImages, setCompareImages] = useState<{ before: string; after: string } | null>(null);
 
   const uploadMutation = trpc.pianos.uploadPianoPhoto.useMutation();
   const deleteMutation = trpc.pianos.deletePianoPhoto.useMutation();
@@ -98,36 +105,115 @@ export default function PhotoGalleryCard({ pianoId, photos: initialPhotos }: Pho
     }
   };
 
+  // Funciones para modo de comparación
+  const handleToggleCompareMode = () => {
+    setCompareMode(!compareMode);
+    setSelectedPhotos([]);
+  };
+
+  const handleSelectPhoto = (index: number) => {
+    if (!compareMode) return;
+
+    if (selectedPhotos.includes(index)) {
+      // Deseleccionar foto
+      setSelectedPhotos(selectedPhotos.filter((i) => i !== index));
+    } else if (selectedPhotos.length < 2) {
+      // Seleccionar foto (máximo 2)
+      setSelectedPhotos([...selectedPhotos, index]);
+    } else {
+      toast.error(t('pianos.maxTwoPhotos'));
+    }
+  };
+
+  const handleComparePhotos = () => {
+    if (selectedPhotos.length !== 2) {
+      toast.error(t('pianos.selectTwoPhotos'));
+      return;
+    }
+
+    setCompareImages({
+      before: photos[selectedPhotos[0]],
+      after: photos[selectedPhotos[1]],
+    });
+    setCompareModalOpen(true);
+  };
+
+  const handleSwapComparePhotos = () => {
+    if (!compareImages) return;
+    setCompareImages({
+      before: compareImages.after,
+      after: compareImages.before,
+    });
+  };
+
+  const handleCancelCompare = () => {
+    setCompareMode(false);
+    setSelectedPhotos([]);
+  };
+
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between">
         <CardTitle>{t('pianos.photoGallery')}</CardTitle>
-        <div>
-          <input
-            type="file"
-            id="photo-upload"
-            accept="image/*"
-            multiple
-            onChange={handleFileUpload}
-            className="hidden"
-          />
-          <Button
-            size="sm"
-            onClick={() => document.getElementById('photo-upload')?.click()}
-            disabled={isUploading}
-          >
-            {isUploading ? (
-              <>
-                <Upload className="mr-2 h-4 w-4 animate-spin" />
-                {t('common.uploading')}
-              </>
-            ) : (
-              <>
-                <Plus className="mr-2 h-4 w-4" />
-                {t('pianos.addPhotos')}
-              </>
-            )}
-          </Button>
+        <div className="flex items-center gap-2">
+          {compareMode ? (
+            <>
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={handleCancelCompare}
+              >
+                <X className="mr-2 h-4 w-4" />
+                {t('common.cancel')}
+              </Button>
+              <Button
+                size="sm"
+                onClick={handleComparePhotos}
+                disabled={selectedPhotos.length !== 2}
+              >
+                <Check className="mr-2 h-4 w-4" />
+                {t('pianos.compare')} ({selectedPhotos.length}/2)
+              </Button>
+            </>
+          ) : (
+            <>
+              {photos.length >= 2 && (
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={handleToggleCompareMode}
+                >
+                  <ArrowLeftRight className="mr-2 h-4 w-4" />
+                  {t('pianos.comparePhotos')}
+                </Button>
+              )}
+              <input
+                type="file"
+                id="photo-upload"
+                accept="image/*"
+                multiple
+                onChange={handleFileUpload}
+                className="hidden"
+              />
+              <Button
+                size="sm"
+                onClick={() => document.getElementById('photo-upload')?.click()}
+                disabled={isUploading}
+              >
+                {isUploading ? (
+                  <>
+                    <Upload className="mr-2 h-4 w-4 animate-spin" />
+                    {t('common.uploading')}
+                  </>
+                ) : (
+                  <>
+                    <Plus className="mr-2 h-4 w-4" />
+                    {t('pianos.addPhotos')}
+                  </>
+                )}
+              </Button>
+            </>
+          )}
         </div>
       </CardHeader>
       <CardContent>
@@ -145,31 +231,70 @@ export default function PhotoGalleryCard({ pianoId, photos: initialPhotos }: Pho
           </div>
         ) : (
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {photos.map((photo, index) => (
-              <div key={index} className="relative group">
-                <img
-                  src={photo}
-                  alt={`Piano photo ${index + 1}`}
-                  className="w-full h-48 object-cover rounded-lg border cursor-pointer"
+            {photos.map((photo, index) => {
+              const isSelected = selectedPhotos.includes(index);
+              const selectionOrder = selectedPhotos.indexOf(index) + 1;
+              
+              return (
+                <div 
+                  key={index} 
+                  className={`relative group ${
+                    compareMode ? 'cursor-pointer' : ''
+                  } ${
+                    isSelected ? 'ring-4 ring-primary rounded-lg' : ''
+                  }`}
                   onClick={() => {
-                    setLightboxIndex(index);
-                    setLightboxOpen(true);
+                    if (compareMode) {
+                      handleSelectPhoto(index);
+                    } else {
+                      setLightboxIndex(index);
+                      setLightboxOpen(true);
+                    }
                   }}
-                />
-                <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg flex items-center justify-center">
-                  <Button
-                    size="sm"
-                    variant="destructive"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleDeletePhoto(index);
-                    }}
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
+                >
+                  <img
+                    src={photo}
+                    alt={`Piano photo ${index + 1}`}
+                    className={`w-full h-48 object-cover rounded-lg border ${
+                      compareMode ? 'cursor-pointer' : 'cursor-pointer'
+                    } ${
+                      isSelected ? 'opacity-90' : ''
+                    }`}
+                  />
+                  
+                  {/* Indicador de selección en modo comparación */}
+                  {compareMode && isSelected && (
+                    <div className="absolute top-2 right-2 w-8 h-8 bg-primary text-primary-foreground rounded-full flex items-center justify-center font-bold shadow-lg">
+                      {selectionOrder}
+                    </div>
+                  )}
+                  
+                  {/* Botón de eliminar (solo visible cuando NO está en modo comparación) */}
+                  {!compareMode && (
+                    <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg flex items-center justify-center">
+                      <Button
+                        size="sm"
+                        variant="destructive"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDeletePhoto(index);
+                        }}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  )}
+                  
+                  {/* Overlay de selección en modo comparación */}
+                  {compareMode && isSelected && (
+                    <div className="absolute inset-0 rounded-lg transition-all bg-primary/20 border-4 border-primary" />
+                  )}
+                  {compareMode && !isSelected && (
+                    <div className="absolute inset-0 rounded-lg transition-all hover:bg-primary/10" />
+                  )}
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
         <p className="text-xs text-muted-foreground mt-4">
@@ -184,6 +309,17 @@ export default function PhotoGalleryCard({ pianoId, photos: initialPhotos }: Pho
         onClose={() => setLightboxOpen(false)}
         initialIndex={lightboxIndex}
       />
+      
+      {/* Modal de comparación antes/después */}
+      {compareImages && (
+        <ComparePhotosModal
+          isOpen={compareModalOpen}
+          onClose={() => setCompareModalOpen(false)}
+          beforeImage={compareImages.before}
+          afterImage={compareImages.after}
+          onSwap={handleSwapComparePhotos}
+        />
+      )}
     </Card>
   );
 }

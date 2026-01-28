@@ -1224,3 +1224,32 @@
 - [ ] Agregar campo photoDate a tabla pianos o crear tabla photo_metadata (futuro)
 - [ ] Implementar scroll infinito o paginación (futuro)
 - [ ] Agregar filtros por rango de fechas (futuro)
+
+## FASE 3.5: Comparación Antes/Después con Control Deslizante
+
+### Componente BeforeAfterSlider
+- [x] Crear componente BeforeAfterSlider.tsx con control deslizante interactivo
+- [x] Implementar overlay de dos imágenes con clip-path dinámico
+- [x] Agregar handle deslizante con indicador visual (icono ArrowLeftRight)
+- [x] Implementar arrastre con mouse y touch (eventos globales)
+- [x] Agregar animaciones suaves de transición (hover scale)
+- [x] Hacer componente responsive para móvil y desktop (touch-action: none)
+- [x] Agregar labels "Antes" y "Después" en las esquinas (badges con colores)
+
+### Modo de Selección de Fotos
+- [x] Agregar botón "Comparar" en PhotoGalleryCard (solo visible si hay 2+ fotos)
+- [x] Implementar modo de selección de 2 fotos con estado compareMode
+- [x] Mostrar indicadores visuales de fotos seleccionadas (badges numéricos, ring primary, overlay)
+- [x] Validar que se seleccionen exactamente 2 fotos (toast de error)
+- [x] Abrir modal con BeforeAfterSlider al confirmar selección
+
+### Integración en UI
+- [x] Crear modal ComparePhotosModal.tsx para el comparador
+- [x] Agregar opción de intercambiar fotos (swap before/after)
+- [x] Agregar botón de cerrar y volver a galería
+- [x] Integrar en PhotoGalleryCard con botón de comparación y modo de selección
+- [ ] Integrar en PhotoTimeline con opción de comparar entre fechas
+
+### Tests
+- [ ] Escribir tests para BeforeAfterSlider
+- [ ] Escribir tests para modo de selección de fotos
