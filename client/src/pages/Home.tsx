@@ -5,6 +5,7 @@ import { Loader2, TrendingUp, Users, Wrench, Music, DollarSign, Calendar, Chevro
 import { trpc } from "@/lib/trpc";
 import { useLocation } from 'wouter';
 import { LicenseExpirationAlert } from '@/components/LicenseExpirationAlert';
+import { useTranslation } from '@/hooks/use-translation';
 
 /**
  * Dashboard Screen - Elegant Professional Design
@@ -18,6 +19,7 @@ import { LicenseExpirationAlert } from '@/components/LicenseExpirationAlert';
  * - Acciones rápidas (botones terracota)
  */
 export default function Home() {
+  const { t } = useTranslation();
   const [, navigate] = useLocation();
   const [selectedMonth, setSelectedMonth] = useState(new Date());
 
@@ -77,18 +79,7 @@ export default function Home() {
 
   // Función helper para formatear tipo de servicio
   const formatServiceType = (type: string) => {
-    const types: Record<string, string> = {
-      tuning: 'Afinación',
-      repair: 'Reparación',
-      regulation: 'Regulación',
-      maintenance_basic: 'Mantenimiento Básico',
-      maintenance_complete: 'Mantenimiento Completo',
-      maintenance_premium: 'Mantenimiento Premium',
-      inspection: 'Inspección',
-      restoration: 'Restauración',
-      other: 'Otro',
-    };
-    return types[type] || type;
+    return t(`home.serviceTypes.${type}` as any) || type;
   };
 
   if (metricsLoading) {
@@ -121,12 +112,12 @@ export default function Home() {
           )}
           <span className="font-medium">
             {hasAlerts
-              ? `${alertCount} ${alertCount === 1 ? 'alerta requiere' : 'alertas requieren'} tu atención`
-              : 'Todo en orden'}
+              ? `${alertCount} ${alertCount === 1 ? t('home.alerts.requireAttention') : t('home.alerts.requireAttentionPlural')} ${t('home.alerts.yourAttention')}`
+              : t('home.alerts.allGood')}
           </span>
         </div>
         {hasAlerts && (
-          <span className="text-white font-medium">Ver →</span>
+          <span className="text-white font-medium">{t('home.alerts.view')} →</span>
         )}
       </button>
 
@@ -136,7 +127,7 @@ export default function Home() {
         <Card>
           <CardHeader>
             <div className="flex items-center justify-between">
-              <CardTitle>Este Mes</CardTitle>
+              <CardTitle>{t('home.thisMonth.title')}</CardTitle>
               <div className="flex items-center gap-2">
                 <Button
                   variant="ghost"
@@ -178,7 +169,7 @@ export default function Home() {
               >
                 <Wrench className="h-8 w-8 text-blue-600 mb-2" />
                 <div className="text-2xl font-bold text-foreground">{metrics?.services ?? 0}</div>
-                <div className="text-sm text-muted-foreground">Servicios</div>
+                <div className="text-sm text-muted-foreground">{t('home.thisMonth.services')}</div>
               </button>
 
               <button
@@ -187,7 +178,7 @@ export default function Home() {
               >
                 <DollarSign className="h-8 w-8 text-green-600 mb-2" />
                 <div className="text-2xl font-bold text-foreground">0 €</div>
-                <div className="text-sm text-muted-foreground">Ingresos</div>
+                <div className="text-sm text-muted-foreground">{t('home.thisMonth.income')}</div>
               </button>
 
               <button
@@ -196,7 +187,7 @@ export default function Home() {
               >
                 <Users className="h-8 w-8 text-cyan-600 mb-2" />
                 <div className="text-2xl font-bold text-foreground">{metrics?.clients ?? 0}</div>
-                <div className="text-sm text-muted-foreground">Clientes</div>
+                <div className="text-sm text-muted-foreground">{t('home.thisMonth.clients')}</div>
               </button>
 
               <button
@@ -205,7 +196,7 @@ export default function Home() {
               >
                 <Music className="h-8 w-8 text-purple-600 mb-2" />
                 <div className="text-2xl font-bold text-foreground">{metrics?.pianos ?? 0}</div>
-                <div className="text-sm text-muted-foreground">Pianos</div>
+                <div className="text-sm text-muted-foreground">{t('home.thisMonth.pianos')}</div>
               </button>
             </div>
           </CardContent>
@@ -217,14 +208,14 @@ export default function Home() {
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <Lightbulb className="h-5 w-5 text-purple-600" />
-                <CardTitle>Predicciones IA</CardTitle>
+                <CardTitle>{t('home.aiPredictions.title')}</CardTitle>
               </div>
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={() => navigate('/predicciones')}
               >
-                Ver todo →
+                {t('home.aiPredictions.viewAll')} →
               </Button>
             </div>
           </CardHeader>
@@ -235,7 +226,7 @@ export default function Home() {
                   <TrendingUp className="h-6 w-6 text-green-500" />
                   <div className="text-sm font-bold text-green-500">N/A</div>
                 </div>
-                <div className="text-xs text-muted-foreground text-center">Ingresos prev.</div>
+                <div className="text-xs text-muted-foreground text-center">{t('home.aiPredictions.predictedIncome')}</div>
               </div>
 
               <div className="flex flex-col items-center">
@@ -243,7 +234,7 @@ export default function Home() {
                   <HelpCircle className="h-6 w-6 text-amber-500" />
                   <div className="text-sm font-bold text-amber-500">0</div>
                 </div>
-                <div className="text-xs text-muted-foreground text-center">Clientes riesgo</div>
+                <div className="text-xs text-muted-foreground text-center">{t('home.aiPredictions.riskClients')}</div>
               </div>
 
               <div className="flex flex-col items-center">
@@ -251,7 +242,7 @@ export default function Home() {
                   <SettingsIcon className="h-6 w-6 text-purple-600" />
                   <div className="text-sm font-bold text-purple-600">0</div>
                 </div>
-                <div className="text-xs text-muted-foreground text-center">Mant. próximo</div>
+                <div className="text-xs text-muted-foreground text-center">{t('home.aiPredictions.upcomingMaintenance')}</div>
               </div>
             </div>
           </CardContent>
@@ -263,7 +254,7 @@ export default function Home() {
         {/* Próximas Citas */}
         <Card>
           <CardHeader>
-            <CardTitle>Próximas Citas</CardTitle>
+            <CardTitle>{t('home.upcomingAppointments.title')}</CardTitle>
           </CardHeader>
           <CardContent>
             {upcomingLoading ? (
@@ -273,7 +264,7 @@ export default function Home() {
             ) : !upcomingServices || upcomingServices.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-8 text-center">
                 <Calendar className="h-12 w-12 text-muted-foreground mb-2" />
-                <p className="text-sm text-muted-foreground">No hay citas próximas</p>
+                <p className="text-sm text-muted-foreground">{t('home.upcomingAppointments.noAppointments')}</p>
               </div>
             ) : (
               <div className="space-y-3">
@@ -281,7 +272,7 @@ export default function Home() {
                   <button
                     key={service.id}
                     onClick={() => navigate(`/servicios/${service.id}`)}
-                    className="w-full flex items-center gap-4 p-3 rounded-lg border border-border hover:bg-accent transition-colors"
+                    className="w-full flex items-center gap-3 p-3 rounded-lg border border-border hover:bg-accent transition-colors text-left"
                   >
                     <div className="flex flex-col items-center justify-center min-w-[60px] bg-primary/10 rounded-lg p-2">
                       <div className="text-sm font-bold text-primary">
@@ -310,7 +301,7 @@ export default function Home() {
         {/* Acciones Rápidas */}
         <Card>
           <CardHeader>
-            <CardTitle>Acciones Rápidas</CardTitle>
+            <CardTitle>{t('home.quickActions.title')}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-2 gap-3">
@@ -319,7 +310,7 @@ export default function Home() {
                 className="h-auto flex-col gap-2 py-4 bg-[#e07a5f] hover:bg-[#d16a4f] text-white"
               >
                 <UserPlus className="h-6 w-6" />
-                <span className="text-sm">Nuevo Cliente</span>
+                <span className="text-sm">{t('home.quickActions.newClient')}</span>
               </Button>
 
               <Button
@@ -327,7 +318,7 @@ export default function Home() {
                 className="h-auto flex-col gap-2 py-4 bg-[#e07a5f] hover:bg-[#d16a4f] text-white"
               >
                 <Wrench className="h-6 w-6" />
-                <span className="text-sm">Nuevo Servicio</span>
+                <span className="text-sm">{t('home.quickActions.newService')}</span>
               </Button>
 
               <Button
@@ -335,7 +326,7 @@ export default function Home() {
                 className="h-auto flex-col gap-2 py-4 bg-[#e07a5f] hover:bg-[#d16a4f] text-white"
               >
                 <Receipt className="h-6 w-6" />
-                <span className="text-sm">Nueva Factura</span>
+                <span className="text-sm">{t('home.quickActions.newInvoice')}</span>
               </Button>
 
               <Button
@@ -343,7 +334,7 @@ export default function Home() {
                 className="h-auto flex-col gap-2 py-4 bg-[#e07a5f] hover:bg-[#d16a4f] text-white"
               >
                 <Music className="h-6 w-6" />
-                <span className="text-sm">Nuevo Piano</span>
+                <span className="text-sm">{t('home.quickActions.newPiano')}</span>
               </Button>
 
               <Button
@@ -351,7 +342,7 @@ export default function Home() {
                 className="h-auto flex-col gap-2 py-4 bg-[#e07a5f] hover:bg-[#d16a4f] text-white"
               >
                 <FileText className="h-6 w-6" />
-                <span className="text-sm">Nuevo Presupuesto</span>
+                <span className="text-sm">{t('home.quickActions.newQuote')}</span>
               </Button>
 
               <Button
@@ -359,7 +350,7 @@ export default function Home() {
                 className="h-auto flex-col gap-2 py-4 bg-[#e07a5f] hover:bg-[#d16a4f] text-white"
               >
                 <CalendarPlus className="h-6 w-6" />
-                <span className="text-sm">Nueva Cita</span>
+                <span className="text-sm">{t('home.quickActions.newAppointment')}</span>
               </Button>
             </div>
           </CardContent>

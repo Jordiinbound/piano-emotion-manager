@@ -1009,24 +1009,47 @@
     "yesterday": "Ayer"
   },
   "workflows": {
-    "action": "Acción",
-    "actions": {
-      "createTask": "Crear tarea",
-      "sendEmail": "Enviar email",
-      "sendSms": "Enviar SMS",
-      "sendWhatsapp": "Enviar WhatsApp",
-      "updateField": "Actualizar campo"
+    "title": "Workflows",
+    "subtitle": "Automatizaciones y flujos de trabajo personalizados",
+    "create": "Crear Workflow",
+    "activeWorkflows": "Workflows Activos",
+    "totalExecutions": "Ejecuciones Totales",
+    "successRate": "Tasa de Éxito",
+    "list": {
+      "title": "Workflows Configurados",
+      "status": "Estado",
+      "lastExecution": "Última Ejecución",
+      "actions": "Acciones",
+      "edit": "Editar",
+      "delete": "Eliminar",
+      "active": "Activo",
+      "inactive": "Inactivo"
     },
-    "condition": "Condición",
-    "newWorkflow": "Nueva Automatización",
-    "title": "Automatizaciones",
-    "trigger": "Disparador",
-    "triggers": {
-      "invoicePaid": "Factura pagada",
-      "lowStock": "Stock bajo",
-      "newAppointment": "Nueva cita",
-      "newClient": "Nuevo cliente",
-      "serviceCompleted": "Servicio completado"
+    "templates": {
+      "title": "Templates Predefinidos",
+      "use": "Usar Template"
+    },
+    "templatesList": {
+      "invoiceReminder": {
+        "name": "Recordatorio de Facturas",
+        "description": "Envía recordatorios automáticos de facturas pendientes"
+      },
+      "appointmentConfirmation": {
+        "name": "Confirmación de Citas",
+        "description": "Confirma citas automáticamente 24h antes"
+      },
+      "maintenanceAlert": {
+        "name": "Alerta de Mantenimiento",
+        "description": "Notifica cuando un piano necesita mantenimiento"
+      }
+    },
+    "workflowsList": {
+      "invoiceReminder": "Recordatorio de Facturas Vencidas",
+      "appointmentConfirmation": "Confirmación Automática de Citas",
+      "maintenanceAlert": "Alerta de Mantenimiento Preventivo"
+    },
+    "toast": {
+      "createComingSoon": "Funcionalidad de creación próximamente"
     }
   },
   "reports": {
@@ -1049,50 +1072,301 @@
     "noData": "No hay datos disponibles"
   },
   "accounting": {
-    "period": {
-      "week": "Semana",
-      "month": "Mes",
-      "quarter": "Trimestre",
-      "year": "Año"
+    "title": "Contabilidad",
+    "subtitle": "Integración contable y gestión fiscal",
+    "import": "Importar",
+    "export": "Exportar",
+    "period": "Período",
+    "month": "Mes",
+    "quarter": "Trimestre",
+    "year": "Año",
+    "totalIncome": "Ingresos Totales",
+    "invoicesIssued": "Facturas Emitidas",
+    "vatCharged": "IVA Repercutido",
+    "dailyBook": {
+      "title": "Libro Diario",
+      "description": "Registro cronológico de todas las operaciones contables",
+      "viewEntries": "Ver Asientos"
     },
-    "income": "Ingresos",
-    "expenses": "Gastos",
-    "profit": "Beneficio",
-    "balance": "Balance",
-    "accounts": "Cuentas",
-    "expensesByCategory": "Gastos por categoría",
-    "quickActions": "Acciones rápidas",
-    "addIncome": "Añadir ingreso",
-    "addExpense": "Añadir gasto",
-    "transfer": "Transferencia",
-    "reports": "Informes",
-    "accountType": {
-      "cash": "Efectivo",
-      "bank": "Banco",
-      "credit_card": "Tarjeta de crédito",
-      "savings": "Ahorros",
-      "paypal": "PayPal",
-      "other": "Otro"
+    "balanceSheet": {
+      "title": "Balance de Situación",
+      "description": "Estado financiero de activos, pasivos y patrimonio",
+      "generate": "Generar Balance"
     },
-    "category": {
-      "materials": "Materiales",
-      "tools": "Herramientas",
-      "transport": "Transporte",
-      "vehicle": "Vehículo",
-      "office": "Oficina",
-      "marketing": "Marketing",
-      "software": "Software",
-      "insurance": "Seguros",
-      "taxes": "Impuestos",
-      "salaries": "Salarios",
-      "rent": "Alquiler",
-      "utilities": "Suministros",
-      "training": "Formación",
-      "other": "Otros"
+    "incomeStatement": {
+      "title": "Cuenta de Resultados",
+      "description": "Análisis de ingresos, gastos y beneficios",
+      "viewResults": "Ver Resultados"
+    },
+    "taxModels": {
+      "title": "Modelos Fiscales",
+      "description": "Generación automática de modelos 303, 390, etc.",
+      "generate": "Generar Modelos"
+    },
+    "integrations": {
+      "title": "Integraciones Contables",
+      "available": "Disponible"
+    },
+    "toast": {
+      "exportSuccess": "Exportación contable generada correctamente",
+      "importComingSoon": "Funcionalidad de importación próximamente"
     }
   },
   "shop": {
     "noShops": "No hay tiendas disponibles",
     "noShopsDesc": "Actualmente no hay tiendas configuradas"
+  },
+  "alerts": {
+    "title": "Alertas y Avisos",
+    "summary": "Resumen de Alertas",
+    "urgent": "Urgentes",
+    "pending": "Pendientes",
+    "total": "Total",
+    "filterByType": "Filtrar por tipo",
+    "filterByPriority": "Filtrar por prioridad",
+    "allTypes": "Todos los tipos",
+    "allPriorities": "Todas las prioridades",
+    "types": {
+      "invoice": "Facturas",
+      "appointment": "Citas",
+      "maintenance": "Mantenimiento"
+    },
+    "priorities": {
+      "urgent": "Urgente",
+      "high": "Alta",
+      "medium": "Media",
+      "low": "Baja"
+    },
+    "actions": {
+      "markAsRead": "Alerta marcada como leída",
+      "markAsReadError": "Error al marcar alerta",
+      "resolveSuccess": "Alerta resuelta correctamente",
+      "resolveError": "Error al resolver alerta"
+    },
+    "empty": "No hay alertas",
+    "emptyMessage": "Todo está al día",
+    "description": "Gestiona todas las alertas del sistema en un solo lugar",
+    "activeAlerts": "Alertas activas en el sistema",
+    "requireImmediate": "Requieren atención inmediata",
+    "toReviewSoon": "Para revisar próximamente",
+    "filters": "Filtros",
+    "noMatchingFilters": "No hay alertas que coincidan con los filtros seleccionados",
+    "client": "Cliente",
+    "amount": "Monto",
+    "dueDate": "Vencimiento",
+    "date": "Fecha",
+    "daysSinceLastService": "Días desde último servicio"
+  },
+  "alertSettings": {
+    "title": "Configuración de Alertas",
+    "description": "Personaliza los umbrales y preferencias de tus alertas",
+    "saveChanges": "Guardar Cambios",
+    "reset": "Restablecer",
+    "resetConfirm": "¿Estás seguro de que quieres restablecer la configuración a los valores por defecto?",
+    "saveSuccess": "Configuración guardada correctamente",
+    "saveError": "Error al guardar configuración",
+    "resetSuccess": "Configuración restablecida a valores por defecto",
+    "resetError": "Error al restablecer configuración",
+    "tabs": {
+      "pianos": "Pianos",
+      "appointments": "Citas",
+      "finances": "Finanzas",
+      "inventory": "Inventario",
+      "maintenance": "Mantenimiento",
+      "clients": "Clientes",
+      "notifications": "Notificaciones"
+    },
+    "pianos": {
+      "title": "Umbrales de Mantenimiento de Pianos",
+      "description": "Configura cuándo recibir alertas sobre afinaciones y regulaciones",
+      "tuningPending": "Afinación Pendiente (días)",
+      "tuningPendingHelp": "Días sin afinación para generar alerta pendiente",
+      "tuningUrgent": "Afinación Urgente (días)",
+      "tuningUrgentHelp": "Días sin afinación para generar alerta urgente",
+      "regulationPending": "Regulación Pendiente (días)",
+      "regulationPendingHelp": "Días sin regulación para generar alerta pendiente",
+      "regulationUrgent": "Regulación Urgente (días)",
+      "regulationUrgentHelp": "Días sin regulación para generar alerta urgente"
+    },
+    "appointments": {
+      "title": "Recordatorios de Citas y Servicios",
+      "description": "Configura cuándo recibir recordatorios de citas programadas",
+      "appointmentsNotice": "Aviso de Citas (días)",
+      "appointmentsNoticeHelp": "Días de anticipación para recordar citas próximas",
+      "servicesNotice": "Aviso de Servicios (días)",
+      "servicesNoticeHelp": "Días de anticipación para recordar servicios programados"
+    },
+    "finances": {
+      "title": "Alertas Financieras",
+      "description": "Configura recordatorios de facturas, presupuestos y pagos",
+      "invoicesDue": "Facturas por Vencer (días)",
+      "invoicesDueHelp": "Días antes del vencimiento para alertar",
+      "overduePayments": "Pagos Vencidos (días)",
+      "overduePaymentsHelp": "Días después del vencimiento para seguimiento",
+      "quotesExpiry": "Presupuestos por Expirar (días)",
+      "quotesExpiryHelp": "Días antes de la expiración del presupuesto",
+      "contractsRenewal": "Renovación de Contratos (días)",
+      "contractsRenewalHelp": "Días antes de la renovación del contrato"
+    },
+    "inventory": {
+      "title": "Alertas de Inventario",
+      "description": "Configura alertas de stock mínimo y productos por expirar",
+      "minStock": "Stock Mínimo (unidades)",
+      "minStockHelp": "Cantidad mínima antes de generar alerta",
+      "expiryNotice": "Productos por Expirar (días)",
+      "expiryNoticeHelp": "Días antes de la fecha de expiración"
+    },
+    "maintenance": {
+      "title": "Mantenimiento de Herramientas",
+      "description": "Configura recordatorios de mantenimiento de herramientas",
+      "toolsMaintenance": "Mantenimiento de Herramientas (días)",
+      "toolsMaintenanceHelp": "Días entre mantenimientos de herramientas"
+    },
+    "clients": {
+      "title": "Seguimiento de Clientes",
+      "description": "Configura recordatorios de seguimiento y clientes inactivos",
+      "clientFollowup": "Seguimiento de Clientes (días)",
+      "clientFollowupHelp": "Días sin contacto para recordar seguimiento",
+      "clientInactive": "Clientes Inactivos (meses)",
+      "clientInactiveHelp": "Meses sin actividad para marcar como inactivo"
+    },
+    "notifications": {
+      "title": "Preferencias de Notificaciones",
+      "description": "Configura cómo y cuándo recibir notificaciones",
+      "emailNotifications": "Notificaciones por Email",
+      "emailNotificationsHelp": "Recibir alertas por correo electrónico",
+      "pushNotifications": "Notificaciones Push",
+      "pushNotificationsHelp": "Recibir notificaciones en el navegador",
+      "weeklyDigest": "Resumen Semanal",
+      "weeklyDigestHelp": "Recibir un resumen semanal de alertas",
+      "digestDay": "Día del Resumen Semanal",
+      "days": {
+        "sunday": "Domingo",
+        "monday": "Lunes",
+        "tuesday": "Martes",
+        "wednesday": "Miércoles",
+        "thursday": "Jueves",
+        "friday": "Viernes",
+        "saturday": "Sábado"
+      }
+    }
+  },
+  "advancedTools": {
+    "title": "Herramientas Avanzadas",
+    "subtitle": "Potencia tu negocio con módulos premium y funcionalidades avanzadas",
+    "modulesAvailable": "Módulos Disponibles",
+    "plan": "Plan",
+    "freeModules": "Módulos Gratuitos",
+    "proModules": "Módulos Profesionales",
+    "premiumModules": "Módulos Premium",
+    "modules": "módulos",
+    "requiresPlan": "Esta funcionalidad requiere plan",
+    "comingSoon": "Módulo en desarrollo - Próximamente disponible",
+    "badges": {
+      "pro": "PRO",
+      "premium": "PREMIUM",
+      "comingSoon": "PRÓXIMAMENTE"
+    },
+    "modulesList": {
+      "shop": {
+        "label": "Tienda",
+        "description": "Gestiona tu catálogo y ventas online"
+      },
+      "calendarAdv": {
+        "label": "Calendario+",
+        "description": "Agenda avanzada con recordatorios"
+      },
+      "dashboardEditor": {
+        "label": "Dashboard+",
+        "description": "Panel personalizable con widgets"
+      },
+      "managePlan": {
+        "label": "Gestionar Plan",
+        "description": "Administra tu suscripción y pagos"
+      },
+      "teams": {
+        "label": "Equipos",
+        "description": "Gestión de miembros y permisos"
+      },
+      "crm": {
+        "label": "CRM",
+        "description": "Gestión avanzada de relaciones"
+      },
+      "reports": {
+        "label": "Reportes",
+        "description": "Análisis y estadísticas detalladas"
+      },
+      "clientPortal": {
+        "label": "Portal Clientes",
+        "description": "Acceso web para tus clientes"
+      },
+      "distributors": {
+        "label": "Distribuidores",
+        "description": "Gestión de proveedores y partners"
+      },
+      "marketing": {
+        "label": "Marketing",
+        "description": "Campañas y email marketing"
+      },
+      "payments": {
+        "label": "Pasarelas Pago",
+        "description": "Configuración de métodos de pago"
+      },
+      "accounting": {
+        "label": "Contabilidad",
+        "description": "Integración contable y fiscal"
+      },
+      "workflows": {
+        "label": "Workflows",
+        "description": "Automatizaciones personalizadas"
+      }
+    }
+  },
+  "home": {
+    "alerts": {
+      "requireAttention": "alerta requiere",
+      "requireAttentionPlural": "alertas requieren",
+      "yourAttention": "tu atención",
+      "allGood": "Todo en orden",
+      "view": "Ver"
+    },
+    "thisMonth": {
+      "title": "Este Mes",
+      "services": "Servicios",
+      "income": "Ingresos",
+      "clients": "Clientes",
+      "pianos": "Pianos"
+    },
+    "aiPredictions": {
+      "title": "Predicciones IA",
+      "viewAll": "Ver todo",
+      "predictedIncome": "Ingresos prev.",
+      "riskClients": "Clientes riesgo",
+      "upcomingMaintenance": "Mant. próximo"
+    },
+    "upcomingAppointments": {
+      "title": "Próximas Citas",
+      "noAppointments": "No hay citas próximas"
+    },
+    "quickActions": {
+      "title": "Acciones Rápidas",
+      "newClient": "Nuevo Cliente",
+      "newService": "Nuevo Servicio",
+      "newInvoice": "Nueva Factura",
+      "newPiano": "Nuevo Piano",
+      "newQuote": "Nuevo Presupuesto",
+      "newAppointment": "Nueva Cita"
+    },
+    "serviceTypes": {
+      "tuning": "Afinación",
+      "repair": "Reparación",
+      "regulation": "Regulación",
+      "maintenance_basic": "Mantenimiento Básico",
+      "maintenance_complete": "Mantenimiento Completo",
+      "maintenance_premium": "Mantenimiento Premium",
+      "inspection": "Inspección",
+      "restoration": "Restauración",
+      "other": "Otro"
+    }
   }
 }

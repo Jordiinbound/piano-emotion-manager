@@ -6,22 +6,36 @@
  * funcionen correctamente en producción.
  */
 
-import { useContext } from 'react';
-import { useLanguage, LanguageProvider } from '@/contexts/language-context';
-import { translations, defaultLanguage } from '@/locales';
-import { I18n } from 'i18n-js';
-
-// Crear instancia de i18n como fallback
-const i18nFallback = new I18n(translations);
-i18nFallback.enableFallback = true;
-i18nFallback.defaultLocale = defaultLanguage;
-i18nFallback.locale = defaultLanguage;
+import { useLanguage } from '@/contexts/language-context';
+import { translations, defaultLanguage } from '../../../locales';
 
 /**
- * Función de traducción fallback que usa i18n-js directamente
+ * Función de traducción fallback que navega por el objeto de traducciones
  */
 function translateFallback(key: string, options?: Record<string, any>): string {
-  return i18nFallback.t(key, options);
+  const locale = defaultLanguage;
+  const keys = key.split('.');
+  let value: any = translations[locale];
+  
+  for (const k of keys) {
+    if (value && typeof value === 'object') {
+      value = value[k];
+    } else {
+      return key; // Retornar la clave si no se encuentra traducción
+    }
+  }
+  
+  if (typeof value === 'string') {
+    // Reemplazar variables en el texto
+    if (options) {
+      return value.replace(/\{\{(\w+)\}\}/g, (_, varName) => {
+        return options[varName] !== undefined ? String(options[varName]) : `{{${varName}}}`;
+      });
+    }
+    return value;
+  }
+  
+  return key;
 }
 
 /**
@@ -57,7 +71,7 @@ export function useTranslation() {
 
 /**
  * Función de traducción standalone para uso fuera de componentes React
- * Usa el fallback de i18n-js directamente
+ * Usa el fallback directamente
  */
 export function t(key: string, options?: Record<string, any>): string {
   return translateFallback(key, options);

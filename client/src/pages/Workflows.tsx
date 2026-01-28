@@ -21,6 +21,7 @@ import {
   AlertCircle,
 } from 'lucide-react';
 import { toast } from 'sonner';
+import { useTranslation } from '@/hooks/use-translation';
 
 interface Workflow {
   id: string;
@@ -33,40 +34,42 @@ interface Workflow {
   lastRun?: string;
 }
 
-const SAMPLE_WORKFLOWS: Workflow[] = [
-  {
-    id: '1',
-    name: 'Recordatorio de Servicios',
-    description: 'Envía email automático 7 días antes del servicio programado',
-    trigger: 'Fecha de servicio',
-    actions: 2,
-    status: 'active',
-    executions: 45,
-    lastRun: '2026-01-27',
-  },
-  {
-    id: '2',
-    name: 'Seguimiento de Facturas',
-    description: 'Notifica cuando una factura lleva más de 30 días sin pagar',
-    trigger: 'Fecha de vencimiento',
-    actions: 3,
-    status: 'active',
-    executions: 12,
-    lastRun: '2026-01-26',
-  },
-  {
-    id: '3',
-    name: 'Bienvenida a Nuevos Clientes',
-    description: 'Envía email de bienvenida y guía de servicios',
-    trigger: 'Cliente creado',
-    actions: 2,
-    status: 'paused',
-    executions: 28,
-    lastRun: '2026-01-20',
-  },
-];
-
 export default function Workflows() {
+  const { t } = useTranslation();
+  
+  const SAMPLE_WORKFLOWS: Workflow[] = [
+    {
+      id: '1',
+      name: t('workflows.workflowsList.invoiceReminder'),
+      description: t('workflows.templatesList.invoiceReminder.description'),
+      trigger: 'Fecha de servicio',
+      actions: 2,
+      status: 'active',
+      executions: 45,
+      lastRun: '2026-01-27',
+    },
+    {
+      id: '2',
+      name: t('workflows.workflowsList.appointmentConfirmation'),
+      description: t('workflows.templatesList.appointmentConfirmation.description'),
+      trigger: 'Fecha de vencimiento',
+      actions: 3,
+      status: 'active',
+      executions: 12,
+      lastRun: '2026-01-26',
+    },
+    {
+      id: '3',
+      name: t('workflows.workflowsList.maintenanceAlert'),
+      description: t('workflows.templatesList.maintenanceAlert.description'),
+      trigger: 'Cliente creado',
+      actions: 2,
+      status: 'paused',
+      executions: 28,
+      lastRun: '2026-01-20',
+    },
+  ];
+
   const [workflows, setWorkflows] = useState<Workflow[]>(SAMPLE_WORKFLOWS);
 
   const handleToggleStatus = (id: string) => {
@@ -81,7 +84,7 @@ export default function Workflows() {
   };
 
   const handleCreateWorkflow = () => {
-    toast.info('Editor de workflows próximamente');
+    toast.info(t('workflows.toast.createComingSoon'));
   };
 
   const getStatusIcon = (status: Workflow['status']) => {
@@ -111,15 +114,15 @@ export default function Workflows() {
         <div>
           <h1 className="text-3xl font-bold text-foreground flex items-center gap-3">
             <GitBranch className="h-8 w-8 text-indigo-500" />
-            Workflows
+            {t('workflows.title')}
           </h1>
           <p className="text-muted-foreground mt-1">
-            Automatizaciones y flujos de trabajo personalizados
+            {t('workflows.subtitle')}
           </p>
         </div>
         <Button onClick={handleCreateWorkflow}>
           <Plus className="h-4 w-4 mr-2" />
-          Crear Workflow
+          {t('workflows.create')}
         </Button>
       </div>
 
@@ -128,7 +131,7 @@ export default function Workflows() {
         <Card className="p-6">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-muted-foreground">Total Workflows</p>
+              <p className="text-sm text-muted-foreground">{t('workflows.title')}</p>
               <p className="text-3xl font-bold text-foreground mt-1">
                 {workflows.length}
               </p>
@@ -140,7 +143,7 @@ export default function Workflows() {
         <Card className="p-6">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-muted-foreground">Activos</p>
+              <p className="text-sm text-muted-foreground">{t('workflows.activeWorkflows')}</p>
               <p className="text-3xl font-bold text-green-600 mt-1">
                 {workflows.filter(w => w.status === 'active').length}
               </p>
@@ -152,7 +155,7 @@ export default function Workflows() {
         <Card className="p-6">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-muted-foreground">Ejecuciones</p>
+              <p className="text-sm text-muted-foreground">{t('workflows.totalExecutions')}</p>
               <p className="text-3xl font-bold text-foreground mt-1">
                 {workflows.reduce((acc, w) => acc + w.executions, 0)}
               </p>
@@ -164,9 +167,9 @@ export default function Workflows() {
         <Card className="p-6">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-muted-foreground">Ahorro Tiempo</p>
+              <p className="text-sm text-muted-foreground">{t('workflows.successRate')}</p>
               <p className="text-3xl font-bold text-foreground mt-1">
-                12h
+                98%
               </p>
             </div>
             <Clock className="h-8 w-8 text-blue-500" />
@@ -176,6 +179,7 @@ export default function Workflows() {
 
       {/* Lista de workflows */}
       <div className="space-y-4">
+        <h2 className="text-2xl font-semibold">{t('workflows.list.title')}</h2>
         {workflows.map((workflow) => (
           <Card key={workflow.id} className="p-6">
             <div className="flex items-start justify-between">
@@ -184,7 +188,11 @@ export default function Workflows() {
                   <h3 className="text-xl font-semibold">{workflow.name}</h3>
                   <Badge className={getStatusBadge(workflow.status)}>
                     {getStatusIcon(workflow.status)}
-                    <span className="ml-1 capitalize">{workflow.status}</span>
+                    <span className="ml-1 capitalize">
+                      {workflow.status === 'active' && t('workflows.list.active')}
+                      {workflow.status === 'paused' && t('workflows.list.inactive')}
+                      {workflow.status === 'error' && 'Error'}
+                    </span>
                   </Badge>
                 </div>
                 <p className="text-muted-foreground mb-4">{workflow.description}</p>
@@ -195,15 +203,15 @@ export default function Workflows() {
                     <p className="font-medium">{workflow.trigger}</p>
                   </div>
                   <div>
-                    <span className="text-muted-foreground">Acciones:</span>
+                    <span className="text-muted-foreground">{t('workflows.list.actions')}:</span>
                     <p className="font-medium">{workflow.actions} pasos</p>
                   </div>
                   <div>
-                    <span className="text-muted-foreground">Ejecuciones:</span>
+                    <span className="text-muted-foreground">{t('workflows.totalExecutions')}:</span>
                     <p className="font-medium">{workflow.executions}</p>
                   </div>
                   <div>
-                    <span className="text-muted-foreground">Última ejecución:</span>
+                    <span className="text-muted-foreground">{t('workflows.list.lastExecution')}:</span>
                     <p className="font-medium">{workflow.lastRun || 'Nunca'}</p>
                   </div>
                 </div>
@@ -238,17 +246,35 @@ export default function Workflows() {
 
       {/* Templates de workflows */}
       <Card className="p-6">
-        <h3 className="text-xl font-semibold mb-4">Templates Disponibles</h3>
+        <h3 className="text-xl font-semibold mb-4">{t('workflows.templates.title')}</h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {[
-            { name: 'Recordatorio de Afinación', icon: Clock },
-            { name: 'Seguimiento Post-Servicio', icon: CheckCircle2 },
-            { name: 'Gestión de Inventario Bajo', icon: AlertCircle },
+            { 
+              name: t('workflows.templatesList.invoiceReminder.name'), 
+              icon: Clock,
+              description: t('workflows.templatesList.invoiceReminder.description')
+            },
+            { 
+              name: t('workflows.templatesList.appointmentConfirmation.name'), 
+              icon: CheckCircle2,
+              description: t('workflows.templatesList.appointmentConfirmation.description')
+            },
+            { 
+              name: t('workflows.templatesList.maintenanceAlert.name'), 
+              icon: AlertCircle,
+              description: t('workflows.templatesList.maintenanceAlert.description')
+            },
           ].map((template) => (
             <Card key={template.name} className="p-4 hover:shadow-lg transition-shadow cursor-pointer">
-              <div className="flex items-center gap-3">
-                <template.icon className="h-6 w-6 text-primary" />
-                <span className="font-medium">{template.name}</span>
+              <div className="flex items-start gap-3">
+                <template.icon className="h-6 w-6 text-primary flex-shrink-0 mt-1" />
+                <div>
+                  <p className="font-medium mb-1">{template.name}</p>
+                  <p className="text-sm text-muted-foreground">{template.description}</p>
+                  <Button variant="link" size="sm" className="mt-2 p-0 h-auto">
+                    {t('workflows.templates.use')}
+                  </Button>
+                </div>
               </div>
             </Card>
           ))}

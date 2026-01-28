@@ -1007,24 +1007,47 @@
     "yesterday": "Yesterday"
   },
   "workflows": {
-    "action": "Action",
-    "actions": {
-      "createTask": "Create task",
-      "sendEmail": "Send email",
-      "sendSms": "Send SMS",
-      "sendWhatsapp": "Send WhatsApp",
-      "updateField": "Update field"
+    "title": "Workflows",
+    "subtitle": "Custom automations and workflows",
+    "create": "Create Workflow",
+    "activeWorkflows": "Active Workflows",
+    "totalExecutions": "Total Executions",
+    "successRate": "Success Rate",
+    "list": {
+      "title": "Configured Workflows",
+      "status": "Status",
+      "lastExecution": "Last Execution",
+      "actions": "Actions",
+      "edit": "Edit",
+      "delete": "Delete",
+      "active": "Active",
+      "inactive": "Inactive"
     },
-    "condition": "Condition",
-    "newWorkflow": "New Automation",
-    "title": "Automations",
-    "trigger": "Trigger",
-    "triggers": {
-      "invoicePaid": "Invoice paid",
-      "lowStock": "Low stock",
-      "newAppointment": "New appointment",
-      "newClient": "New client",
-      "serviceCompleted": "Service completed"
+    "templates": {
+      "title": "Predefined Templates",
+      "use": "Use Template"
+    },
+    "templatesList": {
+      "invoiceReminder": {
+        "name": "Invoice Reminder",
+        "description": "Sends automatic reminders for pending invoices"
+      },
+      "appointmentConfirmation": {
+        "name": "Appointment Confirmation",
+        "description": "Confirms appointments automatically 24h before"
+      },
+      "maintenanceAlert": {
+        "name": "Maintenance Alert",
+        "description": "Notifies when a piano needs maintenance"
+      }
+    },
+    "workflowsList": {
+      "invoiceReminder": "Overdue Invoice Reminder",
+      "appointmentConfirmation": "Automatic Appointment Confirmation",
+      "maintenanceAlert": "Preventive Maintenance Alert"
+    },
+    "toast": {
+      "createComingSoon": "Creation functionality coming soon"
     }
   },
   "reports": {
@@ -1042,22 +1065,301 @@
     "noData": "No data available"
   },
   "accounting": {
-    "period": {
-      "week": "Week",
-      "month": "Month",
-      "quarter": "Quarter",
-      "year": "Year"
+    "title": "Accounting",
+    "subtitle": "Accounting integration and tax management",
+    "import": "Import",
+    "export": "Export",
+    "period": "Period",
+    "month": "Month",
+    "quarter": "Quarter",
+    "year": "Year",
+    "totalIncome": "Total Income",
+    "invoicesIssued": "Invoices Issued",
+    "vatCharged": "VAT Charged",
+    "dailyBook": {
+      "title": "Daily Book",
+      "description": "Chronological record of all accounting operations",
+      "viewEntries": "View Entries"
     },
-    "income": "Income",
-    "expenses": "Expenses",
-    "profit": "Profit",
-    "balance": "Balance",
-    "accounts": "Accounts",
-    "expensesByCategory": "Expenses by category",
-    "quickActions": "Quick actions"
+    "balanceSheet": {
+      "title": "Balance Sheet",
+      "description": "Financial statement of assets, liabilities and equity",
+      "generate": "Generate Balance"
+    },
+    "incomeStatement": {
+      "title": "Income Statement",
+      "description": "Analysis of income, expenses and profits",
+      "viewResults": "View Results"
+    },
+    "taxModels": {
+      "title": "Tax Models",
+      "description": "Automatic generation of models 303, 390, etc.",
+      "generate": "Generate Models"
+    },
+    "integrations": {
+      "title": "Accounting Integrations",
+      "available": "Available"
+    },
+    "toast": {
+      "exportSuccess": "Accounting export generated successfully",
+      "importComingSoon": "Import functionality coming soon"
+    }
   },
   "shop": {
     "noShops": "No shops available",
     "noShopsDesc": "There are currently no shops configured"
+  },
+  "alerts": {
+    "title": "Alerts and Notifications",
+    "summary": "Alerts Summary",
+    "urgent": "Urgent",
+    "pending": "Pending",
+    "total": "Total",
+    "filterByType": "Filter by type",
+    "filterByPriority": "Filter by priority",
+    "allTypes": "All types",
+    "allPriorities": "All priorities",
+    "types": {
+      "invoice": "Invoices",
+      "appointment": "Appointments",
+      "maintenance": "Maintenance"
+    },
+    "priorities": {
+      "urgent": "Urgent",
+      "high": "High",
+      "medium": "Medium",
+      "low": "Low"
+    },
+    "actions": {
+      "markAsRead": "Alert marked as read",
+      "markAsReadError": "Error marking alert",
+      "resolveSuccess": "Alert resolved successfully",
+      "resolveError": "Error resolving alert"
+    },
+    "empty": "No alerts",
+    "emptyMessage": "Everything is up to date",
+    "description": "Manage all system alerts in one place",
+    "activeAlerts": "Active alerts in the system",
+    "requireImmediate": "Require immediate attention",
+    "toReviewSoon": "To review soon",
+    "filters": "Filters",
+    "noMatchingFilters": "No alerts match the selected filters",
+    "client": "Client",
+    "amount": "Amount",
+    "dueDate": "Due Date",
+    "date": "Date",
+    "daysSinceLastService": "Days since last service"
+  },
+  "alertSettings": {
+    "title": "Alert Settings",
+    "description": "Customize your alert thresholds and preferences",
+    "saveChanges": "Save Changes",
+    "reset": "Reset",
+    "resetConfirm": "Are you sure you want to reset settings to default values?",
+    "saveSuccess": "Settings saved successfully",
+    "saveError": "Error saving settings",
+    "resetSuccess": "Settings reset to default values",
+    "resetError": "Error resetting settings",
+    "tabs": {
+      "pianos": "Pianos",
+      "appointments": "Appointments",
+      "finances": "Finances",
+      "inventory": "Inventory",
+      "maintenance": "Maintenance",
+      "clients": "Clients",
+      "notifications": "Notifications"
+    },
+    "pianos": {
+      "title": "Piano Maintenance Thresholds",
+      "description": "Configure when to receive alerts about tunings and regulations",
+      "tuningPending": "Pending Tuning (days)",
+      "tuningPendingHelp": "Days without tuning to generate pending alert",
+      "tuningUrgent": "Urgent Tuning (days)",
+      "tuningUrgentHelp": "Days without tuning to generate urgent alert",
+      "regulationPending": "Pending Regulation (days)",
+      "regulationPendingHelp": "Days without regulation to generate pending alert",
+      "regulationUrgent": "Urgent Regulation (days)",
+      "regulationUrgentHelp": "Days without regulation to generate urgent alert"
+    },
+    "appointments": {
+      "title": "Appointment and Service Reminders",
+      "description": "Configure when to receive reminders for scheduled appointments",
+      "appointmentsNotice": "Appointment Notice (days)",
+      "appointmentsNoticeHelp": "Days in advance to remind upcoming appointments",
+      "servicesNotice": "Service Notice (days)",
+      "servicesNoticeHelp": "Days in advance to remind scheduled services"
+    },
+    "finances": {
+      "title": "Financial Alerts",
+      "description": "Configure reminders for invoices, quotes and payments",
+      "invoicesDue": "Invoices Due (days)",
+      "invoicesDueHelp": "Days before due date to alert",
+      "overduePayments": "Overdue Payments (days)",
+      "overduePaymentsHelp": "Days after due date for follow-up",
+      "quotesExpiry": "Quotes Expiring (days)",
+      "quotesExpiryHelp": "Days before quote expiration",
+      "contractsRenewal": "Contract Renewal (days)",
+      "contractsRenewalHelp": "Days before contract renewal"
+    },
+    "inventory": {
+      "title": "Inventory Alerts",
+      "description": "Configure minimum stock and expiring product alerts",
+      "minStock": "Minimum Stock (units)",
+      "minStockHelp": "Minimum quantity before generating alert",
+      "expiryNotice": "Products Expiring (days)",
+      "expiryNoticeHelp": "Days before expiration date"
+    },
+    "maintenance": {
+      "title": "Tool Maintenance",
+      "description": "Configure tool maintenance reminders",
+      "toolsMaintenance": "Tool Maintenance (days)",
+      "toolsMaintenanceHelp": "Days between tool maintenance"
+    },
+    "clients": {
+      "title": "Client Follow-up",
+      "description": "Configure follow-up reminders and inactive clients",
+      "clientFollowup": "Client Follow-up (days)",
+      "clientFollowupHelp": "Days without contact to remind follow-up",
+      "clientInactive": "Inactive Clients (months)",
+      "clientInactiveHelp": "Months without activity to mark as inactive"
+    },
+    "notifications": {
+      "title": "Notification Preferences",
+      "description": "Configure how and when to receive notifications",
+      "emailNotifications": "Email Notifications",
+      "emailNotificationsHelp": "Receive alerts by email",
+      "pushNotifications": "Push Notifications",
+      "pushNotificationsHelp": "Receive browser notifications",
+      "weeklyDigest": "Weekly Digest",
+      "weeklyDigestHelp": "Receive a weekly alert summary",
+      "digestDay": "Weekly Digest Day",
+      "days": {
+        "sunday": "Sunday",
+        "monday": "Monday",
+        "tuesday": "Tuesday",
+        "wednesday": "Wednesday",
+        "thursday": "Thursday",
+        "friday": "Friday",
+        "saturday": "Saturday"
+      }
+    }
+  },
+  "advancedTools": {
+    "title": "Advanced Tools",
+    "subtitle": "Power your business with premium modules and advanced features",
+    "modulesAvailable": "Available Modules",
+    "plan": "Plan",
+    "freeModules": "Free Modules",
+    "proModules": "Professional Modules",
+    "premiumModules": "Premium Modules",
+    "modules": "modules",
+    "requiresPlan": "This feature requires plan",
+    "comingSoon": "Module in development - Coming soon",
+    "badges": {
+      "pro": "PRO",
+      "premium": "PREMIUM",
+      "comingSoon": "COMING SOON"
+    },
+    "modulesList": {
+      "shop": {
+        "label": "Shop",
+        "description": "Manage your catalog and online sales"
+      },
+      "calendarAdv": {
+        "label": "Calendar+",
+        "description": "Advanced calendar with reminders"
+      },
+      "dashboardEditor": {
+        "label": "Dashboard+",
+        "description": "Customizable panel with widgets"
+      },
+      "managePlan": {
+        "label": "Manage Plan",
+        "description": "Manage your subscription and payments"
+      },
+      "teams": {
+        "label": "Teams",
+        "description": "Member and permission management"
+      },
+      "crm": {
+        "label": "CRM",
+        "description": "Advanced relationship management"
+      },
+      "reports": {
+        "label": "Reports",
+        "description": "Detailed analysis and statistics"
+      },
+      "clientPortal": {
+        "label": "Client Portal",
+        "description": "Web access for your clients"
+      },
+      "distributors": {
+        "label": "Distributors",
+        "description": "Supplier and partner management"
+      },
+      "marketing": {
+        "label": "Marketing",
+        "description": "Campaigns and email marketing"
+      },
+      "payments": {
+        "label": "Payment Gateways",
+        "description": "Payment method configuration"
+      },
+      "accounting": {
+        "label": "Accounting",
+        "description": "Accounting and tax integration"
+      },
+      "workflows": {
+        "label": "Workflows",
+        "description": "Custom automations"
+      }
+    }
+  },
+  "home": {
+    "alerts": {
+      "requireAttention": "alert requires",
+      "requireAttentionPlural": "alerts require",
+      "yourAttention": "your attention",
+      "allGood": "All good",
+      "view": "View"
+    },
+    "thisMonth": {
+      "title": "This Month",
+      "services": "Services",
+      "income": "Income",
+      "clients": "Clients",
+      "pianos": "Pianos"
+    },
+    "aiPredictions": {
+      "title": "AI Predictions",
+      "viewAll": "View all",
+      "predictedIncome": "Predicted income",
+      "riskClients": "Risk clients",
+      "upcomingMaintenance": "Upcoming maint."
+    },
+    "upcomingAppointments": {
+      "title": "Upcoming Appointments",
+      "noAppointments": "No upcoming appointments"
+    },
+    "quickActions": {
+      "title": "Quick Actions",
+      "newClient": "New Client",
+      "newService": "New Service",
+      "newInvoice": "New Invoice",
+      "newPiano": "New Piano",
+      "newQuote": "New Quote",
+      "newAppointment": "New Appointment"
+    },
+    "serviceTypes": {
+      "tuning": "Tuning",
+      "repair": "Repair",
+      "regulation": "Regulation",
+      "maintenance_basic": "Basic Maintenance",
+      "maintenance_complete": "Complete Maintenance",
+      "maintenance_premium": "Premium Maintenance",
+      "inspection": "Inspection",
+      "restoration": "Restoration",
+      "other": "Other"
+    }
   }
 }

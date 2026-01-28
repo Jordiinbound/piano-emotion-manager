@@ -25,8 +25,10 @@ import {
   RefreshCw
 } from 'lucide-react';
 import { toast } from 'sonner';
+import { useTranslation } from '@/hooks/use-translation';
 
 export default function ConfiguracionAlertas() {
+  const { t } = useTranslation();
   const { data: settings, isLoading, refetch } = trpc.alertSettings.getSettings.useQuery();
   const [formData, setFormData] = useState(settings || {});
 
@@ -39,21 +41,21 @@ export default function ConfiguracionAlertas() {
 
   const updateMutation = trpc.alertSettings.updateSettings.useMutation({
     onSuccess: () => {
-      toast.success('Configuración guardada correctamente');
+      toast.success(t('alertSettings.saveSuccess'));
       refetch();
     },
     onError: (error) => {
-      toast.error(error.message || 'Error al guardar configuración');
+      toast.error(error.message || t('alertSettings.saveError'));
     },
   });
 
   const resetMutation = trpc.alertSettings.resetSettings.useMutation({
     onSuccess: () => {
-      toast.success('Configuración restablecida a valores por defecto');
+      toast.success(t('alertSettings.resetSuccess'));
       refetch();
     },
     onError: (error) => {
-      toast.error(error.message || 'Error al restablecer configuración');
+      toast.error(error.message || t('alertSettings.resetError'));
     },
   });
 
@@ -62,7 +64,7 @@ export default function ConfiguracionAlertas() {
   };
 
   const handleReset = () => {
-    if (confirm('¿Estás seguro de que quieres restablecer la configuración a los valores por defecto?')) {
+    if (confirm(t('alertSettings.resetConfirm'))) {
       resetMutation.mutate();
     }
   };
@@ -89,9 +91,9 @@ export default function ConfiguracionAlertas() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Configuración de Alertas</h1>
+          <h1 className="text-3xl font-bold tracking-tight">{t('alertSettings.title')}</h1>
           <p className="text-muted-foreground mt-2">
-            Personaliza los umbrales y preferencias de tus alertas
+            {t('alertSettings.description')}
           </p>
         </div>
         <div className="flex gap-2">
@@ -101,14 +103,14 @@ export default function ConfiguracionAlertas() {
             disabled={resetMutation.isPending}
           >
             <RotateCcw className="h-4 w-4 mr-2" />
-            Restablecer
+            {t('alertSettings.reset')}
           </Button>
           <Button
             onClick={handleSave}
             disabled={updateMutation.isPending}
           >
             <Save className="h-4 w-4 mr-2" />
-            Guardar Cambios
+            {t('alertSettings.saveChanges')}
           </Button>
         </div>
       </div>
@@ -117,31 +119,31 @@ export default function ConfiguracionAlertas() {
         <TabsList className="grid w-full grid-cols-7">
           <TabsTrigger value="pianos">
             <Music className="h-4 w-4 mr-2" />
-            Pianos
+            {t('alertSettings.tabs.pianos')}
           </TabsTrigger>
           <TabsTrigger value="citas">
             <Calendar className="h-4 w-4 mr-2" />
-            Citas
+            {t('alertSettings.tabs.appointments')}
           </TabsTrigger>
           <TabsTrigger value="finanzas">
             <DollarSign className="h-4 w-4 mr-2" />
-            Finanzas
+            {t('alertSettings.tabs.finances')}
           </TabsTrigger>
           <TabsTrigger value="inventario">
             <Package className="h-4 w-4 mr-2" />
-            Inventario
+            {t('alertSettings.tabs.inventory')}
           </TabsTrigger>
           <TabsTrigger value="mantenimiento">
             <Wrench className="h-4 w-4 mr-2" />
-            Mantenimiento
+            {t('alertSettings.tabs.maintenance')}
           </TabsTrigger>
           <TabsTrigger value="clientes">
             <Users className="h-4 w-4 mr-2" />
-            Clientes
+            {t('alertSettings.tabs.clients')}
           </TabsTrigger>
           <TabsTrigger value="notificaciones">
             <Bell className="h-4 w-4 mr-2" />
-            Notificaciones
+            {t('alertSettings.tabs.notifications')}
           </TabsTrigger>
         </TabsList>
 
@@ -149,15 +151,15 @@ export default function ConfiguracionAlertas() {
         <TabsContent value="pianos" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>Umbrales de Mantenimiento de Pianos</CardTitle>
+              <CardTitle>{t('alertSettings.pianos.title')}</CardTitle>
               <CardDescription>
-                Configura cuándo recibir alertas sobre afinaciones y regulaciones
+                {t('alertSettings.pianos.description')}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="grid gap-4 md:grid-cols-2">
                 <div className="space-y-2">
-                  <Label htmlFor="tuningPending">Afinación Pendiente (días)</Label>
+                  <Label htmlFor="tuningPending">{t('alertSettings.pianos.tuningPending')}</Label>
                   <Input
                     id="tuningPending"
                     type="number"
@@ -167,12 +169,12 @@ export default function ConfiguracionAlertas() {
                     onChange={(e) => handleChange('tuningPendingDays', parseInt(e.target.value))}
                   />
                   <p className="text-xs text-muted-foreground">
-                    Días sin afinación para generar alerta pendiente
+                    {t('alertSettings.pianos.tuningPendingHelp')}
                   </p>
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="tuningUrgent">Afinación Urgente (días)</Label>
+                  <Label htmlFor="tuningUrgent">{t('alertSettings.pianos.tuningUrgent')}</Label>
                   <Input
                     id="tuningUrgent"
                     type="number"
@@ -182,12 +184,12 @@ export default function ConfiguracionAlertas() {
                     onChange={(e) => handleChange('tuningUrgentDays', parseInt(e.target.value))}
                   />
                   <p className="text-xs text-muted-foreground">
-                    Días sin afinación para generar alerta urgente
+                    {t('alertSettings.pianos.tuningUrgentHelp')}
                   </p>
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="regulationPending">Regulación Pendiente (días)</Label>
+                  <Label htmlFor="regulationPending">{t('alertSettings.pianos.regulationPending')}</Label>
                   <Input
                     id="regulationPending"
                     type="number"
@@ -197,12 +199,12 @@ export default function ConfiguracionAlertas() {
                     onChange={(e) => handleChange('regulationPendingDays', parseInt(e.target.value))}
                   />
                   <p className="text-xs text-muted-foreground">
-                    Días sin regulación para generar alerta pendiente
+                    {t('alertSettings.pianos.regulationPendingHelp')}
                   </p>
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="regulationUrgent">Regulación Urgente (días)</Label>
+                  <Label htmlFor="regulationUrgent">{t('alertSettings.pianos.regulationUrgent')}</Label>
                   <Input
                     id="regulationUrgent"
                     type="number"
@@ -212,7 +214,7 @@ export default function ConfiguracionAlertas() {
                     onChange={(e) => handleChange('regulationUrgentDays', parseInt(e.target.value))}
                   />
                   <p className="text-xs text-muted-foreground">
-                    Días sin regulación para generar alerta urgente
+                    {t('alertSettings.pianos.regulationUrgentHelp')}
                   </p>
                 </div>
               </div>
@@ -224,15 +226,15 @@ export default function ConfiguracionAlertas() {
         <TabsContent value="citas" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>Recordatorios de Citas y Servicios</CardTitle>
+              <CardTitle>{t('alertSettings.appointments.title')}</CardTitle>
               <CardDescription>
-                Configura cuándo recibir recordatorios de citas programadas
+                {t('alertSettings.appointments.description')}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="grid gap-4 md:grid-cols-2">
                 <div className="space-y-2">
-                  <Label htmlFor="appointmentsNotice">Aviso de Citas (días)</Label>
+                  <Label htmlFor="appointmentsNotice">{t('alertSettings.appointments.appointmentsNotice')}</Label>
                   <Input
                     id="appointmentsNotice"
                     type="number"
@@ -242,12 +244,12 @@ export default function ConfiguracionAlertas() {
                     onChange={(e) => handleChange('appointmentsNoticeDays', parseInt(e.target.value))}
                   />
                   <p className="text-xs text-muted-foreground">
-                    Días de anticipación para recordar citas próximas
+                    {t('alertSettings.appointments.appointmentsNoticeHelp')}
                   </p>
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="servicesNotice">Aviso de Servicios (días)</Label>
+                  <Label htmlFor="servicesNotice">{t('alertSettings.appointments.servicesNotice')}</Label>
                   <Input
                     id="servicesNotice"
                     type="number"
@@ -257,7 +259,7 @@ export default function ConfiguracionAlertas() {
                     onChange={(e) => handleChange('scheduledServicesNoticeDays', parseInt(e.target.value))}
                   />
                   <p className="text-xs text-muted-foreground">
-                    Días de anticipación para recordar servicios programados
+                    {t('alertSettings.appointments.servicesNoticeHelp')}
                   </p>
                 </div>
               </div>
@@ -269,15 +271,15 @@ export default function ConfiguracionAlertas() {
         <TabsContent value="finanzas" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>Alertas Financieras</CardTitle>
+              <CardTitle>{t('alertSettings.finances.title')}</CardTitle>
               <CardDescription>
-                Configura recordatorios de facturas, presupuestos y pagos
+                {t('alertSettings.finances.description')}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="grid gap-4 md:grid-cols-2">
                 <div className="space-y-2">
-                  <Label htmlFor="invoicesDue">Facturas por Vencer (días)</Label>
+                  <Label htmlFor="invoicesDue">{t('alertSettings.finances.invoicesDue')}</Label>
                   <Input
                     id="invoicesDue"
                     type="number"
@@ -287,12 +289,12 @@ export default function ConfiguracionAlertas() {
                     onChange={(e) => handleChange('invoicesDueNoticeDays', parseInt(e.target.value))}
                   />
                   <p className="text-xs text-muted-foreground">
-                    Días antes del vencimiento para alertar
+                    {t('alertSettings.finances.invoicesDueHelp')}
                   </p>
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="overduePayments">Pagos Vencidos (días)</Label>
+                  <Label htmlFor="overduePayments">{t('alertSettings.finances.overduePayments')}</Label>
                   <Input
                     id="overduePayments"
                     type="number"
@@ -302,12 +304,12 @@ export default function ConfiguracionAlertas() {
                     onChange={(e) => handleChange('overduePaymentsNoticeDays', parseInt(e.target.value))}
                   />
                   <p className="text-xs text-muted-foreground">
-                    Días después del vencimiento para seguimiento
+                    {t('alertSettings.finances.overduePaymentsHelp')}
                   </p>
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="quotesExpiry">Presupuestos por Expirar (días)</Label>
+                  <Label htmlFor="quotesExpiry">{t('alertSettings.finances.quotesExpiry')}</Label>
                   <Input
                     id="quotesExpiry"
                     type="number"
@@ -317,12 +319,12 @@ export default function ConfiguracionAlertas() {
                     onChange={(e) => handleChange('quotesExpiryNoticeDays', parseInt(e.target.value))}
                   />
                   <p className="text-xs text-muted-foreground">
-                    Días antes de la expiración del presupuesto
+                    {t('alertSettings.finances.quotesExpiryHelp')}
                   </p>
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="contractsRenewal">Renovación de Contratos (días)</Label>
+                  <Label htmlFor="contractsRenewal">{t('alertSettings.finances.contractsRenewal')}</Label>
                   <Input
                     id="contractsRenewal"
                     type="number"
@@ -332,7 +334,7 @@ export default function ConfiguracionAlertas() {
                     onChange={(e) => handleChange('contractsRenewalNoticeDays', parseInt(e.target.value))}
                   />
                   <p className="text-xs text-muted-foreground">
-                    Días antes de la renovación del contrato
+                    {t('alertSettings.finances.contractsRenewalHelp')}
                   </p>
                 </div>
               </div>
@@ -344,15 +346,15 @@ export default function ConfiguracionAlertas() {
         <TabsContent value="inventario" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>Alertas de Inventario</CardTitle>
+              <CardTitle>{t('alertSettings.inventory.title')}</CardTitle>
               <CardDescription>
-                Configura alertas de stock mínimo y productos por expirar
+                {t('alertSettings.inventory.description')}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="grid gap-4 md:grid-cols-2">
                 <div className="space-y-2">
-                  <Label htmlFor="minStock">Stock Mínimo (unidades)</Label>
+                  <Label htmlFor="minStock">{t('alertSettings.inventory.minStock')}</Label>
                   <Input
                     id="minStock"
                     type="number"
@@ -362,12 +364,12 @@ export default function ConfiguracionAlertas() {
                     onChange={(e) => handleChange('inventoryMinStock', parseInt(e.target.value))}
                   />
                   <p className="text-xs text-muted-foreground">
-                    Cantidad mínima antes de generar alerta
+                    {t('alertSettings.inventory.minStockHelp')}
                   </p>
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="inventoryExpiry">Productos por Expirar (días)</Label>
+                  <Label htmlFor="inventoryExpiry">{t('alertSettings.inventory.expiryNotice')}</Label>
                   <Input
                     id="inventoryExpiry"
                     type="number"
@@ -377,7 +379,7 @@ export default function ConfiguracionAlertas() {
                     onChange={(e) => handleChange('inventoryExpiryNoticeDays', parseInt(e.target.value))}
                   />
                   <p className="text-xs text-muted-foreground">
-                    Días antes de la fecha de expiración
+                    {t('alertSettings.inventory.expiryNoticeHelp')}
                   </p>
                 </div>
               </div>
@@ -389,14 +391,14 @@ export default function ConfiguracionAlertas() {
         <TabsContent value="mantenimiento" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>Mantenimiento de Herramientas</CardTitle>
+              <CardTitle>{t('alertSettings.maintenance.title')}</CardTitle>
               <CardDescription>
-                Configura recordatorios de mantenimiento de herramientas
+                {t('alertSettings.maintenance.description')}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="space-y-2">
-                <Label htmlFor="toolsMaintenance">Mantenimiento de Herramientas (días)</Label>
+                <Label htmlFor="toolsMaintenance">{t('alertSettings.maintenance.toolsMaintenance')}</Label>
                 <Input
                   id="toolsMaintenance"
                   type="number"
@@ -406,7 +408,7 @@ export default function ConfiguracionAlertas() {
                   onChange={(e) => handleChange('toolsMaintenanceDays', parseInt(e.target.value))}
                 />
                 <p className="text-xs text-muted-foreground">
-                  Días entre mantenimientos de herramientas
+                  {t('alertSettings.maintenance.toolsMaintenanceHelp')}
                 </p>
               </div>
             </CardContent>
@@ -417,15 +419,15 @@ export default function ConfiguracionAlertas() {
         <TabsContent value="clientes" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>Seguimiento de Clientes</CardTitle>
+              <CardTitle>{t('alertSettings.clients.title')}</CardTitle>
               <CardDescription>
-                Configura recordatorios de seguimiento y clientes inactivos
+                {t('alertSettings.clients.description')}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="grid gap-4 md:grid-cols-2">
                 <div className="space-y-2">
-                  <Label htmlFor="clientFollowup">Seguimiento de Clientes (días)</Label>
+                  <Label htmlFor="clientFollowup">{t('alertSettings.clients.clientFollowup')}</Label>
                   <Input
                     id="clientFollowup"
                     type="number"
@@ -435,12 +437,12 @@ export default function ConfiguracionAlertas() {
                     onChange={(e) => handleChange('clientFollowupDays', parseInt(e.target.value))}
                   />
                   <p className="text-xs text-muted-foreground">
-                    Días sin contacto para recordar seguimiento
+                    {t('alertSettings.clients.clientFollowupHelp')}
                   </p>
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="clientInactive">Clientes Inactivos (meses)</Label>
+                  <Label htmlFor="clientInactive">{t('alertSettings.clients.clientInactive')}</Label>
                   <Input
                     id="clientInactive"
                     type="number"
@@ -450,7 +452,7 @@ export default function ConfiguracionAlertas() {
                     onChange={(e) => handleChange('clientInactiveMonths', parseInt(e.target.value))}
                   />
                   <p className="text-xs text-muted-foreground">
-                    Meses sin actividad para marcar como inactivo
+                    {t('alertSettings.clients.clientInactiveHelp')}
                   </p>
                 </div>
               </div>
@@ -462,18 +464,18 @@ export default function ConfiguracionAlertas() {
         <TabsContent value="notificaciones" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>Preferencias de Notificaciones</CardTitle>
+              <CardTitle>{t('alertSettings.notifications.title')}</CardTitle>
               <CardDescription>
-                Configura cómo y cuándo recibir notificaciones
+                {t('alertSettings.notifications.description')}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <div className="space-y-0.5">
-                    <Label>Notificaciones por Email</Label>
+                    <Label>{t('alertSettings.notifications.emailNotifications')}</Label>
                     <p className="text-sm text-muted-foreground">
-                      Recibir alertas por correo electrónico
+                      {t('alertSettings.notifications.emailNotificationsHelp')}
                     </p>
                   </div>
                   <Switch
@@ -484,9 +486,9 @@ export default function ConfiguracionAlertas() {
 
                 <div className="flex items-center justify-between">
                   <div className="space-y-0.5">
-                    <Label>Notificaciones Push</Label>
+                    <Label>{t('alertSettings.notifications.pushNotifications')}</Label>
                     <p className="text-sm text-muted-foreground">
-                      Recibir notificaciones en el navegador
+                      {t('alertSettings.notifications.pushNotificationsHelp')}
                     </p>
                   </div>
                   <Switch
@@ -497,9 +499,9 @@ export default function ConfiguracionAlertas() {
 
                 <div className="flex items-center justify-between">
                   <div className="space-y-0.5">
-                    <Label>Resumen Semanal</Label>
+                    <Label>{t('alertSettings.notifications.weeklyDigest')}</Label>
                     <p className="text-sm text-muted-foreground">
-                      Recibir un resumen semanal de alertas
+                      {t('alertSettings.notifications.weeklyDigestHelp')}
                     </p>
                   </div>
                   <Switch
@@ -510,20 +512,20 @@ export default function ConfiguracionAlertas() {
 
                 {formData.weeklyDigestEnabled && (
                   <div className="space-y-2">
-                    <Label htmlFor="digestDay">Día del Resumen Semanal</Label>
+                    <Label htmlFor="digestDay">{t('alertSettings.notifications.digestDay')}</Label>
                     <select
                       id="digestDay"
                       className="w-full rounded-md border border-input bg-background px-3 py-2"
                       value={formData.weeklyDigestDay || 1}
                       onChange={(e) => handleChange('weeklyDigestDay', parseInt(e.target.value))}
                     >
-                      <option value="0">Domingo</option>
-                      <option value="1">Lunes</option>
-                      <option value="2">Martes</option>
-                      <option value="3">Miércoles</option>
-                      <option value="4">Jueves</option>
-                      <option value="5">Viernes</option>
-                      <option value="6">Sábado</option>
+                      <option value="0">{t('alertSettings.notifications.days.sunday')}</option>
+                      <option value="1">{t('alertSettings.notifications.days.monday')}</option>
+                      <option value="2">{t('alertSettings.notifications.days.tuesday')}</option>
+                      <option value="3">{t('alertSettings.notifications.days.wednesday')}</option>
+                      <option value="4">{t('alertSettings.notifications.days.thursday')}</option>
+                      <option value="5">{t('alertSettings.notifications.days.friday')}</option>
+                      <option value="6">{t('alertSettings.notifications.days.saturday')}</option>
                     </select>
                   </div>
                 )}

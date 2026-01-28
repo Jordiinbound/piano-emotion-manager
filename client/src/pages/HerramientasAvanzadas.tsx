@@ -25,160 +25,162 @@ import {
 } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { useTranslation } from '@/hooks/use-translation';
 
 type PlanTier = 'free' | 'pro' | 'premium';
 
 interface Module {
   key: string;
   icon: any;
-  label: string;
-  description: string;
+  labelKey: string;
+  descriptionKey: string;
   color: string;
   tier: PlanTier;
   route?: string;
   implemented: boolean;
 }
 
-const ADVANCED_MODULES: Module[] = [
-  // FREE - Disponibles para todos
-  { 
-    key: 'shop', 
-    icon: ShoppingCart, 
-    label: 'Tienda', 
-    description: 'Gestiona tu catálogo y ventas online',
-    color: '#84CC16', 
-    tier: 'free', 
-    route: '/store',
-    implemented: true
-  },
-  { 
-    key: 'calendar_adv', 
-    icon: Calendar, 
-    label: 'Calendario+', 
-    description: 'Agenda avanzada con recordatorios',
-    color: '#A855F7', 
-    tier: 'free', 
-    route: '/agenda',
-    implemented: true
-  },
-  { 
-    key: 'dashboard_editor', 
-    icon: LayoutGrid, 
-    label: 'Dashboard+', 
-    description: 'Panel personalizable con widgets',
-    color: '#EC4899', 
-    tier: 'free', 
-    route: '/',
-    implemented: true
-  },
-  { 
-    key: 'modules', 
-    icon: CreditCard, 
-    label: 'Gestionar Plan', 
-    description: 'Administra tu suscripción y pagos',
-    color: '#8B5CF6', 
-    tier: 'free',
-    route: '/admin/licenses',
-    implemented: true
-  },
-  
-  // PRO - Requieren suscripción Pro
-  { 
-    key: 'team', 
-    icon: Users, 
-    label: 'Equipos', 
-    description: 'Gestión de miembros y permisos',
-    color: '#10B981', 
-    tier: 'pro',
-    route: '/organization/settings',
-    implemented: true
-  },
-  { 
-    key: 'crm', 
-    icon: Heart, 
-    label: 'CRM', 
-    description: 'Gestión avanzada de relaciones',
-    color: '#EF4444', 
-    tier: 'pro',
-    route: '/clientes',
-    implemented: true
-  },
-  { 
-    key: 'reports', 
-    icon: PieChart, 
-    label: 'Reportes', 
-    description: 'Análisis y estadísticas detalladas',
-    color: '#06B6D4', 
-    tier: 'pro', 
-    route: '/reportes',
-    implemented: true
-  },
-  { 
-    key: 'client_portal', 
-    icon: Globe, 
-    label: 'Portal Clientes', 
-    description: 'Acceso web para tus clientes',
-    color: '#0891B2', 
-    tier: 'pro',
-    route: '/client-portal/login',
-    implemented: true
-  },
-  { 
-    key: 'distributor', 
-    icon: Building, 
-    label: 'Distribuidores', 
-    description: 'Gestión de proveedores y partners',
-    color: '#BE185D', 
-    tier: 'pro',
-    route: '/admin/partners',
-    implemented: true
-  },
-  { 
-    key: 'marketing', 
-    icon: Megaphone, 
-    label: 'Marketing', 
-    description: 'Campañas y email marketing',
-    color: '#E91E63', 
-    tier: 'pro',
-    route: '/configuracion/email',
-    implemented: true
-  },
-  { 
-    key: 'payments', 
-    icon: Wallet, 
-    label: 'Pasarelas Pago', 
-    description: 'Configuración de métodos de pago',
-    color: '#635BFF', 
-    tier: 'pro',
-    route: '/facturacion',
-    implemented: true
-  },
-  
-  // PREMIUM - Solo para Premium
-  { 
-    key: 'accounting', 
-    icon: Calculator, 
-    label: 'Contabilidad', 
-    description: 'Integración contable y fiscal',
-    color: '#F97316', 
-    tier: 'premium',
-    route: '/contabilidad',
-    implemented: true
-  },
-  { 
-    key: 'workflows', 
-    icon: GitBranch, 
-    label: 'Workflows', 
-    description: 'Automatizaciones personalizadas',
-    color: '#6366F1', 
-    tier: 'premium',
-    route: '/workflows',
-    implemented: true
-  },
-];
-
 export default function HerramientasAvanzadas() {
+  const { t } = useTranslation();
   const [, setLocation] = useLocation();
+
+  const ADVANCED_MODULES: Module[] = [
+    // FREE - Disponibles para todos
+    { 
+      key: 'shop', 
+      icon: ShoppingCart, 
+      labelKey: 'advancedTools.modulesList.shop.label',
+      descriptionKey: 'advancedTools.modulesList.shop.description',
+      color: '#84CC16', 
+      tier: 'free', 
+      route: '/store',
+      implemented: true
+    },
+    { 
+      key: 'calendar_adv', 
+      icon: Calendar, 
+      labelKey: 'advancedTools.modulesList.calendarAdv.label',
+      descriptionKey: 'advancedTools.modulesList.calendarAdv.description',
+      color: '#A855F7', 
+      tier: 'free', 
+      route: '/agenda',
+      implemented: true
+    },
+    { 
+      key: 'dashboard_editor', 
+      icon: LayoutGrid, 
+      labelKey: 'advancedTools.modulesList.dashboardEditor.label',
+      descriptionKey: 'advancedTools.modulesList.dashboardEditor.description',
+      color: '#EC4899', 
+      tier: 'free', 
+      route: '/',
+      implemented: true
+    },
+    { 
+      key: 'modules', 
+      icon: CreditCard, 
+      labelKey: 'advancedTools.modulesList.managePlan.label',
+      descriptionKey: 'advancedTools.modulesList.managePlan.description',
+      color: '#8B5CF6', 
+      tier: 'free',
+      route: '/admin/licenses',
+      implemented: true
+    },
+    
+    // PRO - Requieren suscripción Pro
+    { 
+      key: 'team', 
+      icon: Users, 
+      labelKey: 'advancedTools.modulesList.teams.label',
+      descriptionKey: 'advancedTools.modulesList.teams.description',
+      color: '#10B981', 
+      tier: 'pro',
+      route: '/organization/settings',
+      implemented: true
+    },
+    { 
+      key: 'crm', 
+      icon: Heart, 
+      labelKey: 'advancedTools.modulesList.crm.label',
+      descriptionKey: 'advancedTools.modulesList.crm.description',
+      color: '#EF4444', 
+      tier: 'pro',
+      route: '/clientes',
+      implemented: true
+    },
+    { 
+      key: 'reports', 
+      icon: PieChart, 
+      labelKey: 'advancedTools.modulesList.reports.label',
+      descriptionKey: 'advancedTools.modulesList.reports.description',
+      color: '#06B6D4', 
+      tier: 'pro', 
+      route: '/reportes',
+      implemented: true
+    },
+    { 
+      key: 'client_portal', 
+      icon: Globe, 
+      labelKey: 'advancedTools.modulesList.clientPortal.label',
+      descriptionKey: 'advancedTools.modulesList.clientPortal.description',
+      color: '#0891B2', 
+      tier: 'pro',
+      route: '/client-portal/login',
+      implemented: true
+    },
+    { 
+      key: 'distributor', 
+      icon: Building, 
+      labelKey: 'advancedTools.modulesList.distributors.label',
+      descriptionKey: 'advancedTools.modulesList.distributors.description',
+      color: '#BE185D', 
+      tier: 'pro',
+      route: '/admin/partners',
+      implemented: true
+    },
+    { 
+      key: 'marketing', 
+      icon: Megaphone, 
+      labelKey: 'advancedTools.modulesList.marketing.label',
+      descriptionKey: 'advancedTools.modulesList.marketing.description',
+      color: '#E91E63', 
+      tier: 'pro',
+      route: '/configuracion/email',
+      implemented: true
+    },
+    { 
+      key: 'payments', 
+      icon: Wallet, 
+      labelKey: 'advancedTools.modulesList.payments.label',
+      descriptionKey: 'advancedTools.modulesList.payments.description',
+      color: '#635BFF', 
+      tier: 'pro',
+      route: '/facturacion',
+      implemented: true
+    },
+    
+    // PREMIUM - Solo para Premium
+    { 
+      key: 'accounting', 
+      icon: Calculator, 
+      labelKey: 'advancedTools.modulesList.accounting.label',
+      descriptionKey: 'advancedTools.modulesList.accounting.description',
+      color: '#F97316', 
+      tier: 'premium',
+      route: '/contabilidad',
+      implemented: true
+    },
+    { 
+      key: 'workflows', 
+      icon: GitBranch, 
+      labelKey: 'advancedTools.modulesList.workflows.label',
+      descriptionKey: 'advancedTools.modulesList.workflows.description',
+      color: '#6366F1', 
+      tier: 'premium',
+      route: '/workflows',
+      implemented: true
+    },
+  ];
 
   // Por ahora, todos los módulos están disponibles (tier free)
   const userTier = 'premium' as PlanTier;
@@ -191,12 +193,12 @@ export default function HerramientasAvanzadas() {
 
   const handleAction = (module: Module) => {
     if (!canAccess(module.tier)) {
-      alert(`Esta funcionalidad requiere plan ${module.tier.toUpperCase()}`);
+      alert(`${t('advancedTools.requiresPlan')} ${module.tier.toUpperCase()}`);
       return;
     }
     
     if (!module.implemented) {
-      alert('Módulo en desarrollo - Próximamente disponible');
+      alert(t('advancedTools.comingSoon'));
       return;
     }
     
@@ -207,9 +209,9 @@ export default function HerramientasAvanzadas() {
 
   const getTierBadge = (tier: PlanTier): { label: string; color: string } | null => {
     if (tier === 'pro' && !canAccess('pro')) 
-      return { label: 'PRO', color: 'bg-amber-500' };
+      return { label: t('advancedTools.badges.pro'), color: 'bg-amber-500' };
     if (tier === 'premium' && !canAccess('premium')) 
-      return { label: 'PREMIUM', color: 'bg-purple-600' };
+      return { label: t('advancedTools.badges.premium'), color: 'bg-purple-600' };
     return null;
   };
 
@@ -225,18 +227,18 @@ export default function HerramientasAvanzadas() {
         <div className="relative z-10">
           <div className="flex items-center gap-3 mb-3">
             <Sparkles className="h-8 w-8" />
-            <h1 className="text-4xl font-bold">Herramientas Avanzadas</h1>
+            <h1 className="text-4xl font-bold">{t('advancedTools.title')}</h1>
           </div>
           <p className="text-lg text-white/90 max-w-2xl">
-            Potencia tu negocio con módulos premium y funcionalidades avanzadas
+            {t('advancedTools.subtitle')}
           </p>
           <div className="mt-6 flex items-center gap-4">
             <Badge className="bg-white/20 text-white border-white/30 hover:bg-white/30">
               <TrendingUp className="h-3 w-3 mr-1" />
-              14 Módulos Disponibles
+              {ADVANCED_MODULES.length} {t('advancedTools.modulesAvailable')}
             </Badge>
             <Badge className="bg-white/20 text-white border-white/30 hover:bg-white/30">
-              Plan: {userTier.toUpperCase()}
+              {t('advancedTools.plan')}: {userTier.toUpperCase()}
             </Badge>
           </div>
         </div>
@@ -246,9 +248,9 @@ export default function HerramientasAvanzadas() {
       <div>
         <div className="flex items-center gap-2 mb-4">
           <div className="h-8 w-1 bg-green-500 rounded-full"></div>
-          <h2 className="text-2xl font-bold text-foreground">Módulos Gratuitos</h2>
+          <h2 className="text-2xl font-bold text-foreground">{t('advancedTools.freeModules')}</h2>
           <Badge variant="outline" className="ml-2">
-            {freeModules.length} módulos
+            {freeModules.length} {t('advancedTools.modules')}
           </Badge>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -270,7 +272,7 @@ export default function HerramientasAvanzadas() {
                 )}
                 {!module.implemented && (
                   <Badge className="absolute top-3 right-3 bg-gray-400 text-white">
-                    PRÓXIMAMENTE
+                    {t('advancedTools.badges.comingSoon')}
                   </Badge>
                 )}
                 <div
@@ -285,10 +287,10 @@ export default function HerramientasAvanzadas() {
                   />
                 </div>
                 <h3 className="text-lg font-semibold text-foreground mb-2">
-                  {module.label}
+                  {t(module.labelKey)}
                 </h3>
                 <p className="text-sm text-muted-foreground">
-                  {module.description}
+                  {t(module.descriptionKey)}
                 </p>
               </Card>
             );
@@ -300,9 +302,9 @@ export default function HerramientasAvanzadas() {
       <div>
         <div className="flex items-center gap-2 mb-4">
           <div className="h-8 w-1 bg-amber-500 rounded-full"></div>
-          <h2 className="text-2xl font-bold text-foreground">Módulos Profesionales</h2>
+          <h2 className="text-2xl font-bold text-foreground">{t('advancedTools.proModules')}</h2>
           <Badge variant="outline" className="ml-2">
-            {proModules.length} módulos
+            {proModules.length} {t('advancedTools.modules')}
           </Badge>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -324,7 +326,7 @@ export default function HerramientasAvanzadas() {
                 )}
                 {!module.implemented && (
                   <Badge className="absolute top-3 right-3 bg-gray-400 text-white">
-                    PRÓXIMAMENTE
+                    {t('advancedTools.badges.comingSoon')}
                   </Badge>
                 )}
                 <div
@@ -339,10 +341,10 @@ export default function HerramientasAvanzadas() {
                   />
                 </div>
                 <h3 className="text-lg font-semibold text-foreground mb-2">
-                  {module.label}
+                  {t(module.labelKey)}
                 </h3>
                 <p className="text-sm text-muted-foreground">
-                  {module.description}
+                  {t(module.descriptionKey)}
                 </p>
               </Card>
             );
@@ -354,9 +356,9 @@ export default function HerramientasAvanzadas() {
       <div>
         <div className="flex items-center gap-2 mb-4">
           <div className="h-8 w-1 bg-purple-600 rounded-full"></div>
-          <h2 className="text-2xl font-bold text-foreground">Módulos Premium</h2>
+          <h2 className="text-2xl font-bold text-foreground">{t('advancedTools.premiumModules')}</h2>
           <Badge variant="outline" className="ml-2">
-            {premiumModules.length} módulos
+            {premiumModules.length} {t('advancedTools.modules')}
           </Badge>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -378,7 +380,7 @@ export default function HerramientasAvanzadas() {
                 )}
                 {!module.implemented && (
                   <Badge className="absolute top-3 right-3 bg-gray-400 text-white">
-                    PRÓXIMAMENTE
+                    {t('advancedTools.badges.comingSoon')}
                   </Badge>
                 )}
                 <div
@@ -393,10 +395,10 @@ export default function HerramientasAvanzadas() {
                   />
                 </div>
                 <h3 className="text-lg font-semibold text-foreground mb-2">
-                  {module.label}
+                  {t(module.labelKey)}
                 </h3>
                 <p className="text-sm text-muted-foreground">
-                  {module.description}
+                  {t(module.descriptionKey)}
                 </p>
               </Card>
             );

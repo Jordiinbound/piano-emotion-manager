@@ -21,8 +21,10 @@ import {
 } from 'lucide-react';
 import { trpc } from '@/lib/trpc';
 import { toast } from 'sonner';
+import { useTranslation } from '@/hooks/use-translation';
 
 export default function Contabilidad() {
+  const { t } = useTranslation();
   const [selectedPeriod, setSelectedPeriod] = useState('month');
 
   // Obtener resumen contable
@@ -32,11 +34,11 @@ export default function Contabilidad() {
   const totalFacturas = summary?.length || 0;
 
   const handleExportContable = () => {
-    toast.success('Exportación contable generada correctamente');
+    toast.success(t('accounting.toast.exportSuccess'));
   };
 
   const handleImportAsientos = () => {
-    toast.info('Funcionalidad de importación próximamente');
+    toast.info(t('accounting.toast.importComingSoon'));
   };
 
   return (
@@ -46,20 +48,20 @@ export default function Contabilidad() {
         <div>
           <h1 className="text-3xl font-bold text-foreground flex items-center gap-3">
             <Calculator className="h-8 w-8 text-orange-500" />
-            Contabilidad
+            {t('accounting.title')}
           </h1>
           <p className="text-muted-foreground mt-1">
-            Integración contable y gestión fiscal
+            {t('accounting.subtitle')}
           </p>
         </div>
         <div className="flex gap-2">
           <Button variant="outline" onClick={handleImportAsientos}>
             <Upload className="h-4 w-4 mr-2" />
-            Importar
+            {t('accounting.import')}
           </Button>
           <Button onClick={handleExportContable}>
             <Download className="h-4 w-4 mr-2" />
-            Exportar
+            {t('accounting.export')}
           </Button>
         </div>
       </div>
@@ -68,7 +70,7 @@ export default function Contabilidad() {
       <Card className="p-4">
         <div className="flex items-center gap-4">
           <Calendar className="h-5 w-5 text-muted-foreground" />
-          <span className="text-sm font-medium">Período:</span>
+          <span className="text-sm font-medium">{t('accounting.period')}:</span>
           <div className="flex gap-2">
             {['month', 'quarter', 'year'].map((period) => (
               <Button
@@ -77,9 +79,7 @@ export default function Contabilidad() {
                 size="sm"
                 onClick={() => setSelectedPeriod(period)}
               >
-                {period === 'month' && 'Mes'}
-                {period === 'quarter' && 'Trimestre'}
-                {period === 'year' && 'Año'}
+                {t(`accounting.${period}`)}
               </Button>
             ))}
           </div>
@@ -91,7 +91,7 @@ export default function Contabilidad() {
         <Card className="p-6">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-muted-foreground">Ingresos Totales</p>
+              <p className="text-sm text-muted-foreground">{t('accounting.totalIncome')}</p>
               <p className="text-3xl font-bold text-foreground mt-1">
                 €{totalIngresos.toFixed(2)}
               </p>
@@ -105,7 +105,7 @@ export default function Contabilidad() {
         <Card className="p-6">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-muted-foreground">Facturas Emitidas</p>
+              <p className="text-sm text-muted-foreground">{t('accounting.invoicesIssued')}</p>
               <p className="text-3xl font-bold text-foreground mt-1">
                 {totalFacturas}
               </p>
@@ -119,7 +119,7 @@ export default function Contabilidad() {
         <Card className="p-6">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-muted-foreground">IVA Repercutido</p>
+              <p className="text-sm text-muted-foreground">{t('accounting.vatCharged')}</p>
               <p className="text-3xl font-bold text-foreground mt-1">
                 €{(totalIngresos * 0.21).toFixed(2)}
               </p>
@@ -136,64 +136,64 @@ export default function Contabilidad() {
         <Card className="p-6">
           <div className="flex items-center gap-3 mb-4">
             <FileText className="h-6 w-6 text-primary" />
-            <h3 className="text-xl font-semibold">Libro Diario</h3>
+            <h3 className="text-xl font-semibold">{t('accounting.dailyBook.title')}</h3>
           </div>
           <p className="text-muted-foreground mb-4">
-            Registro cronológico de todas las operaciones contables
+            {t('accounting.dailyBook.description')}
           </p>
           <Button variant="outline" className="w-full">
-            Ver Asientos
+            {t('accounting.dailyBook.viewEntries')}
           </Button>
         </Card>
 
         <Card className="p-6">
           <div className="flex items-center gap-3 mb-4">
             <PieChart className="h-6 w-6 text-primary" />
-            <h3 className="text-xl font-semibold">Balance de Situación</h3>
+            <h3 className="text-xl font-semibold">{t('accounting.balanceSheet.title')}</h3>
           </div>
           <p className="text-muted-foreground mb-4">
-            Estado financiero de activos, pasivos y patrimonio
+            {t('accounting.balanceSheet.description')}
           </p>
           <Button variant="outline" className="w-full">
-            Generar Balance
+            {t('accounting.balanceSheet.generate')}
           </Button>
         </Card>
 
         <Card className="p-6">
           <div className="flex items-center gap-3 mb-4">
             <TrendingUp className="h-6 w-6 text-primary" />
-            <h3 className="text-xl font-semibold">Cuenta de Resultados</h3>
+            <h3 className="text-xl font-semibold">{t('accounting.incomeStatement.title')}</h3>
           </div>
           <p className="text-muted-foreground mb-4">
-            Análisis de ingresos, gastos y beneficios
+            {t('accounting.incomeStatement.description')}
           </p>
           <Button variant="outline" className="w-full">
-            Ver Resultados
+            {t('accounting.incomeStatement.viewResults')}
           </Button>
         </Card>
 
         <Card className="p-6">
           <div className="flex items-center gap-3 mb-4">
             <Calculator className="h-6 w-6 text-primary" />
-            <h3 className="text-xl font-semibold">Modelos Fiscales</h3>
+            <h3 className="text-xl font-semibold">{t('accounting.taxModels.title')}</h3>
           </div>
           <p className="text-muted-foreground mb-4">
-            Generación automática de modelos 303, 390, etc.
+            {t('accounting.taxModels.description')}
           </p>
           <Button variant="outline" className="w-full">
-            Generar Modelos
+            {t('accounting.taxModels.generate')}
           </Button>
         </Card>
       </div>
 
       {/* Integraciones */}
       <Card className="p-6">
-        <h3 className="text-xl font-semibold mb-4">Integraciones Contables</h3>
+        <h3 className="text-xl font-semibold mb-4">{t('accounting.integrations.title')}</h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {['Contasol', 'A3', 'Sage'].map((software) => (
             <div key={software} className="flex items-center justify-between p-4 border rounded-lg">
               <span className="font-medium">{software}</span>
-              <Badge variant="outline">Disponible</Badge>
+              <Badge variant="outline">{t('accounting.integrations.available')}</Badge>
             </div>
           ))}
         </div>

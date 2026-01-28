@@ -794,3 +794,89 @@
 - [x] Crear alias partners = partnersV2 en schema
 - [x] Registrar router de language en routers.ts
 - [x] Agregar LanguageProvider en main.tsx
+
+## Mejoras del sistema i18n
+
+### Traducir TODAS las páginas del proyecto (53 páginas)
+
+#### Páginas ya traducidas
+- [x] Alertas.tsx
+- [x] ConfiguracionAlertas.tsx
+- [x] HerramientasAvanzadas.tsx
+- [x] Contabilidad.tsx
+- [x] Workflows.tsx
+
+#### Páginas principales
+- [x] Home.tsx
+- [ ] Clientes.tsx
+- [ ] Pianos.tsx
+- [ ] Servicios.tsx
+- [ ] Inventario.tsx
+- [ ] Agenda.tsx
+- [ ] Facturacion.tsx
+- [ ] Presupuestos.tsx
+- [ ] Store.tsx
+- [ ] TiposServicio.tsx
+
+#### Formularios (Nuevo/Editar)
+- [ ] ClienteNuevo.tsx
+- [ ] ClienteEditar.tsx
+- [ ] PianoNuevo.tsx
+- [ ] PianoEditar.tsx
+- [ ] ServicioNuevo.tsx
+- [ ] ServicioEditar.tsx
+- [ ] InventarioNuevo.tsx
+- [ ] InventarioEditar.tsx
+- [ ] CitaNueva.tsx
+- [ ] CitaEditar.tsx
+- [ ] FacturaNueva.tsx
+- [ ] FacturaEditar.tsx
+- [ ] PresupuestoNuevo.tsx
+
+#### Facturación y Pagos
+- [ ] PayInvoice.tsx
+- [ ] PaymentStats.tsx
+
+#### Administración y Configuración
+- [ ] Configuracion.tsx
+- [ ] ConfiguracionSMTP.tsx
+- [ ] EmailConfig.tsx
+- [ ] OrganizationSettings.tsx
+- [ ] LicensesAdmin.tsx
+- [ ] ActivationCodesAdmin.tsx
+- [ ] PartnersAdmin.tsx
+- [ ] RolesManagement.tsx
+- [ ] LicenseNotifications.tsx
+- [ ] LicenseReminders.tsx
+- [ ] ActivateLicense.tsx
+- [ ] RenewalSuccess.tsx
+
+#### Portal de Clientes y Autenticación
+- [ ] ClientPortalLogin.tsx
+- [ ] ClientPortalRegister.tsx
+- [ ] ClientPortalDashboard.tsx
+- [ ] SignIn.tsx
+- [ ] SignUp.tsx
+
+#### Reportes y Analíticas
+- [ ] Reportes.tsx
+- [ ] GlobalAnalytics.tsx
+- [ ] PartnerDashboard.tsx
+
+#### Utilidades
+- [ ] AccesosRapidos.tsx
+- [ ] NotFound.tsx
+- [ ] ComponentShowcase.tsx
+
+### Interfaz de gestión de traducciones
+- [ ] Crear página TranslationManager.tsx
+- [ ] Crear router tRPC para gestión de traducciones
+- [ ] Implementar editor de traducciones con preview
+- [ ] Agregar funcionalidad de exportar/importar JSON
+- [ ] Registrar ruta en App.tsx
+
+### Notificaciones multiidioma
+- [ ] Adaptar sistema de emails para usar traducciones
+- [ ] Crear templates de email por idioma
+- [ ] Actualizar router de notificaciones para detectar idioma del usuario
+- [ ] Probar envío de emails en diferentes idiomas

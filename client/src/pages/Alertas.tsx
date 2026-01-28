@@ -22,8 +22,10 @@ import {
 } from 'lucide-react';
 import { useLocation } from 'wouter';
 import { toast } from 'sonner';
+import { useTranslation } from '@/hooks/use-translation';
 
 export default function Alertas() {
+  const { t } = useTranslation();
   const [, setLocation] = useLocation();
   const [selectedFilter, setSelectedFilter] = useState<string>('all');
   const [selectedPriority, setSelectedPriority] = useState<string>('all');
@@ -31,21 +33,21 @@ export default function Alertas() {
   const { data: alertsData, isLoading, refetch } = trpc.alerts.getAlerts.useQuery();
   const markAsReadMutation = trpc.alerts.markAsRead.useMutation({
     onSuccess: () => {
-      toast.success('Alerta marcada como leída');
+      toast.success(t('alerts.actions.markAsRead'));
       refetch();
     },
     onError: (error) => {
-      toast.error(error.message || 'Error al marcar alerta');
+      toast.error(error.message || t('alerts.actions.markAsReadError'));
     },
   });
 
   const resolveAlertMutation = trpc.alerts.resolveAlert.useMutation({
     onSuccess: () => {
-      toast.success('Alerta resuelta correctamente');
+      toast.success(t('alerts.actions.resolveSuccess'));
       refetch();
     },
     onError: (error) => {
-      toast.error(error.message || 'Error al resolver alerta');
+      toast.error(error.message || t('alerts.actions.resolveError'));
     },
   });
 
@@ -89,9 +91,9 @@ export default function Alertas() {
   };
 
   const getPriorityLabel = (priority: string) => {
-    if (priority === 'urgent') return 'Urgente';
-    if (priority === 'pending') return 'Pendiente';
-    return 'Normal';
+    if (priority === 'urgent') return t('alerts.priorities.urgent');
+    if (priority === 'pending') return t('alerts.priorities.medium');
+    return t('alerts.priorities.low');
   };
 
   const handleMarkAsRead = (alertId: string) => {
@@ -116,9 +118,9 @@ export default function Alertas() {
     <div className="container py-8 space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">Alertas y Notificaciones</h1>
+        <h1 className="text-3xl font-bold tracking-tight">{t('alerts.title')}</h1>
         <p className="text-muted-foreground mt-2">
-          Gestiona todas las alertas del sistema en un solo lugar
+          {t('alerts.description')}
         </p>
       </div>
 
@@ -126,39 +128,39 @@ export default function Alertas() {
       <div className="grid gap-4 md:grid-cols-3">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total de Alertas</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('alerts.total')}</CardTitle>
             <AlertCircle className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{alerts.length}</div>
             <p className="text-xs text-muted-foreground">
-              Alertas activas en el sistema
+              {t('alerts.activeAlerts')}
             </p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Urgentes</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('alerts.urgent')}</CardTitle>
             <AlertCircle className="h-4 w-4 text-destructive" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-destructive">{urgentCount}</div>
             <p className="text-xs text-muted-foreground">
-              Requieren atención inmediata
+              {t('alerts.requireImmediate')}
             </p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Pendientes</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('alerts.pending')}</CardTitle>
             <Clock className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{pendingCount}</div>
             <p className="text-xs text-muted-foreground">
-              Para revisar próximamente
+              {t('alerts.toReviewSoon')}
             </p>
           </CardContent>
         </Card>
@@ -169,7 +171,7 @@ export default function Alertas() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Filter className="h-5 w-5" />
-            Filtros
+            {t('alerts.filters')}
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -179,7 +181,7 @@ export default function Alertas() {
               size="sm"
               onClick={() => setSelectedFilter('all')}
             >
-              Todas
+              {t('alerts.allTypes')}
             </Button>
             <Button
               variant={selectedFilter === 'invoices' ? 'default' : 'outline'}
@@ -187,7 +189,7 @@ export default function Alertas() {
               onClick={() => setSelectedFilter('invoices')}
             >
               <FileText className="h-4 w-4 mr-2" />
-              Facturas
+              {t('alerts.types.invoice')}
             </Button>
             <Button
               variant={selectedFilter === 'appointments' ? 'default' : 'outline'}
@@ -195,7 +197,7 @@ export default function Alertas() {
               onClick={() => setSelectedFilter('appointments')}
             >
               <Calendar className="h-4 w-4 mr-2" />
-              Citas
+              {t('alerts.types.appointment')}
             </Button>
             <Button
               variant={selectedFilter === 'pianos' ? 'default' : 'outline'}
@@ -203,7 +205,7 @@ export default function Alertas() {
               onClick={() => setSelectedFilter('pianos')}
             >
               <Wrench className="h-4 w-4 mr-2" />
-              Mantenimiento
+              {t('alerts.types.maintenance')}
             </Button>
           </div>
 
@@ -213,21 +215,21 @@ export default function Alertas() {
               size="sm"
               onClick={() => setSelectedPriority('all')}
             >
-              Todas las prioridades
+              {t('alerts.allPriorities')}
             </Button>
             <Button
               variant={selectedPriority === 'urgent' ? 'destructive' : 'outline'}
               size="sm"
               onClick={() => setSelectedPriority('urgent')}
             >
-              Urgentes
+              {t('alerts.priorities.urgent')}
             </Button>
             <Button
               variant={selectedPriority === 'pending' ? 'default' : 'outline'}
               size="sm"
               onClick={() => setSelectedPriority('pending')}
             >
-              Pendientes
+              {t('alerts.pending')}
             </Button>
           </div>
         </CardContent>
@@ -239,11 +241,11 @@ export default function Alertas() {
           <Card>
             <CardContent className="flex flex-col items-center justify-center py-12">
               <CheckCircle2 className="h-12 w-12 text-green-500 mb-4" />
-              <h3 className="text-lg font-semibold mb-2">No hay alertas</h3>
+              <h3 className="text-lg font-semibold mb-2">{t('alerts.empty')}</h3>
               <p className="text-muted-foreground text-center">
                 {selectedFilter !== 'all' || selectedPriority !== 'all'
-                  ? 'No hay alertas que coincidan con los filtros seleccionados'
-                  : 'Todo está en orden. No tienes alertas pendientes.'}
+                  ? t('alerts.noMatchingFilters')
+                  : t('alerts.emptyMessage')}
               </p>
             </CardContent>
           </Card>
@@ -278,19 +280,19 @@ export default function Alertas() {
                       {/* Información adicional */}
                       <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
                         {alert.clientName && (
-                          <span>Cliente: {alert.clientName}</span>
+                          <span>{t('alerts.client')}: {alert.clientName}</span>
                         )}
                         {alert.amount && (
-                          <span>Monto: {Number(alert.amount).toFixed(2)}€</span>
+                          <span>{t('alerts.amount')}: {Number(alert.amount).toFixed(2)}€</span>
                         )}
                         {alert.dueDate && (
-                          <span>Vencimiento: {new Date(alert.dueDate).toLocaleDateString('es-ES')}</span>
+                          <span>{t('alerts.dueDate')}: {new Date(alert.dueDate).toLocaleDateString('es-ES')}</span>
                         )}
                         {alert.date && (
-                          <span>Fecha: {new Date(alert.date).toLocaleDateString('es-ES')} {new Date(alert.date).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}</span>
+                          <span>{t('alerts.date')}: {new Date(alert.date).toLocaleDateString('es-ES')} {new Date(alert.date).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}</span>
                         )}
                         {alert.daysSinceLastService && (
-                          <span>Días desde último servicio: {alert.daysSinceLastService}</span>
+                          <span>{t('alerts.daysSinceLastService')}: {alert.daysSinceLastService}</span>
                         )}
                       </div>
 
@@ -301,7 +303,7 @@ export default function Alertas() {
                             size="sm"
                             onClick={() => handleNavigate(alert.actionUrl)}
                           >
-                            Ver detalles
+                            {t('alerts.actions.viewDetails')}
                           </Button>
                         )}
                         {alert.type.includes('piano_') && (
@@ -312,7 +314,7 @@ export default function Alertas() {
                             disabled={resolveAlertMutation.isPending}
                           >
                             <CheckCircle2 className="h-4 w-4 mr-2" />
-                            Resolver
+                            {t('alerts.actions.resolve')}
                           </Button>
                         )}
                         <Button
@@ -322,7 +324,7 @@ export default function Alertas() {
                           disabled={markAsReadMutation.isPending}
                         >
                           <X className="h-4 w-4 mr-2" />
-                          Descartar
+                          {t('alerts.actions.dismiss')}
                         </Button>
                       </div>
                     </div>
