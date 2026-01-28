@@ -8,8 +8,10 @@ import { useLocation, Link } from 'wouter';
 import { trpc } from '@/lib/trpc';
 import { toast } from 'sonner';
 import { FileText, CreditCard, LogOut, Download, Eye } from 'lucide-react';
+import { useTranslation } from '@/hooks/use-translation';
 
 export default function ClientPortalDashboard() {
+  const { t } = useTranslation();
   const [token, setToken] = useState<string | null>(null);
   const [, setLocation] = useLocation();
 
@@ -51,7 +53,7 @@ export default function ClientPortalDashboard() {
   const logoutMutation = trpc.clientPortal.logout.useMutation({
     onSuccess: () => {
       localStorage.removeItem('clientPortalToken');
-      toast.success('Sesión cerrada');
+      toast.success(t('clientPortal.sessionClosed'));
       setLocation('/client-portal/login');
     },
   });
@@ -67,11 +69,11 @@ export default function ClientPortalDashboard() {
     onSuccess: (data) => {
       if (data.url) {
         window.open(data.url, '_blank');
-        toast.success('Redirigiendo a la página de pago');
+        toast.success(t('clientPortal.redirectingToPaymentPage'));
       }
     },
     onError: (error) => {
-      toast.error('Error al procesar el pago', {
+      toast.error(t('clientPortal.errorProcessingPayment'), {
         description: error.message,
       });
     },
@@ -86,7 +88,7 @@ export default function ClientPortalDashboard() {
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#e07a5f] mx-auto"></div>
-          <p className="mt-4 text-gray-600">Cargando...</p>
+          <p className="mt-4 text-gray-600">{t('common.loading')}</p>
         </div>
       </div>
     );
@@ -103,7 +105,7 @@ export default function ClientPortalDashboard() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">Portal del Cliente</h1>
+              <h1 className="text-2xl font-bold text-gray-900">{t('clientPortal.title')}</h1>
               <p className="text-sm text-gray-600 mt-1">{sessionData?.user.email}</p>
             </div>
             <button
@@ -111,7 +113,7 @@ export default function ClientPortalDashboard() {
               className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
             >
               <LogOut className="w-4 h-4" />
-              Cerrar Sesión
+              {t('clientPortal.logout')}
             </button>
           </div>
         </div>
@@ -124,7 +126,7 @@ export default function ClientPortalDashboard() {
           <div className="bg-white rounded-lg shadow p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">Total Facturas</p>
+                <p className="text-sm font-medium text-gray-600">{t('clientPortal.totalInvoices')}</p>
                 <p className="text-3xl font-bold text-gray-900 mt-2">{invoices.length}</p>
               </div>
               <FileText className="w-12 h-12 text-blue-500" />
@@ -134,7 +136,7 @@ export default function ClientPortalDashboard() {
           <div className="bg-white rounded-lg shadow p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">Pendientes</p>
+                <p className="text-sm font-medium text-gray-600">{t('clientPortal.pending')}</p>
                 <p className="text-3xl font-bold text-[#e07a5f] mt-2">{pendingInvoices.length}</p>
               </div>
               <CreditCard className="w-12 h-12 text-[#e07a5f]" />
@@ -144,7 +146,7 @@ export default function ClientPortalDashboard() {
           <div className="bg-white rounded-lg shadow p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">Pagadas</p>
+                <p className="text-sm font-medium text-gray-600">{t('clientPortal.paid')}</p>
                 <p className="text-3xl font-bold text-green-600 mt-2">{paidInvoices.length}</p>
               </div>
               <FileText className="w-12 h-12 text-green-600" />
@@ -155,26 +157,26 @@ export default function ClientPortalDashboard() {
         {/* Pending Invoices */}
         {pendingInvoices.length > 0 && (
           <div className="mb-8">
-            <h2 className="text-xl font-bold text-gray-900 mb-4">Facturas Pendientes</h2>
+            <h2 className="text-xl font-bold text-gray-900 mb-4">{t('clientPortal.pendingInvoices')}</h2>
             <div className="bg-white rounded-lg shadow overflow-hidden">
               <div className="overflow-x-auto">
                 <table className="min-w-full divide-y divide-gray-200">
                   <thead className="bg-gray-50">
                     <tr>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Número
+                        {t('clientPortal.number')}
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Fecha
+                        {t('clientPortal.date')}
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Total
+                        {t('clientPortal.total')}
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Estado
+                        {t('clientPortal.status')}
                       </th>
                       <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Acciones
+                        {t('clientPortal.actions')}
                       </th>
                     </tr>
                   </thead>
@@ -192,7 +194,7 @@ export default function ClientPortalDashboard() {
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <span className="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-orange-100 text-orange-800">
-                            Pendiente
+                            {t('clientPortal.pending')}
                           </span>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
@@ -204,14 +206,14 @@ export default function ClientPortalDashboard() {
                                   className="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-blue-600 hover:text-blue-700"
                                 >
                                   <Eye className="w-3.5 h-3.5" />
-                                  Ver
+                                  {t('clientPortal.view')}
                                 </Link>
                                 <button
                                   onClick={() => handlePay(invoice.id, invoice.paymentToken!)}
                                   className="inline-flex items-center gap-1 px-3 py-1.5 bg-[#e07a5f] text-white text-xs font-semibold rounded hover:bg-[#d06a4f] transition-colors"
                                 >
                                   <CreditCard className="w-3.5 h-3.5" />
-                                  Pagar
+                                  {t('clientPortal.pay')}
                                 </button>
                               </>
                             )}
@@ -229,26 +231,26 @@ export default function ClientPortalDashboard() {
         {/* Paid Invoices */}
         {paidInvoices.length > 0 && (
           <div>
-            <h2 className="text-xl font-bold text-gray-900 mb-4">Facturas Pagadas</h2>
+            <h2 className="text-xl font-bold text-gray-900 mb-4">{t('clientPortal.paidInvoices')}</h2>
             <div className="bg-white rounded-lg shadow overflow-hidden">
               <div className="overflow-x-auto">
                 <table className="min-w-full divide-y divide-gray-200">
                   <thead className="bg-gray-50">
                     <tr>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Número
+                        {t('clientPortal.number')}
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Fecha
+                        {t('clientPortal.date')}
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Total
+                        {t('clientPortal.total')}
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Estado
+                        {t('clientPortal.status')}
                       </th>
                       <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Acciones
+                        {t('clientPortal.actions')}
                       </th>
                     </tr>
                   </thead>
@@ -266,7 +268,7 @@ export default function ClientPortalDashboard() {
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <span className="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
-                            Pagada
+                            {t('clientPortal.paid')}
                           </span>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
@@ -276,7 +278,7 @@ export default function ClientPortalDashboard() {
                               className="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-blue-600 hover:text-blue-700"
                             >
                               <Eye className="w-3.5 h-3.5" />
-                              Ver
+                              {t('clientPortal.view')}
                             </Link>
                           )}
                         </td>
@@ -293,8 +295,8 @@ export default function ClientPortalDashboard() {
         {invoices.length === 0 && !invoicesLoading && (
           <div className="bg-white rounded-lg shadow p-12 text-center">
             <FileText className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-gray-900 mb-2">No tienes facturas</h3>
-            <p className="text-gray-600">Tus facturas aparecerán aquí cuando estén disponibles</p>
+            <h3 className="text-lg font-medium text-gray-900 mb-2">{t('clientPortal.noInvoices')}</h3>
+            <p className="text-gray-600">{t('clientPortal.invoicesWillAppearHere')}</p>
           </div>
         )}
       </main>

@@ -8,8 +8,10 @@ import { useLocation, Link } from 'wouter';
 import { trpc } from '@/lib/trpc';
 import { toast } from 'sonner';
 import { UserPlus, Mail, Lock, User, Phone, MapPin } from 'lucide-react';
+import { useTranslation } from '@/hooks/use-translation';
 
 export default function ClientPortalRegister() {
+  const { t } = useTranslation();
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -24,13 +26,13 @@ export default function ClientPortalRegister() {
     onSuccess: (data) => {
       // Guardar token en localStorage
       localStorage.setItem('clientPortalToken', data.token);
-      toast.success('Registro exitoso', {
-        description: 'Tu cuenta ha sido creada correctamente',
+      toast.success(t('clientPortal.registrationSuccessful'), {
+        description: t('clientPortal.accountCreatedSuccessfully'),
       });
       setLocation('/client-portal/dashboard');
     },
     onError: (error) => {
-      toast.error('Error al registrarse', {
+      toast.error(t('clientPortal.registrationError'), {
         description: error.message,
       });
     },
@@ -41,17 +43,17 @@ export default function ClientPortalRegister() {
 
     // Validaciones
     if (!formData.name || !formData.email || !formData.password) {
-      toast.error('Por favor completa los campos obligatorios');
+      toast.error(t('clientPortal.pleaseCompleteRequiredFields'));
       return;
     }
 
     if (formData.password !== formData.confirmPassword) {
-      toast.error('Las contraseñas no coinciden');
+      toast.error(t('clientPortal.passwordsDoNotMatch'));
       return;
     }
 
     if (formData.password.length < 6) {
-      toast.error('La contraseña debe tener al menos 6 caracteres');
+      toast.error(t('clientPortal.passwordMinLength'));
       return;
     }
 
@@ -76,8 +78,8 @@ export default function ClientPortalRegister() {
           <div className="inline-flex items-center justify-center w-16 h-16 bg-[#e07a5f] rounded-full mb-4">
             <UserPlus className="w-8 h-8 text-white" />
           </div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Crear Cuenta</h1>
-          <p className="text-gray-600">Regístrate para acceder a tu portal</p>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">{t('clientPortal.createAccount')}</h1>
+          <p className="text-gray-600">{t('clientPortal.registerToAccess')}</p>
         </div>
 
         {/* Register Form */}
@@ -86,7 +88,7 @@ export default function ClientPortalRegister() {
             {/* Name */}
             <div>
               <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
-                Nombre completo <span className="text-red-500">*</span>
+                {t('clientPortal.fullName')} <span className="text-red-500">*</span>
               </label>
               <div className="relative">
                 <User className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
@@ -96,7 +98,7 @@ export default function ClientPortalRegister() {
                   value={formData.name}
                   onChange={(e) => handleChange('name', e.target.value)}
                   className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#e07a5f] focus:border-transparent"
-                  placeholder="Juan Pérez"
+                  placeholder={t('clientPortal.fullNamePlaceholder')}
                   required
                 />
               </div>
@@ -105,7 +107,7 @@ export default function ClientPortalRegister() {
             {/* Email */}
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
-                Email <span className="text-red-500">*</span>
+                {t('clientPortal.email')} <span className="text-red-500">*</span>
               </label>
               <div className="relative">
                 <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
@@ -115,7 +117,7 @@ export default function ClientPortalRegister() {
                   value={formData.email}
                   onChange={(e) => handleChange('email', e.target.value)}
                   className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#e07a5f] focus:border-transparent"
-                  placeholder="tu@email.com"
+                  placeholder={t('clientPortal.emailPlaceholder')}
                   required
                 />
               </div>
@@ -125,7 +127,7 @@ export default function ClientPortalRegister() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
-                  Contraseña <span className="text-red-500">*</span>
+                  {t('clientPortal.password')} <span className="text-red-500">*</span>
                 </label>
                 <div className="relative">
                   <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
@@ -143,7 +145,7 @@ export default function ClientPortalRegister() {
 
               <div>
                 <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-2">
-                  Confirmar <span className="text-red-500">*</span>
+                  {t('clientPortal.confirmPassword')} <span className="text-red-500">*</span>
                 </label>
                 <div className="relative">
                   <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
@@ -163,7 +165,7 @@ export default function ClientPortalRegister() {
             {/* Phone (Optional) */}
             <div>
               <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">
-                Teléfono (opcional)
+                {t('clientPortal.phoneOptional')}
               </label>
               <div className="relative">
                 <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
@@ -173,7 +175,7 @@ export default function ClientPortalRegister() {
                   value={formData.phone}
                   onChange={(e) => handleChange('phone', e.target.value)}
                   className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#e07a5f] focus:border-transparent"
-                  placeholder="+34 600 000 000"
+                  placeholder={t('clientPortal.phonePlaceholder')}
                 />
               </div>
             </div>
@@ -181,7 +183,7 @@ export default function ClientPortalRegister() {
             {/* Address (Optional) */}
             <div>
               <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-2">
-                Dirección (opcional)
+                {t('clientPortal.addressOptional')}
               </label>
               <div className="relative">
                 <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
@@ -191,7 +193,7 @@ export default function ClientPortalRegister() {
                   value={formData.address}
                   onChange={(e) => handleChange('address', e.target.value)}
                   className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#e07a5f] focus:border-transparent"
-                  placeholder="Calle Principal 123"
+                  placeholder={t('clientPortal.addressPlaceholder')}
                 />
               </div>
             </div>
@@ -202,16 +204,16 @@ export default function ClientPortalRegister() {
               disabled={registerMutation.isPending}
               className="w-full bg-[#e07a5f] text-white py-3 rounded-lg font-semibold hover:bg-[#d06a4f] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {registerMutation.isPending ? 'Creando cuenta...' : 'Crear Cuenta'}
+              {registerMutation.isPending ? t('clientPortal.creatingAccount') : t('clientPortal.createAccount')}
             </button>
           </form>
 
           {/* Login Link */}
           <div className="mt-6 text-center">
             <p className="text-sm text-gray-600">
-              ¿Ya tienes una cuenta?{' '}
+              {t('clientPortal.alreadyHaveAccount')}{' '}
               <Link href="/client-portal/login" className="text-[#e07a5f] font-semibold hover:underline">
-                Inicia sesión aquí
+                {t('clientPortal.loginHere')}
               </Link>
             </p>
           </div>
@@ -219,7 +221,7 @@ export default function ClientPortalRegister() {
 
         {/* Footer */}
         <div className="mt-8 text-center text-sm text-gray-600">
-          <p>© 2026 Piano Emotion. Todos los derechos reservados.</p>
+          <p>{t('clientPortal.footer')}</p>
         </div>
       </div>
     </div>
