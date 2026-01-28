@@ -48,6 +48,7 @@ import { PartnersAdmin } from "./pages/PartnersAdmin";
 import { ActivationCodesAdmin } from "./pages/ActivationCodesAdmin";
 import { LicensesAdmin } from "./pages/LicensesAdmin";
 import { ActivateLicense } from "./pages/ActivateLicense";
+import Notificaciones from "./pages/Notificaciones";
 import { OrganizationSettings } from "./pages/OrganizationSettings";
 import { LicenseNotifications } from "./pages/LicenseNotifications";
 import { RenewalSuccess } from "./pages/RenewalSuccess";
@@ -224,6 +225,13 @@ function Router() {
         <ProtectedRoute>
           <Layout>
             <InventarioEditar />
+          </Layout>
+        </ProtectedRoute>
+      </Route>
+      <Route path="/notificaciones">
+        <ProtectedRoute>
+          <Layout>
+            <Notificaciones />
           </Layout>
         </ProtectedRoute>
       </Route>

@@ -998,3 +998,13 @@
 - [x] Crear sistema de notificaciones automáticas de WhatsApp para mantenimiento de pianos
 - [x] Crear router de notificaciones con 4 endpoints (citas, pagos, mantenimiento, todos)
 - [x] Agregar tests para las nuevas funcionalidades (whatsappNotifications.test.ts - 9 tests pasando)
+
+## Panel de Notificaciones de WhatsApp
+- [x] Crear página Notificaciones.tsx con interfaz visual completa (4 tabs, tarjetas, badges)
+- [x] Implementar tabs para separar tipos de recordatorios (Todos, Citas, Pagos, Mantenimiento)
+- [x] Agregar tarjetas de recordatorio con información del cliente y botón de WhatsApp
+- [x] Implementar botón de envío masivo de recordatorios (máximo 5 simultáneos)
+- [x] Agregar estados vacíos con iconos y mensajes informativos
+- [x] Agregar ruta /notificaciones al App.tsx
+- [x] Agregar enlace "Notificaciones" en el menú HERRAMIENTAS del Layout
+- [x] Tests no requeridos (página de UI que consume endpoints ya testeados)

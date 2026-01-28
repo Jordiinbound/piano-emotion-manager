@@ -74,6 +74,7 @@ const menuSections: MenuSection[] = [
     title: 'HERRAMIENTAS',
     items: [
       { name: 'Accesos Rápidos', href: '/accesos-rapidos', icon: Zap },
+      { name: 'Notificaciones', href: '/notificaciones', icon: Bell },
       { name: 'Alertas', href: '/alertas', icon: Bell },
       { name: 'Herramientas Avanzadas', href: '/herramientas-avanzadas', icon: Hammer },
       { name: 'Configuración', href: '/configuracion', icon: Settings },
