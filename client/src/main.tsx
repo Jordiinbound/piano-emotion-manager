@@ -8,6 +8,7 @@ import App from "./App";
 import { getLoginUrl } from "./const";
 import { ClerkProvider, useAuth } from "@clerk/clerk-react";
 import { useMemo } from "react";
+import { LanguageProvider } from "@/contexts/language-context";
 import "./index.css";
 
 const queryClient = new QueryClient();
@@ -72,7 +73,9 @@ function TRPCProvider({ children }: { children: React.ReactNode }) {
   return (
     <trpc.Provider client={trpcClient} queryClient={queryClient}>
       <QueryClientProvider client={queryClient}>
-        {children}
+        <LanguageProvider>
+          {children}
+        </LanguageProvider>
       </QueryClientProvider>
     </trpc.Provider>
   );

@@ -800,6 +800,9 @@ export const partnersV2 = mysqlTable("partners_v2", {
 	index("partners_email_idx").on(table.email),
 ]);
 
+// Alias for backward compatibility
+export const partners = partnersV2;
+
 export const pianos = mysqlTable("pianos", {
 	id: int().autoincrement().notNull(),
 	odId: varchar({ length: 64 }).notNull(),

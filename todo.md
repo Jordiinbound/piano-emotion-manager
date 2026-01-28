@@ -784,3 +784,13 @@
 - [x] Crear router tRPC para gestionar alertSettings
 - [x] Implementar formulario de configuración de umbrales
 - [x] Registrar ruta en App.tsx
+
+## Recuperar sistema de internacionalización (i18n)
+- [x] Clonar repositorio de GitHub
+- [x] Localizar archivos de i18n en el repositorio
+- [x] Copiar contextos, hooks y archivos de traducción
+- [x] Adaptar para web (sin dependencias React Native)
+- [x] Integrar en el proyecto actual
+- [x] Crear alias partners = partnersV2 en schema
+- [x] Registrar router de language en routers.ts
+- [x] Agregar LanguageProvider en main.tsx
