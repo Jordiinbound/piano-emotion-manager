@@ -1409,3 +1409,197 @@ export const alertHistoryRelations = relations(alertHistory, ({ one }) => ({
  * Tabla de recordatorios
  * Gestión de recordatorios de seguimiento y captación de clientes
  */
+
+
+// ============================================================================
+// MARKETING & CAMPAIGNS
+// ============================================================================
+
+/**
+ * Plantillas de mensajes configurables para campañas de marketing
+ */
+export const messageTemplates = mysqlTable('message_templates', {
+  id: int().primaryKey().autoincrement(),
+  partnerId: int('partner_id'),
+  organizationId: int('organization_id'),
+  
+  // Tipo de plantilla
+  type: varchar({ length: 50 }).notNull(),
+  
+  // Canal: whatsapp, email, sms, all
+  channel: varchar({ length: 20 }).default('whatsapp'),
+  
+  // Nombre descriptivo de la plantilla
+  name: varchar({ length: 100 }).notNull(),
+  
+  // Asunto del email (solo para canal email)
+  emailSubject: varchar('email_subject', { length: 200 }),
+  
+  // Contenido del mensaje con variables {{variable}}
+  content: text().notNull(),
+  
+  // Contenido HTML para email (opcional)
+  htmlContent: text('html_content'),
+  
+  // Variables disponibles para esta plantilla (JSON array)
+  availableVariables: json('available_variables').$type<string[]>(),
+  
+  // Si es la plantilla por defecto para este tipo y canal
+  isDefault: tinyint('is_default').default(0),
+  
+  // Si está activa
+  isActive: tinyint('is_active').default(1),
+  
+  // Metadatos
+  createdAt: timestamp('created_at').defaultNow(),
+  updatedAt: timestamp('updated_at').defaultNow(),
+  createdBy: int('created_by'),
+});
+
+/**
+ * Campañas de marketing
+ */
+export const marketingCampaigns = mysqlTable('marketing_campaigns', {
+  id: int().primaryKey().autoincrement(),
+  partnerId: int('partner_id'),
+  organizationId: int('organization_id'),
+  
+  // Información básica
+  name: varchar({ length: 100 }).notNull(),
+  description: text(),
+  
+  // Plantilla a usar
+  templateId: int('template_id').notNull(),
+  
+  // Estado de la campaña: draft, scheduled, in_progress, paused, completed, cancelled
+  status: varchar({ length: 20 }).default('draft'),
+  
+  // Filtros para seleccionar destinatarios (JSON)
+  recipientFilters: json('recipient_filters').$type<{
+    lastServiceBefore?: string;
+    lastServiceAfter?: string;
+    pianoTypes?: string[];
+    serviceTypes?: string[];
+    tags?: string[];
+    hasUpcomingAppointment?: boolean;
+    isActive?: boolean;
+  }>(),
+  
+  // Estadísticas
+  totalRecipients: int('total_recipients').default(0),
+  sentCount: int('sent_count').default(0),
+  deliveredCount: int('delivered_count').default(0),
+  failedCount: int('failed_count').default(0),
+  
+  // Fechas
+  scheduledAt: timestamp('scheduled_at'),
+  startedAt: timestamp('started_at'),
+  completedAt: timestamp('completed_at'),
+  createdAt: timestamp('created_at').defaultNow(),
+  updatedAt: timestamp('updated_at').defaultNow(),
+  createdBy: int('created_by'),
+});
+
+/**
+ * Destinatarios de una campaña (cola de envío)
+ */
+export const campaignRecipients = mysqlTable('campaign_recipients', {
+  id: int().primaryKey().autoincrement(),
+  campaignId: int('campaign_id').notNull(),
+  clientId: int('client_id').notNull(),
+  
+  // Mensaje personalizado generado para este cliente
+  generatedMessage: text('generated_message'),
+  
+  // Estado del envío: pending, sent, delivered, failed, skipped
+  status: varchar({ length: 20 }).default('pending'),
+  
+  // Información del envío
+  sentAt: timestamp('sent_at'),
+  deliveredAt: timestamp('delivered_at'),
+  sentBy: int('sent_by'),
+  
+  // Notas (por qué se saltó, error, etc.)
+  notes: text(),
+  errorMessage: text('error_message'),
+  
+  // Orden en la cola
+  queueOrder: int('queue_order'),
+  
+  createdAt: timestamp('created_at').defaultNow(),
+});
+
+/**
+ * Historial de mensajes enviados (para auditoría y seguimiento)
+ */
+export const messageHistory = mysqlTable('message_history', {
+  id: int().primaryKey().autoincrement(),
+  partnerId: int('partner_id'),
+  organizationId: int('organization_id'),
+  
+  // Relaciones opcionales
+  campaignId: int('campaign_id'),
+  templateId: int('template_id'),
+  clientId: int('client_id').notNull(),
+  
+  // Tipo de mensaje
+  messageType: varchar('message_type', { length: 50 }).notNull(),
+  
+  // Contenido enviado
+  content: text().notNull(),
+  
+  // Canal de envío: whatsapp, email, sms
+  channel: varchar({ length: 20 }).default('whatsapp'),
+  
+  // Destinatario
+  recipientPhone: varchar('recipient_phone', { length: 20 }),
+  recipientEmail: varchar('recipient_email', { length: 255 }),
+  
+  // Estado: sent, delivered, read, failed
+  status: varchar({ length: 20 }).default('sent'),
+  
+  // Metadatos
+  sentAt: timestamp('sent_at').defaultNow(),
+  deliveredAt: timestamp('delivered_at'),
+  readAt: timestamp('read_at'),
+  sentBy: int('sent_by'),
+});
+
+// Relaciones de marketing
+export const messageTemplatesRelations = relations(messageTemplates, ({ many }) => ({
+  campaigns: many(marketingCampaigns),
+}));
+
+export const marketingCampaignsRelations = relations(marketingCampaigns, ({ one, many }) => ({
+  template: one(messageTemplates, {
+    fields: [marketingCampaigns.templateId],
+    references: [messageTemplates.id],
+  }),
+  recipients: many(campaignRecipients),
+}));
+
+export const campaignRecipientsRelations = relations(campaignRecipients, ({ one }) => ({
+  campaign: one(marketingCampaigns, {
+    fields: [campaignRecipients.campaignId],
+    references: [marketingCampaigns.id],
+  }),
+  client: one(clients, {
+    fields: [campaignRecipients.clientId],
+    references: [clients.id],
+  }),
+}));
+
+export const messageHistoryRelations = relations(messageHistory, ({ one }) => ({
+  campaign: one(marketingCampaigns, {
+    fields: [messageHistory.campaignId],
+    references: [marketingCampaigns.id],
+  }),
+  template: one(messageTemplates, {
+    fields: [messageHistory.templateId],
+    references: [messageTemplates.id],
+  }),
+  client: one(clients, {
+    fields: [messageHistory.clientId],
+    references: [clients.id],
+  }),
+}));

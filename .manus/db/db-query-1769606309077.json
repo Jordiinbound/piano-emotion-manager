@@ -1,0 +1,16 @@
+{
+  "query": "SHOW TABLES LIKE 'message%';",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2ghn282qNtTBYRw.2c60fb684332 --database U7erxBowPGSR3wjYQtQi9z --execute SHOW TABLES LIKE 'message%';",
+  "rows": [
+    {
+      "Tables_in_U7erxBowPGSR3wjYQtQi9z (message%)": "message_history"
+    },
+    {
+      "Tables_in_U7erxBowPGSR3wjYQtQi9z (message%)": "message_templates"
+    }
+  ],
+  "messages": [],
+  "stdout": "Tables_in_U7erxBowPGSR3wjYQtQi9z (message%)\nmessage_history\nmessage_templates\n",
+  "stderr": "",
+  "execution_time_ms": 344
+}
