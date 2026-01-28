@@ -8,6 +8,7 @@
 import { useState } from 'react';
 import { Brain, Mail, FileText, Sparkles, X, Copy, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { trpc } from '@/lib/trpc';
 import {
   Dialog,
   DialogContent,
@@ -61,84 +62,35 @@ export default function AIAssistantButton() {
   const [isGenerating, setIsGenerating] = useState(false);
   const [isCopied, setIsCopied] = useState(false);
 
+  const generateMutation = trpc.aiAssistant.generateContent.useMutation({
+    onSuccess: (data) => {
+      setGeneratedContent(data.content);
+      toast.success('Contenido generado correctamente');
+      setIsGenerating(false);
+    },
+    onError: (error) => {
+      toast.error(error.message || 'Error al generar contenido');
+      setIsGenerating(false);
+    },
+  });
+
   const handleGenerate = async () => {
     if (!prompt.trim()) {
       toast.error('Por favor, describe lo que necesitas');
       return;
     }
 
+    if (!selectedMode) {
+      toast.error('Por favor, selecciona un modo');
+      return;
+    }
+
     setIsGenerating(true);
     
-    try {
-      // Simular generación de contenido (en producción, llamar a API de IA)
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
-      let content = '';
-      
-      if (selectedMode === 'email') {
-        content = `Asunto: Confirmación de Servicio de Afinación
-
-Estimado/a cliente,
-
-Nos complace confirmar su cita de afinación programada para el próximo martes a las 10:00 horas.
-
-Nuestro técnico especializado realizará una revisión completa de su piano, incluyendo:
-- Afinación precisa de todas las cuerdas
-- Inspección del mecanismo
-- Ajustes menores necesarios
-
-La duración estimada del servicio es de 2 horas. Por favor, asegúrese de que el piano esté accesible y en un ambiente con temperatura estable.
-
-Si necesita reprogramar o tiene alguna consulta, no dude en contactarnos.
-
-Atentamente,
-Piano Emotion Manager`;
-      } else if (selectedMode === 'report') {
-        content = `INFORME TÉCNICO DE SERVICIO
-
-Cliente: [Nombre del Cliente]
-Piano: [Marca y Modelo]
-Fecha: ${new Date().toLocaleDateString('es-ES')}
-Técnico: [Nombre del Técnico]
-
-TRABAJO REALIZADO:
-
-1. Afinación Completa
-   - Afinación a 440 Hz (La central)
-   - Temperamento igual
-   - Todas las cuerdas ajustadas correctamente
-
-2. Regulación de Martillos
-   - Ajuste de la distancia cuerda-martillo
-   - Nivelación de la línea de martillos
-   - Corrección de centrado
-
-3. Inspección General
-   - Estado de cuerdas: Bueno
-   - Estado de fieltros: Bueno
-   - Mecanismo: Funcionamiento óptimo
-
-OBSERVACIONES:
-El piano se encuentra en excelente estado de mantenimiento. Se recomienda la próxima afinación en 6 meses.
-
-PRÓXIMA REVISIÓN RECOMENDADA: ${new Date(Date.now() + 180 * 24 * 60 * 60 * 1000).toLocaleDateString('es-ES')}`;
-      } else {
-        content = `Contenido generado basado en tu solicitud:
-
-${prompt}
-
-[La IA generaría aquí contenido personalizado según tu necesidad específica]
-
-Este es un ejemplo de cómo el asistente de IA puede ayudarte con diversas tareas relacionadas con la gestión de tu negocio de pianos.`;
-      }
-      
-      setGeneratedContent(content);
-      toast.success('Contenido generado correctamente');
-    } catch (error) {
-      toast.error('Error al generar contenido');
-    } finally {
-      setIsGenerating(false);
-    }
+    generateMutation.mutate({
+      mode: selectedMode,
+      prompt: prompt.trim(),
+    });
   };
 
   const handleCopy = () => {

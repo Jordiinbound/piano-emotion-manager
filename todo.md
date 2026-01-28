@@ -749,3 +749,12 @@
 - [x] Implementar modal/drawer con opciones (redactar emails, informes de servicio, etc.)
 - [x] Integrar botón flotante en Layout principal
 - [x] Conectar con API de IA para generación de contenido
+
+## Conectar IA real y verificar funcionalidades existentes
+- [x] Buscar configuración de Groq IA en el proyecto
+- [x] Crear router tRPC para asistente IA
+- [x] Conectar AIAssistantButton con invokeLLM usando Groq
+- [x] Verificar gráficos del dashboard de métricas
+- [x] Verificar sistema de alertas en dashboard
+- [x] Conectar alertas con datos reales de BD (citas próximas, facturas vencidas)
+- [x] Actualizar modelo a llama-3.3-70b-versatile (Groq)
