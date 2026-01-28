@@ -815,8 +815,8 @@
 - [x] Agenda.tsx
 - [x] Facturacion.tsx
 - [x] Presupuestos.tsx
-- [ ] Store.tsx
-- [ ] TiposServicio.tsx
+- [x] Store.tsx
+- [x] TiposServicio.tsx
 
 #### Formularios (Nuevo/Editar)
 - [ ] ClienteNuevo.tsx

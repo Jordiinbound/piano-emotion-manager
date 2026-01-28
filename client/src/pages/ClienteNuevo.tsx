@@ -9,8 +9,10 @@ import { Textarea } from '../components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { ArrowLeft, Save } from 'lucide-react';
 import { toast } from 'sonner';
+import { useTranslation } from '@/hooks/use-translation';
 
 export default function ClienteNuevo() {
+  const { t } = useTranslation();
   const [, setLocation] = useLocation();
   const createMutation = trpc.clients.createClient.useMutation();
 
@@ -33,10 +35,10 @@ export default function ClienteNuevo() {
     try {
       const odId = `CLI-${Date.now()}`;
       await createMutation.mutateAsync({ ...formData, odId });
-      toast.success('Cliente creado correctamente');
+      toast.success(t('clients.clientCreated'));
       setLocation('/clientes');
     } catch (error) {
-      toast.error('No se pudo crear el cliente');
+      toast.error(t('clients.couldNotCreateClient'));
     }
   };
 
@@ -49,138 +51,138 @@ export default function ClienteNuevo() {
       <div className="mb-6">
         <Button variant="ghost" onClick={() => setLocation('/clientes')} className="mb-4">
           <ArrowLeft className="mr-2 h-4 w-4" />
-          Volver a Clientes
+          {t('clients.backToClients')}
         </Button>
-        <h1 className="text-3xl font-bold">Nuevo Cliente</h1>
+        <h1 className="text-3xl font-bold">{t('clients.newClient')}</h1>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle>Información del Cliente</CardTitle>
+          <CardTitle>{t('clients.clientInformation')}</CardTitle>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="name">Nombre *</Label>
+                <Label htmlFor="name">{t('clients.name')} *</Label>
                 <Input
                   id="name"
                   value={formData.name}
                   onChange={(e) => handleChange('name', e.target.value)}
                   required
-                  placeholder="Nombre completo del cliente"
+                  placeholder={t('clients.namePlaceholder')}
                 />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="clientType">Tipo de Cliente *</Label>
+                <Label htmlFor="clientType">{t('clients.clientType')} *</Label>
                 <Select value={formData.clientType} onValueChange={(value) => handleChange('clientType', value)}>
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="particular">Particular</SelectItem>
-                    <SelectItem value="professional">Profesional</SelectItem>
-                    <SelectItem value="student">Estudiante</SelectItem>
-                    <SelectItem value="conservatory">Conservatorio</SelectItem>
-                    <SelectItem value="music_school">Escuela de Música</SelectItem>
-                    <SelectItem value="concert_hall">Sala de Conciertos</SelectItem>
+                    <SelectItem value="particular">{t('clients.types.particular')}</SelectItem>
+                    <SelectItem value="professional">{t('clients.types.professional')}</SelectItem>
+                    <SelectItem value="student">{t('clients.types.student')}</SelectItem>
+                    <SelectItem value="conservatory">{t('clients.types.conservatory')}</SelectItem>
+                    <SelectItem value="music_school">{t('clients.types.musicSchool')}</SelectItem>
+                    <SelectItem value="concert_hall">{t('clients.types.concertHall')}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
+                <Label htmlFor="email">{t('clients.email')}</Label>
                 <Input
                   id="email"
                   type="email"
                   value={formData.email}
                   onChange={(e) => handleChange('email', e.target.value)}
-                  placeholder="correo@ejemplo.com"
+                  placeholder={t('clients.emailPlaceholder')}
                 />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="phone">Teléfono</Label>
+                <Label htmlFor="phone">{t('clients.phone')}</Label>
                 <Input
                   id="phone"
                   value={formData.phone}
                   onChange={(e) => handleChange('phone', e.target.value)}
-                  placeholder="+34 123 456 789"
+                  placeholder={t('clients.phonePlaceholder')}
                 />
               </div>
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="address">Dirección</Label>
+              <Label htmlFor="address">{t('clients.address')}</Label>
               <Input
                 id="address"
                 value={formData.address}
                 onChange={(e) => handleChange('address', e.target.value)}
-                placeholder="Calle, número, piso..."
+                placeholder={t('clients.addressPlaceholder')}
               />
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="city">Ciudad</Label>
+                <Label htmlFor="city">{t('clients.city')}</Label>
                 <Input
                   id="city"
                   value={formData.city}
                   onChange={(e) => handleChange('city', e.target.value)}
-                  placeholder="Madrid"
+                  placeholder={t('clients.cityPlaceholder')}
                 />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="postalCode">Código Postal</Label>
+                <Label htmlFor="postalCode">{t('clients.postalCode')}</Label>
                 <Input
                   id="postalCode"
                   value={formData.postalCode}
                   onChange={(e) => handleChange('postalCode', e.target.value)}
-                  placeholder="28001"
+                  placeholder={t('clients.postalCodePlaceholder')}
                 />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="region">Comunidad</Label>
+                <Label htmlFor="region">{t('clients.region')}</Label>
                 <Input
                   id="region"
                   value={formData.region}
                   onChange={(e) => handleChange('region', e.target.value)}
-                  placeholder="Madrid"
+                  placeholder={t('clients.regionPlaceholder')}
                 />
               </div>
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="routeGroup">Grupo de Ruta</Label>
+              <Label htmlFor="routeGroup">{t('clients.routeGroup')}</Label>
               <Input
                 id="routeGroup"
                 value={formData.routeGroup}
                 onChange={(e) => handleChange('routeGroup', e.target.value)}
-                placeholder="Ruta Centro, Ruta Norte..."
+                placeholder={t('clients.routeGroupPlaceholder')}
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="notes">Notas</Label>
+              <Label htmlFor="notes">{t('clients.notes')}</Label>
               <Textarea
                 id="notes"
                 value={formData.notes}
                 onChange={(e) => handleChange('notes', e.target.value)}
-                placeholder="Notas adicionales sobre el cliente..."
+                placeholder={t('clients.notesPlaceholder')}
                 rows={4}
               />
             </div>
 
             <div className="flex gap-4 justify-end">
               <Button type="button" variant="outline" onClick={() => setLocation('/clientes')}>
-                Cancelar
+                {t('common.cancel')}
               </Button>
               <Button type="submit" disabled={createMutation.isPending}>
                 <Save className="mr-2 h-4 w-4" />
-                {createMutation.isPending ? 'Guardando...' : 'Guardar Cliente'}
+                {createMutation.isPending ? t('common.saving') : t('clients.saveClient')}
               </Button>
             </div>
           </form>
