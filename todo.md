@@ -1174,3 +1174,20 @@
 - [ ] Implementar cualquier característica no migrada aún
 - [ ] Completar integración de todas las funcionalidades
 - [ ] Verificar que no falte ninguna funcionalidad del proyecto original
+
+## Tests Unitarios Pendientes
+- [ ] Escribir tests para pdfInspectionService.ts (generación de PDF)
+- [ ] Escribir tests para endpoint generateInspectionPDF
+- [ ] Escribir tests para endpoint deletePianoPhoto
+- [ ] Escribir tests para función storageDelete()
+- [ ] Verificar que todos los tests pasen al 100%
+
+## Funcionalidades Avanzadas Identificadas
+- [ ] Revisar proyecto GitHub para identificar funcionalidades no migradas
+- [ ] Implementar vista previa de PDF en navegador antes de descargar
+- [ ] Agregar opción de imprimir PDF directamente desde la interfaz
+- [ ] Implementar lightbox con zoom para galería de fotos
+- [ ] Agregar comparación de fotos antes/después
+- [ ] Implementar timeline de fotos por fecha
+- [ ] Agregar etiquetas y categorías a las fotos
+- [ ] Verificar que todas las funcionalidades del proyecto original estén migradas
