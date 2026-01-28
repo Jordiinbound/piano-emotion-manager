@@ -742,3 +742,10 @@
 - [x] Eliminar ruta /ia-avanzada de App.tsx
 - [x] Eliminar archivo IAAvanzada.tsx
 - [x] Actualizar todo.md para reflejar eliminación
+
+## Implementar botón flotante de ayuda IA
+- [x] Buscar implementación del botón de ayuda IA en el proyecto original
+- [x] Crear componente AIAssistantButton con icono de cerebro
+- [x] Implementar modal/drawer con opciones (redactar emails, informes de servicio, etc.)
+- [x] Integrar botón flotante en Layout principal
+- [x] Conectar con API de IA para generación de contenido

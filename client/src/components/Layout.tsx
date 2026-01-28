@@ -29,6 +29,7 @@ import { Button } from '@/components/ui/button';
 import { LicenseNotificationBadge } from '@/components/LicenseNotificationBadge';
 import { OnboardingWizard } from '@/components/OnboardingWizard';
 import { GlobalSearch } from '@/components/GlobalSearch';
+import AIAssistantButton from '@/components/AIAssistantButton';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -300,6 +301,9 @@ export default function Layout({ children }: LayoutProps) {
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">{children}</div>
         </main>
       </div>
+
+      {/* Botón flotante de ayuda IA */}
+      <AIAssistantButton />
     </div>
     </>
   );
