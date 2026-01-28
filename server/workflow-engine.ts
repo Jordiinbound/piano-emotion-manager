@@ -189,6 +189,11 @@ async function executeNode(
         // Implementar delay (en producción, esto debería ser asíncrono)
         await executeDelay(node, context);
         break;
+
+      case 'approval':
+        // Pausar workflow y esperar aprobación manual
+        await pauseForApproval(node, context);
+        return; // Detener ejecución hasta que se apruebe
     }
 
     // Encontrar y ejecutar nodos siguientes (para nodos sin bifurcación)
@@ -207,33 +212,140 @@ async function executeNode(
 }
 
 /**
- * Evalúa una condición
+ * Evalúa una condición con soporte para operadores lógicos (AND/OR) y comparaciones avanzadas
  */
 async function evaluateCondition(node: WorkflowNode, context: ExecutionContext): Promise<boolean> {
   const config = node.nodeConfig;
   
-  // Ejemplo de evaluación de condición
-  // En producción, esto debería ser más robusto y soportar diferentes tipos de condiciones
-  if (config.field && config.operator && config.value !== undefined) {
-    const fieldValue = context.variables[config.field] || context.triggerData[config.field];
-    
-    switch (config.operator) {
-      case 'equals':
-        return fieldValue === config.value;
-      case 'not_equals':
-        return fieldValue !== config.value;
-      case 'greater_than':
-        return fieldValue > config.value;
-      case 'less_than':
-        return fieldValue < config.value;
-      case 'contains':
-        return String(fieldValue).includes(String(config.value));
-      default:
-        return false;
+  // Soporte para condiciones compuestas con AND/OR
+  if (config.conditions && Array.isArray(config.conditions)) {
+    const logicOperator = config.logicOperator || 'AND';
+    const results: boolean[] = [];
+
+    for (const condition of config.conditions) {
+      const result = await evaluateSingleCondition(condition, context);
+      results.push(result);
+    }
+
+    if (logicOperator === 'AND') {
+      return results.every(r => r === true);
+    } else if (logicOperator === 'OR') {
+      return results.some(r => r === true);
     }
   }
 
-  return false;
+  // Condición simple (backward compatibility)
+  return await evaluateSingleCondition(config, context);
+}
+
+/**
+ * Evalúa una condición individual
+ */
+async function evaluateSingleCondition(condition: any, context: ExecutionContext): Promise<boolean> {
+  if (!condition.field || !condition.operator) {
+    return false;
+  }
+
+  const fieldValue = context.variables[condition.field] || context.triggerData[condition.field];
+  const compareValue = condition.value;
+
+  switch (condition.operator) {
+    // Comparaciones de igualdad
+    case 'equals':
+    case '==':
+      return fieldValue == compareValue;
+    
+    case 'not_equals':
+    case '!=':
+      return fieldValue != compareValue;
+    
+    case 'strict_equals':
+    case '===':
+      return fieldValue === compareValue;
+    
+    case 'strict_not_equals':
+    case '!==':
+      return fieldValue !== compareValue;
+
+    // Comparaciones numéricas
+    case 'greater_than':
+    case '>':
+      return Number(fieldValue) > Number(compareValue);
+    
+    case 'greater_than_or_equal':
+    case '>=':
+      return Number(fieldValue) >= Number(compareValue);
+    
+    case 'less_than':
+    case '<':
+      return Number(fieldValue) < Number(compareValue);
+    
+    case 'less_than_or_equal':
+    case '<=':
+      return Number(fieldValue) <= Number(compareValue);
+
+    // Validaciones de texto
+    case 'contains':
+      return String(fieldValue).toLowerCase().includes(String(compareValue).toLowerCase());
+    
+    case 'not_contains':
+      return !String(fieldValue).toLowerCase().includes(String(compareValue).toLowerCase());
+    
+    case 'starts_with':
+      return String(fieldValue).toLowerCase().startsWith(String(compareValue).toLowerCase());
+    
+    case 'ends_with':
+      return String(fieldValue).toLowerCase().endsWith(String(compareValue).toLowerCase());
+    
+    case 'matches_regex':
+      try {
+        const regex = new RegExp(String(compareValue));
+        return regex.test(String(fieldValue));
+      } catch {
+        return false;
+      }
+
+    // Validaciones de existencia
+    case 'is_empty':
+      return !fieldValue || fieldValue === '' || (Array.isArray(fieldValue) && fieldValue.length === 0);
+    
+    case 'is_not_empty':
+      return !!fieldValue && fieldValue !== '' && (!Array.isArray(fieldValue) || fieldValue.length > 0);
+    
+    case 'is_null':
+      return fieldValue === null || fieldValue === undefined;
+    
+    case 'is_not_null':
+      return fieldValue !== null && fieldValue !== undefined;
+
+    // Validaciones de tipo
+    case 'is_number':
+      return !isNaN(Number(fieldValue));
+    
+    case 'is_boolean':
+      return typeof fieldValue === 'boolean';
+    
+    case 'is_array':
+      return Array.isArray(fieldValue);
+
+    // Validaciones de rango
+    case 'in_range':
+      if (condition.min !== undefined && condition.max !== undefined) {
+        const numValue = Number(fieldValue);
+        return numValue >= Number(condition.min) && numValue <= Number(condition.max);
+      }
+      return false;
+    
+    case 'in_list':
+      if (Array.isArray(compareValue)) {
+        return compareValue.includes(fieldValue);
+      }
+      return false;
+
+    default:
+      console.warn(`[Workflow Engine] Unknown operator: ${condition.operator}`);
+      return false;
+  }
 }
 
 /**
@@ -446,6 +558,176 @@ async function updateStatus(config: any, context: ExecutionContext) {
   });
   
   // TODO: Actualizar estado en la base de datos
+}
+
+/**
+ * Pausa el workflow y espera aprobación manual
+ */
+async function pauseForApproval(node: WorkflowNode, context: ExecutionContext) {
+  const db = await getDb();
+  const config = node.nodeConfig;
+  
+  console.log('[Workflow Engine] Pausing workflow for approval:', {
+    workflowId: context.workflowId,
+    executionId: context.executionId,
+    nodeId: node.id,
+    message: config.approvalMessage || 'Aprobación requerida',
+  });
+
+  // Actualizar ejecución con datos de aprobación pendiente
+  await db.update(workflowExecutions)
+    .set({
+      status: 'pending',
+      pendingApprovalData: {
+        nodeId: node.id,
+        message: config.approvalMessage || 'Aprobación requerida',
+        details: config.approvalDetails || '',
+        pausedAt: new Date().toISOString(),
+        approvedBy: null,
+        approvedAt: null,
+        decision: null, // 'approved' | 'rejected'
+      },
+    })
+    .where(eq(workflowExecutions.id, context.executionId));
+
+  // TODO: Enviar notificación al usuario sobre la aprobación pendiente
+  // Esto podría ser un email, notificación push, etc.
+}
+
+/**
+ * Reanuda un workflow después de aprobación
+ */
+export async function resumeWorkflowAfterApproval(
+  executionId: number,
+  decision: 'approved' | 'rejected',
+  approvedBy: number
+) {
+  const db = await getDb();
+
+  try {
+    // Obtener ejecución
+    const [execution] = await db
+      .select()
+      .from(workflowExecutions)
+      .where(eq(workflowExecutions.id, executionId));
+
+    if (!execution) {
+      throw new Error(`Execution ${executionId} not found`);
+    }
+
+    if (execution.status !== 'pending') {
+      throw new Error(`Execution ${executionId} is not pending approval`);
+    }
+
+    const approvalData = execution.pendingApprovalData as any;
+
+    // Actualizar datos de aprobación
+    await db.update(workflowExecutions)
+      .set({
+        pendingApprovalData: {
+          ...approvalData,
+          decision,
+          approvedBy,
+          approvedAt: new Date().toISOString(),
+        },
+      })
+      .where(eq(workflowExecutions.id, executionId));
+
+    if (decision === 'rejected') {
+      // Si se rechaza, marcar como completado (no continuar)
+      await db.update(workflowExecutions)
+        .set({
+          status: 'completed',
+          completedAt: new Date(),
+        })
+        .where(eq(workflowExecutions.id, executionId));
+
+      return {
+        success: true,
+        message: 'Workflow rejected and stopped',
+      };
+    }
+
+    // Si se aprueba, continuar con la ejecución
+    // Obtener workflow y nodos
+    const [workflow] = await db
+      .select()
+      .from(workflows)
+      .where(eq(workflows.id, execution.workflowId));
+
+    if (!workflow) {
+      throw new Error(`Workflow ${execution.workflowId} not found`);
+    }
+
+    const nodes = await db
+      .select()
+      .from(workflowNodes)
+      .where(eq(workflowNodes.workflowId, execution.workflowId));
+
+    const connections = await db
+      .select()
+      .from(workflowConnections)
+      .where(eq(workflowConnections.workflowId, execution.workflowId));
+
+    // Encontrar el nodo de aprobación
+    const approvalNode = nodes.find(n => n.id === approvalData.nodeId);
+    if (!approvalNode) {
+      throw new Error(`Approval node ${approvalData.nodeId} not found`);
+    }
+
+    // Crear contexto de ejecución
+    const context: ExecutionContext = {
+      workflowId: execution.workflowId,
+      executionId: execution.id,
+      triggerData: execution.triggerData || {},
+      variables: {},
+    };
+
+    // Actualizar estado a running
+    await db.update(workflowExecutions)
+      .set({
+        status: 'running',
+      })
+      .where(eq(workflowExecutions.id, executionId));
+
+    // Continuar con los nodos siguientes al nodo de aprobación
+    const nextConnections = connections.filter(c => c.sourceNodeId === approvalNode.id);
+    for (const conn of nextConnections) {
+      const nextNode = nodes.find(n => n.id === conn.targetNodeId);
+      if (nextNode) {
+        await executeNode(nextNode, nodes, connections, context);
+      }
+    }
+
+    // Marcar como completado
+    await db.update(workflowExecutions)
+      .set({
+        status: 'completed',
+        completedAt: new Date(),
+      })
+      .where(eq(workflowExecutions.id, executionId));
+
+    return {
+      success: true,
+      message: 'Workflow resumed and completed',
+    };
+
+  } catch (error: any) {
+    console.error('[Workflow Engine] Error resuming workflow:', error);
+    
+    await db.update(workflowExecutions)
+      .set({
+        status: 'failed',
+        errorMessage: error.message,
+        completedAt: new Date(),
+      })
+      .where(eq(workflowExecutions.id, executionId));
+
+    return {
+      success: false,
+      error: error.message,
+    };
+  }
 }
 
 /**

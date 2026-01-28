@@ -1694,3 +1694,19 @@
 - [x] Implementar estadísticas de ejecuciones (total, exitosas, fallidas)
 - [x] Agregar gráficos de actividad de workflows
 - [x] Mostrar workflows más usados y métricas de rendimiento
+
+
+## FASE 11 - Triggers Automáticos y Condiciones Avanzadas
+- [x] Crear sistema de event listeners para triggers automáticos
+- [x] Implementar trigger: nuevo cliente creado
+- [x] Implementar trigger: cita programada
+- [x] Implementar trigger: factura vencida
+- [x] Implementar trigger: servicio completado
+- [x] Conectar triggers con motor de ejecución de workflows
+- [x] Implementar operadores lógicos AND/OR en condiciones
+- [x] Agregar comparaciones numéricas (>, <, >=, <=, ==, !=)
+- [x] Implementar validaciones de campos (vacío, contiene, empieza con, termina con)
+- [x] Crear nodo de aprobación manual
+- [x] Implementar sistema de pausas en workflows
+- [x] Crear UI para aprobar/rechazar workflows pausados
+- [x] Agregar notificaciones de workflows pendientes de aprobación

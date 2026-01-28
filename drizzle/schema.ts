@@ -1875,6 +1875,9 @@ export const workflowExecutions = mysqlTable('workflow_executions', {
   // Mensaje de error (si falló)
   errorMessage: text('error_message'),
   
+  // Sistema de aprobaciones
+  pendingApprovalData: json('pending_approval_data'), // { nodeId: 123, message: 'Aprobar envío de email...', approvedBy: null, approvedAt: null }
+  
   // Tiempos
   startedAt: timestamp('started_at'),
   completedAt: timestamp('completed_at'),

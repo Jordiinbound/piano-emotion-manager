@@ -212,4 +212,55 @@ export const workflowsRouter = router({
         message: 'Workflow created from template successfully',
       };
     }),
+
+  // Listar workflows pendientes de aprobación
+  listPendingApprovals: protectedProcedure
+    .query(async ({ ctx }) => {
+      const db = await getDb();
+      
+      const pendingExecutions = await db
+        .select()
+        .from(workflowExecutions)
+        .where(eq(workflowExecutions.status, 'pending'))
+        .orderBy(desc(workflowExecutions.createdAt));
+      
+      // Obtener información de workflows
+      const executionsWithWorkflows = await Promise.all(
+        pendingExecutions.map(async (execution) => {
+          const [workflow] = await db
+            .select()
+            .from(workflows)
+            .where(eq(workflows.id, execution.workflowId));
+          
+          return {
+            ...execution,
+            workflow,
+          };
+        })
+      );
+      
+      return executionsWithWorkflows;
+    }),
+
+  // Aprobar o rechazar workflow
+  approveWorkflow: protectedProcedure
+    .input(z.object({
+      executionId: z.number(),
+      decision: z.enum(['approved', 'rejected']),
+    }))
+    .mutation(async ({ input, ctx }) => {
+      const { resumeWorkflowAfterApproval } = await import('../workflow-engine');
+      
+      const result = await resumeWorkflowAfterApproval(
+        input.executionId,
+        input.decision,
+        ctx.user.id
+      );
+      
+      if (!result.success) {
+        throw new Error(result.error || 'Failed to process approval');
+      }
+      
+      return result;
+    }),
 });

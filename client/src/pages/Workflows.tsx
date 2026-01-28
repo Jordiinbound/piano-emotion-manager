@@ -252,13 +252,17 @@ export default function Workflows() {
           </p>
         </div>
         <div className="flex items-center gap-3">
+          <Button variant="outline" onClick={() => setLocation('/workflows/approvals')}>
+            <AlertCircle className="h-4 w-4 mr-2" />
+            {t('workflows.pendingApprovals')}
+          </Button>
           <Button variant="outline" onClick={() => setLocation('/workflows/metrics')}>
             <Settings className="h-4 w-4 mr-2" />
-            Ver Métricas
+            {t('workflows.metrics')}
           </Button>
-          <Button onClick={handleCreateWorkflow}>
+          <Button onClick={() => handleOpenDialog()}>
             <Plus className="h-4 w-4 mr-2" />
-            {t('workflows.create')}
+            {t('workflows.createWorkflow')}
           </Button>
         </div>
       </div>

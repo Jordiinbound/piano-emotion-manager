@@ -68,6 +68,7 @@ import Workflows from "./pages/Workflows";
 import WorkflowEditorPage from "./pages/WorkflowEditor";
 import WorkflowMetrics from "./pages/WorkflowMetrics";
 import WorkflowExecutionHistory from "./pages/WorkflowExecutionHistory";
+import WorkflowApprovals from "./pages/WorkflowApprovals";
 import TranslationManager from "./pages/TranslationManager";
 
 function Router() {
@@ -390,6 +391,14 @@ function Router() {
         <ProtectedRoute>
           <Layout>
             <WorkflowMetrics />
+          </Layout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/workflows/approvals">
+        <ProtectedRoute>
+          <Layout>
+            <WorkflowApprovals />
           </Layout>
         </ProtectedRoute>
       </Route>
