@@ -946,5 +946,11 @@
   "translationManager.translationUpdated": "Traducción actualizada correctamente",
   "translationManager.valueCannotBeEmpty": "El valor no puede estar vacío",
   "translationManager.error": "Error: {{message}}",
-  "translationManager.complete": "completado"
+  "translationManager.complete": "completado",
+  "translationManager.export": "Exportar",
+  "translationManager.import": "Importar",
+  "translationManager.exportSuccess": "Traducciones exportadas correctamente",
+  "translationManager.exportError": "Error al exportar: {{message}}",
+  "translationManager.importSuccess": "{{count}} traducciones importadas correctamente",
+  "translationManager.importError": "Error al importar: {{message}}"
 }

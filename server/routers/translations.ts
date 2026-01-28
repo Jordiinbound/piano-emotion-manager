@@ -164,3 +164,140 @@ export const translationsRouter = router({
     return stats;
   }),
 });
+
+  // Exportar traducciones a CSV
+  exportToCSV: protectedProcedure
+    .input(
+      z.object({
+        languages: z.array(z.enum(LANGUAGES)).optional(),
+      })
+    )
+    .query(({ input }) => {
+      const languagesToExport = input.languages || LANGUAGES;
+      
+      // Obtener todas las claves del idioma base (español)
+      const baseTranslations = readTranslationFile("es");
+      const keys = Object.keys(baseTranslations).sort();
+      
+      // Crear CSV header
+      const header = ["key", ...languagesToExport].join(",");
+      
+      // Crear filas CSV
+      const rows = keys.map(key => {
+        const values = languagesToExport.map(lang => {
+          const translations = readTranslationFile(lang);
+          const value = translations[key] || "";
+          // Escapar comillas y comas en el valor
+          return `"${value.replace(/"/g, '""')}"`;
+        });
+        return `"${key}",${values.join(",")}`;
+      });
+      
+      const csvContent = [header, ...rows].join("\n");
+      
+      return {
+        content: csvContent,
+        filename: `translations_${new Date().toISOString().split('T')[0]}.csv`,
+      };
+    }),
+
+  // Importar traducciones desde CSV
+  importFromCSV: protectedProcedure
+    .input(
+      z.object({
+        csvContent: z.string(),
+        overwrite: z.boolean().default(false),
+      })
+    )
+    .mutation(({ input }) => {
+      try {
+        // Parsear CSV
+        const lines = input.csvContent.split("\n").filter(line => line.trim());
+        if (lines.length < 2) {
+          throw new Error("CSV file is empty or invalid");
+        }
+        
+        // Parsear header
+        const header = lines[0].split(",").map(h => h.trim().replace(/^"|"$/g, ""));
+        const keyIndex = header.indexOf("key");
+        if (keyIndex === -1) {
+          throw new Error("CSV must have a 'key' column");
+        }
+        
+        // Obtener idiomas del header (todos excepto 'key')
+        const languages = header.filter((h, i) => i !== keyIndex);
+        
+        // Validar que los idiomas son soportados
+        const invalidLanguages = languages.filter(lang => !LANGUAGES.includes(lang as any));
+        if (invalidLanguages.length > 0) {
+          throw new Error(`Unsupported languages: ${invalidLanguages.join(", ")}`);
+        }
+        
+        // Cargar traducciones existentes
+        const translationsData: Record<string, Record<string, string>> = {};
+        languages.forEach(lang => {
+          translationsData[lang] = input.overwrite ? {} : readTranslationFile(lang);
+        });
+        
+        // Parsear filas
+        let updatedCount = 0;
+        for (let i = 1; i < lines.length; i++) {
+          const line = lines[i];
+          // Parsear CSV con soporte para comillas
+          const values: string[] = [];
+          let currentValue = "";
+          let insideQuotes = false;
+          
+          for (let j = 0; j < line.length; j++) {
+            const char = line[j];
+            if (char === '"') {
+              if (insideQuotes && line[j + 1] === '"') {
+                currentValue += '"';
+                j++; // Skip next quote
+              } else {
+                insideQuotes = !insideQuotes;
+              }
+            } else if (char === ',' && !insideQuotes) {
+              values.push(currentValue);
+              currentValue = "";
+            } else {
+              currentValue += char;
+            }
+          }
+          values.push(currentValue); // Add last value
+          
+          if (values.length !== header.length) {
+            console.warn(`Skipping invalid line ${i + 1}: column count mismatch`);
+            continue;
+          }
+          
+          const key = values[keyIndex].trim();
+          if (!key) continue;
+          
+          // Actualizar traducciones
+          languages.forEach((lang, langIndex) => {
+            const valueIndex = langIndex < keyIndex ? langIndex : langIndex + 1;
+            const value = values[valueIndex]?.trim() || "";
+            if (value) {
+              translationsData[lang][key] = value;
+              updatedCount++;
+            }
+          });
+        }
+        
+        // Guardar traducciones actualizadas
+        languages.forEach(lang => {
+          writeTranslationFile(lang, translationsData[lang]);
+        });
+        
+        return {
+          success: true,
+          message: `Successfully imported ${updatedCount} translations for ${languages.length} languages`,
+          updatedCount,
+          languages,
+        };
+      } catch (error: any) {
+        throw new Error(`Failed to import translations: ${error.message}`);
+      }
+    }),
+});

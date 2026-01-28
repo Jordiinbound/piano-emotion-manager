@@ -909,3 +909,24 @@
 - [x] Agregar enlace de TranslationManager en el sidebar (sección HERRAMIENTAS)
 - [x] Agregar traducciones de TranslationManager en es.json
 - [x] Mover enlace de TranslationManager de sección HERRAMIENTAS a sección ADMINISTRACIÓN en Layout.tsx
+
+## Pruebas exhaustivas del sistema i18n
+- [ ] Verificar que el selector de idioma funciona correctamente en el header
+- [ ] Probar cambio de idioma en páginas principales (Home, Clientes, Pianos, Servicios)
+- [ ] Probar cambio de idioma en formularios complejos (FacturaNueva, PresupuestoNuevo, CitaNueva)
+- [ ] Verificar traducciones en mensajes de error y éxito (toast notifications)
+- [ ] Probar cambio de idioma en páginas administrativas (Partners, Licencias, Analytics)
+- [ ] Verificar que las traducciones persisten después de recargar la página
+- [ ] Probar todos los 9 idiomas soportados (es, en, fr, de, it, pt, ca, eu, gl)
+
+## Optimización de carga de traducciones
+- [x] Implementar lazy loading de archivos de idioma
+- [x] Cargar solo el idioma seleccionado por el usuario
+- [x] Implementar caché de traducciones en memoria
+- [x] Optimizar tamaño del bundle inicial con carga dinámica
+
+## Exportación/importación de traducciones
+- [x] Implementar exportación de traducciones a formato CSV
+- [x] Implementar importación de traducciones desde CSV
+- [x] Agregar validación de claves en importación
+- [x] Crear interfaz de usuario para exportar/importar con botones en TranslationManager

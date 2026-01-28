@@ -1,37 +1,15 @@
 /**
- * use-i18n Hook - Web Version
+ * use-i18n Hook - Web Version with Lazy Loading
  * Piano Emotion Manager
  * 
- * Hook para internacionalización con persistencia en localStorage
+ * Hook para internacionalización con carga lazy de traducciones
+ * y persistencia en localStorage
  */
 
 import { useState, useEffect, useCallback } from 'react';
 import { trpc } from '@/lib/trpc';
 
-// Importar traducciones
-import esTranslations from '../../../locales/es/translations.json';
-import enTranslations from '../../../locales/en/translations.json';
-import frTranslations from '../../../locales/fr/translations.json';
-import deTranslations from '../../../locales/de/translations.json';
-import itTranslations from '../../../locales/it/translations.json';
-import ptTranslations from '../../../locales/pt/translations.json';
-import daTranslations from '../../../locales/da/translations.json';
-import noTranslations from '../../../locales/no/translations.json';
-import svTranslations from '../../../locales/sv/translations.json';
-
-export const translations = {
-  es: esTranslations,
-  en: enTranslations,
-  fr: frTranslations,
-  de: deTranslations,
-  it: itTranslations,
-  pt: ptTranslations,
-  da: daTranslations,
-  no: noTranslations,
-  sv: svTranslations,
-};
-
-export type SupportedLanguage = 'es' | 'en' | 'fr' | 'de' | 'it' | 'pt' | 'da' | 'no' | 'sv';
+export type SupportedLanguage = 'es' | 'en' | 'fr' | 'de' | 'it' | 'pt' | 'ca' | 'eu' | 'gl';
 
 export const supportedLanguages = [
   { code: 'es' as SupportedLanguage, name: 'Spanish', nativeName: 'Español', flag: '🇪🇸' },
@@ -40,14 +18,53 @@ export const supportedLanguages = [
   { code: 'de' as SupportedLanguage, name: 'German', nativeName: 'Deutsch', flag: '🇩🇪' },
   { code: 'it' as SupportedLanguage, name: 'Italian', nativeName: 'Italiano', flag: '🇮🇹' },
   { code: 'pt' as SupportedLanguage, name: 'Portuguese', nativeName: 'Português', flag: '🇵🇹' },
-  { code: 'da' as SupportedLanguage, name: 'Danish', nativeName: 'Dansk', flag: '🇩🇰' },
-  { code: 'no' as SupportedLanguage, name: 'Norwegian', nativeName: 'Norsk', flag: '🇳🇴' },
-  { code: 'sv' as SupportedLanguage, name: 'Swedish', nativeName: 'Svenska', flag: '🇸🇪' },
+  { code: 'ca' as SupportedLanguage, name: 'Catalan', nativeName: 'Català', flag: '🏴' },
+  { code: 'eu' as SupportedLanguage, name: 'Basque', nativeName: 'Euskara', flag: '🏴' },
+  { code: 'gl' as SupportedLanguage, name: 'Galician', nativeName: 'Galego', flag: '🏴' },
 ];
 
 export const defaultLanguage: SupportedLanguage = 'es';
 
 const LANGUAGE_STORAGE_KEY = 'piano_emotion_language';
+
+// Cache de traducciones cargadas
+const translationsCache: Record<SupportedLanguage, Record<string, string> | null> = {
+  es: null,
+  en: null,
+  fr: null,
+  de: null,
+  it: null,
+  pt: null,
+  ca: null,
+  eu: null,
+  gl: null,
+};
+
+/**
+ * Cargar traducciones de forma lazy
+ */
+async function loadTranslations(language: SupportedLanguage): Promise<Record<string, string>> {
+  // Si ya está en caché, devolverlo
+  if (translationsCache[language]) {
+    return translationsCache[language]!;
+  }
+
+  try {
+    // Cargar dinámicamente el archivo de traducción
+    const translations = await import(`../../../locales/${language}.json`);
+    translationsCache[language] = translations.default || translations;
+    return translationsCache[language]!;
+  } catch (error) {
+    console.error(`[i18n] Error loading translations for ${language}:`, error);
+    
+    // Si falla, intentar cargar el idioma por defecto
+    if (language !== defaultLanguage) {
+      return loadTranslations(defaultLanguage);
+    }
+    
+    return {};
+  }
+}
 
 /**
  * Get browser language
@@ -64,17 +81,11 @@ function getBrowserLanguage(): SupportedLanguage {
 }
 
 /**
- * Get nested value from object using dot notation
- */
-function getNestedValue(obj: any, path: string): any {
-  return path.split('.').reduce((current, key) => current?.[key], obj);
-}
-
-/**
- * Hook for internationalization with language persistence
+ * Hook for internationalization with lazy loading and language persistence
  */
 export function useI18n() {
   const [currentLanguage, setCurrentLanguage] = useState<SupportedLanguage>(defaultLanguage);
+  const [translations, setTranslations] = useState<Record<string, string>>({});
   const [isLoading, setIsLoading] = useState(true);
 
   const { data: userLanguageData } = trpc.language.getUserLanguage.useQuery(undefined, {
@@ -87,6 +98,11 @@ export function useI18n() {
   useEffect(() => {
     loadSavedLanguage();
   }, []);
+
+  // Load translations when language changes
+  useEffect(() => {
+    loadLanguageTranslations(currentLanguage);
+  }, [currentLanguage]);
 
   const loadSavedLanguage = async () => {
     try {
@@ -111,6 +127,16 @@ export function useI18n() {
     } catch (error) {
       console.error('[i18n] Error loading language:', error);
       setCurrentLanguage(getBrowserLanguage());
+    }
+  };
+
+  const loadLanguageTranslations = async (language: SupportedLanguage) => {
+    try {
+      setIsLoading(true);
+      const loadedTranslations = await loadTranslations(language);
+      setTranslations(loadedTranslations);
+    } catch (error) {
+      console.error('[i18n] Error loading translations:', error);
     } finally {
       setIsLoading(false);
     }
@@ -138,28 +164,22 @@ export function useI18n() {
    * Translate function with interpolation support
    */
   const t = useCallback((key: string, options?: Record<string, any>): string => {
-    const translation = getNestedValue(translations[currentLanguage], key);
+    const translation = translations[key];
     
     if (!translation) {
       console.warn(`[i18n] Missing translation for key: ${key} in language: ${currentLanguage}`);
-      // Fallback to default language
-      const fallback = getNestedValue(translations[defaultLanguage], key);
-      if (fallback) {
-        return interpolate(fallback, options);
-      }
       return key;
     }
 
     return interpolate(translation, options);
-  }, [currentLanguage]);
+  }, [translations, currentLanguage]);
 
   /**
    * Check if translation exists
    */
   const hasTranslation = useCallback((key: string): boolean => {
-    const translation = getNestedValue(translations[currentLanguage], key);
-    return translation !== undefined;
-  }, [currentLanguage]);
+    return translations[key] !== undefined;
+  }, [translations]);
 
   /**
    * Get current language info

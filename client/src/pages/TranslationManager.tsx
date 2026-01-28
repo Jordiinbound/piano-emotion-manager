@@ -25,7 +25,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { Search, Save, Languages, CheckCircle2 } from "lucide-react";
+import { Search, Save, Languages, CheckCircle2, Download, Upload } from "lucide-react";
 import { toast } from "sonner";
 import { useTranslation } from "@/hooks/use-translation";
 
@@ -82,6 +82,63 @@ export default function TranslationManager() {
     setEditingValue("");
   };
 
+  // Exportar traducciones a CSV
+  const { refetch: exportTranslations } = trpc.translations.exportToCSV.useQuery(
+    { languages: undefined }, // Exportar todos los idiomas
+    {
+      enabled: false,
+      onSuccess: (data) => {
+        // Crear blob y descargar
+        const blob = new Blob([data.content], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = data.filename;
+        link.click();
+        toast.success(t('translationManager.exportSuccess'));
+      },
+      onError: (error) => {
+        toast.error(t('translationManager.exportError', { message: error.message }));
+      },
+    }
+  );
+
+  const handleExport = () => {
+    exportTranslations();
+  };
+
+  // Importar traducciones desde CSV
+  const importTranslations = trpc.translations.importFromCSV.useMutation({
+    onSuccess: (data) => {
+      utils.translations.getTranslations.invalidate();
+      utils.translations.getTranslationStats.invalidate();
+      toast.success(t('translationManager.importSuccess', { count: data.updatedCount }));
+    },
+    onError: (error) => {
+      toast.error(t('translationManager.importError', { message: error.message }));
+    },
+  });
+
+  const handleImport = () => {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.csv';
+    input.onchange = async (e) => {
+      const file = (e.target as HTMLInputElement).files?.[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const csvContent = event.target?.result as string;
+        importTranslations.mutate({
+          csvContent,
+          overwrite: false,
+        });
+      };
+      reader.readAsText(file);
+    };
+    input.click();
+  };
+
   const getLanguageName = (code: string) => {
     return languages?.find(l => l.code === code)?.name || code;
   };
@@ -105,6 +162,16 @@ export default function TranslationManager() {
           <p className="text-muted-foreground">
             {t('translationManager.description')}
           </p>
+        </div>
+        <div className="flex gap-2">
+          <Button onClick={handleExport} variant="outline">
+            <Download className="h-4 w-4 mr-2" />
+            {t('translationManager.export')}
+          </Button>
+          <Button onClick={handleImport} variant="outline">
+            <Upload className="h-4 w-4 mr-2" />
+            {t('translationManager.import')}
+          </Button>
         </div>
       </div>
 
