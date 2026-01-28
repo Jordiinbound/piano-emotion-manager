@@ -4,10 +4,11 @@
  */
 
 import { getDb } from './db';
-import { workflows, workflowNodes, workflowConnections, workflowExecutions } from '../drizzle/schema';
+import { workflows, workflowNodes, workflowConnections, workflowExecutions, userSettings } from '../drizzle/schema';
 import { eq, and } from 'drizzle-orm';
 import { sendEmail as sendEmailIntegration, replaceEmailVariables, emailTemplates, isEmailConfigured } from './integrations/email';
 import { sendWhatsAppMessage, replaceWhatsAppVariables, isWhatsAppConfigured } from './integrations/whatsapp';
+import { UnifiedEmailService } from './services/emailUnified';
 
 interface WorkflowNode {
   id: number;
@@ -31,12 +32,18 @@ interface ExecutionContext {
   executionId: number;
   triggerData: any;
   variables: Record<string, any>;
+  userId?: number;
+  userConfig?: {
+    email?: any;
+    whatsapp?: any;
+    calendar?: any;
+  };
 }
 
 /**
  * Ejecuta un workflow completo
  */
-export async function executeWorkflow(workflowId: number, triggerData: any = {}) {
+export async function executeWorkflow(workflowId: number, triggerData: any = {}, userId?: number) {
   const db = await getDb();
   
   try {
@@ -49,6 +56,24 @@ export async function executeWorkflow(workflowId: number, triggerData: any = {})
     // Verificar que el workflow esté activo
     if (workflow.status !== 'active') {
       throw new Error(`Workflow ${workflowId} is not active`);
+    }
+
+    // Cargar configuraciones de usuario si se proporciona userId
+    let userConfig: any = {};
+    if (userId) {
+      const [settings] = await db
+        .select()
+        .from(userSettings)
+        .where(eq(userSettings.userId, userId))
+        .limit(1);
+
+      if (settings) {
+        userConfig = {
+          email: settings.emailConfig ? JSON.parse(settings.emailConfig as string) : null,
+          whatsapp: settings.whatsappConfig ? JSON.parse(settings.whatsappConfig as string) : null,
+          calendar: settings.calendarConfig ? JSON.parse(settings.calendarConfig as string) : null,
+        };
+      }
     }
 
     // Crear registro de ejecución
@@ -67,6 +92,8 @@ export async function executeWorkflow(workflowId: number, triggerData: any = {})
       executionId,
       triggerData,
       variables: {},
+      userId,
+      userConfig,
     };
 
     // Obtener nodos y conexiones
@@ -289,13 +316,8 @@ async function sendEmail(config: any, context: ExecutionContext) {
     to: config.emailTo,
     subject: config.emailSubject,
     template: config.emailTemplate,
+    provider: context.userConfig?.email?.provider || 'gmail',
   });
-  
-  // Verificar si el email está configurado
-  if (!isEmailConfigured()) {
-    console.warn('[Workflow Engine] Email service not configured, skipping email action');
-    return;
-  }
 
   try {
     // Preparar variables para reemplazo
@@ -309,7 +331,6 @@ async function sendEmail(config: any, context: ExecutionContext) {
     const subject = replaceEmailVariables(config.emailSubject || '', variables);
     
     let html = '';
-    let text = '';
 
     // Usar plantilla predefinida o contenido personalizado
     if (config.emailTemplate && config.emailTemplate !== 'custom') {
@@ -321,18 +342,18 @@ async function sendEmail(config: any, context: ExecutionContext) {
       html = replaceEmailVariables(config.emailBody, variables);
     }
 
-    // Enviar email
-    const result = await sendEmailIntegration({
+    // Usar UnifiedEmailService que detecta automáticamente el proveedor configurado
+    const success = await UnifiedEmailService.sendEmail({
       to,
       subject,
       html,
-      text,
+      userId: context.userId,
     });
 
-    if (result.success) {
+    if (success) {
       console.log('[Workflow Engine] Email sent successfully');
     } else {
-      console.error('[Workflow Engine] Failed to send email:', result.error);
+      console.error('[Workflow Engine] Failed to send email');
     }
 
   } catch (error: any) {
@@ -341,16 +362,13 @@ async function sendEmail(config: any, context: ExecutionContext) {
 }
 
 async function sendWhatsApp(config: any, context: ExecutionContext) {
+  const whatsappMethod = context.userConfig?.whatsapp?.method || 'web';
+  
   console.log('[Workflow Engine] Sending WhatsApp:', {
     to: config.whatsappPhone,
     message: config.whatsappMessage,
+    method: whatsappMethod,
   });
-  
-  // Verificar si WhatsApp está configurado
-  if (!isWhatsAppConfigured()) {
-    console.warn('[Workflow Engine] WhatsApp service not configured, skipping WhatsApp action');
-    return;
-  }
 
   try {
     // Preparar variables para reemplazo
@@ -363,17 +381,36 @@ async function sendWhatsApp(config: any, context: ExecutionContext) {
     const phone = replaceWhatsAppVariables(config.whatsappPhone || '', variables);
     const message = replaceWhatsAppVariables(config.whatsappMessage || '', variables);
 
-    // Enviar mensaje de WhatsApp
-    const result = await sendWhatsAppMessage({
-      to: phone,
-      type: 'text',
-      text: message,
-    });
+    if (whatsappMethod === 'business_api') {
+      // Usar WhatsApp Business API si está configurado
+      if (!isWhatsAppConfigured()) {
+        console.warn('[Workflow Engine] WhatsApp Business API not configured, skipping');
+        return;
+      }
 
-    if (result.success) {
-      console.log('[Workflow Engine] WhatsApp message sent successfully');
+      const result = await sendWhatsAppMessage({
+        to: phone,
+        type: 'text',
+        text: message,
+      });
+
+      if (result.success) {
+        console.log('[Workflow Engine] WhatsApp message sent via Business API');
+      } else {
+        console.error('[Workflow Engine] Failed to send WhatsApp via Business API:', result.error);
+      }
     } else {
-      console.error('[Workflow Engine] Failed to send WhatsApp message:', result.error);
+      // Usar WhatsApp Web (abrir enlace)
+      const encodedMessage = encodeURIComponent(message);
+      const whatsappUrl = `https://wa.me/${phone}?text=${encodedMessage}`;
+      
+      console.log('[Workflow Engine] WhatsApp Web URL generated:', whatsappUrl);
+      console.log('[Workflow Engine] Note: WhatsApp Web requires manual user action');
+      
+      // En un entorno de producción, esto podría:
+      // 1. Enviar notificación al usuario con el enlace
+      // 2. Guardar el enlace para que el usuario lo abra manualmente
+      // 3. Usar un sistema de colas para procesar más tarde
     }
 
   } catch (error: any) {

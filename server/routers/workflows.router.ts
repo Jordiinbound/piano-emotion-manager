@@ -164,12 +164,11 @@ export const workflowsRouter = router({
       id: z.number(),
       triggerData: z.any().optional(),
     }))
-    .mutation(async ({ input }) => {
+    .mutation(async ({ input, ctx }) => {
       const db = await getDb();
       
-      // Crear registro de ejecución
-      // Ejecutar workflow usando el motor
-      const executionResult = await executeWorkflow(input.id, input.triggerData);
+      // Ejecutar workflow usando el motor (pasar userId para configuraciones)
+      const executionResult = await executeWorkflow(input.id, input.triggerData, ctx.user.id);
       
       if (!executionResult.success) {
         throw new Error(executionResult.error || 'Failed to execute workflow');
@@ -179,6 +178,38 @@ export const workflowsRouter = router({
         executionId: executionResult.executionId || 0,
         success: true,
         message: executionResult.message,
+      };
+    }),
+
+  // Listar plantillas de workflows
+  listTemplates: protectedProcedure
+    .query(async () => {
+      const { workflowTemplates } = await import('../workflow-templates');
+      return Object.entries(workflowTemplates).map(([id, template]) => ({
+        id,
+        name: template.name,
+        description: template.description,
+        category: template.category,
+      }));
+    }),
+
+  // Crear workflow desde plantilla
+  createFromTemplate: protectedProcedure
+    .input(z.object({ templateId: z.string() }))
+    .mutation(async ({ input, ctx }) => {
+      const db = await getDb();
+      const { createWorkflowFromTemplate } = await import('../workflow-templates');
+      
+      const workflowId = await createWorkflowFromTemplate(
+        input.templateId,
+        ctx.user.id,
+        db
+      );
+      
+      return { 
+        workflowId,
+        success: true,
+        message: 'Workflow created from template successfully',
       };
     }),
 });

@@ -1660,3 +1660,15 @@
 - [ ] Actualizar motor de workflows para usar configuraciones de usuario
 - [ ] Integrar Gmail MCP para envío de emails desde workflows
 - [ ] Probar configuración completa de comunicaciones
+
+
+## FASE 8 - Integración Completa de Workflows con Comunicaciones
+- [x] Actualizar motor de workflows para leer configuraciones de usuario desde user_settings
+- [x] Implementar envío real de emails desde workflows usando Gmail MCP
+- [x] Implementar envío real de emails desde workflows usando Outlook OAuth2
+- [x] Implementar envío real de emails desde workflows usando SMTP/SendGrid/Mailgun
+- [x] Implementar envío real de WhatsApp desde workflows (Web y Business API)
+- [x] Crear plantilla de workflow: Bienvenida a nuevos clientes
+- [x] Crear plantilla de workflow: Recordatorio de citas
+- [x] Crear plantilla de workflow: Seguimiento post-servicio
+- [x] Probar envío real de emails y WhatsApp desde workflows
