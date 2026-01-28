@@ -249,4 +249,47 @@ export const appointmentsRouter = router({
         deleted: (result as any).rowsAffected || 0,
       };
     }),
+
+  // Optimizar ruta para múltiples citas
+  optimizeRoute: publicProcedure
+    .input(z.object({
+      appointmentIds: z.array(z.number()),
+    }))
+    .query(async ({ input }) => {
+      const db = await getDb();
+      if (!db) throw new Error('Database not available');
+
+      // Obtener las citas con sus ubicaciones
+      const appointmentsData = await Promise.all(
+        input.appointmentIds.map(async (id) => {
+          const appointment = await db.query.appointments.findFirst({
+            where: eq(appointments.id, id),
+            with: {
+              client: true,
+            },
+          });
+          return appointment;
+        })
+      );
+
+      // Filtrar citas válidas con ubicación
+      const validAppointments = appointmentsData.filter(
+        (apt) => apt && apt.client && apt.client.address
+      );
+
+      if (validAppointments.length === 0) {
+        throw new Error('No appointments with valid addresses found');
+      }
+
+      // Retornar datos para que el frontend haga la optimización con Google Maps
+      return {
+        appointments: validAppointments.map((apt) => ({
+          id: apt!.id,
+          clientName: apt!.client.name,
+          address: apt!.client.address,
+          scheduledDate: apt!.scheduledDate,
+          serviceType: apt!.serviceType,
+        })),
+      };
+    }),
 });

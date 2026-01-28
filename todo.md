@@ -1341,3 +1341,77 @@
 - [ ] Integrar con Stripe Subscriptions
 - [ ] Agregar página de planes y precios
 - [ ] Escribir tests para sistema premium
+
+## FASE 4.2: Implementación de Funcionalidades Avanzadas
+
+### Optimizador de Rutas para Visitas
+- [ ] Crear endpoint tRPC `optimizeRoute` en appointments.router.ts
+- [ ] Integrar Google Maps Directions API para cálculo de rutas
+- [ ] Implementar algoritmo de optimización de ruta (orden óptimo de visitas)
+- [ ] Crear componente RouteOptimizerCard.tsx
+- [ ] Permitir seleccionar múltiples citas del día
+- [ ] Mostrar ruta optimizada en mapa con marcadores numerados
+- [ ] Calcular tiempo total estimado y distancia total
+- [ ] Agregar opción de exportar ruta a Google Maps
+- [ ] Integrar en página Agenda/Appointments
+- [ ] Escribir tests para optimización de rutas
+
+### Firma Digital con Canvas
+- [ ] Instalar librería signature_pad o react-signature-canvas
+- [ ] Crear componente SignaturePad.tsx con canvas interactivo
+- [ ] Implementar botones de limpiar, deshacer y confirmar
+- [ ] Convertir firma a imagen PNG/base64
+- [ ] Subir firma a R2 usando storagePut()
+- [ ] Agregar campo signatureUrl a tabla services
+- [ ] Agregar campo signatureUrl a tabla invoices
+- [ ] Integrar en formulario de completar servicio
+- [ ] Integrar en formulario de confirmar factura
+- [ ] Mostrar firma en PDF de factura/servicio
+- [ ] Agregar validación de firma obligatoria (opcional)
+- [ ] Escribir tests para firma digital
+
+### Mapa de Clientes con Visualización Geográfica
+- [ ] Agregar campos latitude y longitude a tabla clients
+- [ ] Implementar geocoding automático al agregar/editar cliente
+- [ ] Crear componente ClientMap.tsx usando Google Maps
+- [ ] Crear endpoint tRPC `getClientsWithLocation`
+- [ ] Mostrar marcadores de clientes en mapa con info windows
+- [ ] Agregar clustering para muchos clientes (MarkerClusterer)
+- [ ] Implementar filtros por zona geográfica (radio, polígono)
+- [ ] Agregar búsqueda de cliente en mapa
+- [ ] Integrar en página Clientes como vista alternativa (toggle lista/mapa)
+- [ ] Agregar opción de centrar mapa en ubicación actual
+- [ ] Escribir tests para mapa de clientes
+
+## FASE 4.3: Optimizador de Rutas - Página Dedicada
+- [x] Crear página /optimizador-rutas como ruta independiente
+- [x] Integrar RouteOptimizerCard como componente principal
+- [x] Agregar enlace en sidebar bajo sección HERRAMIENTAS
+- [ ] Agregar traducción de claves en sistema i18n
+- [ ] Probar optimización de rutas con Google Maps Directions API
+- [ ] Verificar exportación a Google Maps funciona correctamente
+
+## FASE 4.4: Firma Digital con Canvas
+- [ ] Instalar react-signature-canvas
+- [ ] Crear componente SignatureCanvas.tsx reutilizable
+- [ ] Agregar campo de firma en formulario de servicios
+- [ ] Agregar campo de firma en formulario de facturas
+- [ ] Almacenar firmas en R2 con storagePut()
+- [ ] Incluir firmas en PDFs generados de servicios
+- [ ] Incluir firmas en PDFs generados de facturas
+- [ ] Agregar opción de limpiar/rehacer firma
+- [ ] Implementar vista previa de firma antes de guardar
+- [ ] Escribir tests para funcionalidad de firma
+
+## FASE 4.5: Mapa de Clientes con Google Maps
+- [ ] Crear página /mapa-clientes como ruta independiente
+- [ ] Crear componente ClientsMapView.tsx con Google Maps
+- [ ] Implementar marcadores para cada cliente con dirección
+- [ ] Agregar clustering para agrupar marcadores cercanos
+- [ ] Implementar InfoWindow con datos del cliente al hacer click
+- [ ] Agregar filtros por región/ciudad
+- [ ] Agregar filtros por grupo de ruta
+- [ ] Implementar búsqueda de cliente en el mapa
+- [ ] Agregar enlace en sidebar bajo sección HERRAMIENTAS
+- [ ] Escribir tests para componente de mapa
+

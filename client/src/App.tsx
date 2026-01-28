@@ -33,6 +33,7 @@ import Marketing from "./pages/Marketing";
 import Alertas from "./pages/Alertas";
 import ConfiguracionAlertas from "./pages/ConfiguracionAlertas";
 import HerramientasAvanzadas from "./pages/HerramientasAvanzadas";
+import OptimizadorRutas from "./pages/OptimizadorRutas";
 import Configuracion from "./pages/Configuracion";
 import SignIn from "./pages/SignIn";
 import SignUp from "./pages/SignUp";
@@ -421,6 +422,13 @@ function Router() {
         <ProtectedRoute>
           <Layout>
             <HerramientasAvanzadas />
+          </Layout>
+        </ProtectedRoute>
+      </Route>
+      <Route path="/optimizador-rutas">
+        <ProtectedRoute>
+          <Layout>
+            <OptimizadorRutas />
           </Layout>
         </ProtectedRoute>
       </Route>

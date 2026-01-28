@@ -27,6 +27,7 @@ import {
   Languages,
   ClipboardList,
   Megaphone,
+  Route,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { LicenseNotificationBadge } from '@/components/LicenseNotificationBadge';
@@ -81,6 +82,7 @@ const menuSections: MenuSection[] = [
       { name: 'Marketing', href: '/marketing', icon: Megaphone },
       { name: 'Alertas', href: '/alertas', icon: Bell },
       { name: 'Herramientas Avanzadas', href: '/herramientas-avanzadas', icon: Hammer },
+      { name: 'Optimizador de Rutas', href: '/optimizador-rutas', icon: Route },
       { name: 'Configuración', href: '/configuracion', icon: Settings },
     ],
   },

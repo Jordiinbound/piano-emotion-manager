@@ -8,10 +8,12 @@
 import { useState, useMemo } from 'react';
 import { trpc } from '@/lib/trpc';
 import { AppointmentCard } from '@/components/AppointmentCard';
-import { Plus } from 'lucide-react';
+import { Plus, Route } from 'lucide-react';
 import AppointmentFormModal from '@/components/AppointmentFormModal';
 import DeleteConfirmModal from '@/components/DeleteConfirmModal';
+import RouteOptimizerCard from '@/components/RouteOptimizerCard';
 import { useTranslation } from '@/hooks/use-translation';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 type FilterType = 'all' | 'scheduled' | 'confirmed' | 'completed' | 'cancelled';
 
@@ -90,9 +92,23 @@ export default function Agenda() {
 
   return (
     <div className="min-h-screen bg-white">
-      {/* Estadísticas minimalistas */}
+      {/* Tabs para Agenda y Optimizador de Rutas */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <Tabs defaultValue="agenda" className="w-full">
+          <TabsList className="grid w-full grid-cols-2 mb-6">
+            <TabsTrigger value="agenda">
+              <Plus className="mr-2 h-4 w-4" />
+              {t('appointments.agenda')}
+            </TabsTrigger>
+            <TabsTrigger value="optimizer">
+              <Route className="mr-2 h-4 w-4" />
+              {t('appointments.routeOptimizer')}
+            </TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="agenda">
+            {/* Estadísticas minimalistas */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
           {/* Total */}
           <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 text-center">
             {statsLoading ? (
@@ -152,11 +168,10 @@ export default function Agenda() {
               </>
             )}
           </div>
-        </div>
-      </div>
+            </div>
 
-      {/* Filtros horizontales minimalistas */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-6">
+            {/* Filtros horizontales minimalistas */}
+            <div className="pb-6">
         <div className="flex gap-2 overflow-x-auto">
           {filters.map((f) => (
             <button
@@ -172,10 +187,10 @@ export default function Agenda() {
             </button>
           ))}
         </div>
-      </div>
+            </div>
 
-      {/* Lista de citas agrupadas por fecha */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-24">
+            {/* Lista de citas agrupadas por fecha */}
+            <div className="pb-24">
         {appointmentsLoading ? (
           <div className="space-y-6">
             {[...Array(3)].map((_, i) => (
@@ -249,6 +264,13 @@ export default function Agenda() {
             ))}
           </div>
         )}
+            </div>
+            </TabsContent>
+
+            <TabsContent value="optimizer">
+              <RouteOptimizerCard appointments={appointments} />
+            </TabsContent>
+        </Tabs>
       </div>
 
       {/* FAB (Floating Action Button) */}
