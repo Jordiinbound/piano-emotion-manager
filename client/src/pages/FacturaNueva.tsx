@@ -9,8 +9,10 @@ import { Textarea } from '../components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { ArrowLeft, Save } from 'lucide-react';
 import { toast } from 'sonner';
+import { useTranslation } from '@/hooks/use-translation';
 
 export default function FacturaNueva() {
+  const { t } = useTranslation();
   const [, setLocation] = useLocation();
   const createMutation = trpc.invoices.createInvoice.useMutation();
   const { data: clients } = trpc.clients.getClients.useQuery({ page: 1, pageSize: 1000 });
@@ -46,10 +48,10 @@ export default function FacturaNueva() {
         total: Number(formData.total),
         notes: formData.notes || undefined,
       });
-      toast.success('Factura creada correctamente');
+      toast.success(t('invoices.invoiceCreated'));
       setLocation('/facturacion');
     } catch (error) {
-      toast.error('No se pudo crear la factura');
+      toast.error(t('invoices.couldNotCreateInvoice'));
     }
   };
 
@@ -86,23 +88,23 @@ export default function FacturaNueva() {
       <div className="mb-6">
         <Button variant="ghost" onClick={() => setLocation('/facturacion')} className="mb-4">
           <ArrowLeft className="mr-2 h-4 w-4" />
-          Volver a Facturación
+          {t('invoices.backToInvoices')}
         </Button>
-        <h1 className="text-3xl font-bold">Nueva Factura</h1>
+        <h1 className="text-3xl font-bold">{t('invoices.newInvoice')}</h1>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle>Información de la Factura</CardTitle>
+          <CardTitle>{t('invoices.invoiceInformation')}</CardTitle>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="clientId">Cliente *</Label>
+                <Label htmlFor="clientId">{t('invoices.client')} *</Label>
                 <Select value={formData.clientId} onValueChange={handleClientChange} required>
                   <SelectTrigger>
-                    <SelectValue placeholder="Seleccionar cliente..." />
+                    <SelectValue placeholder={t('invoices.selectClient')} />
                   </SelectTrigger>
                   <SelectContent>
                     {clients?.clients.map((client: any) => (
@@ -115,39 +117,39 @@ export default function FacturaNueva() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="clientName">Nombre del Cliente *</Label>
+                <Label htmlFor="clientName">{t('invoices.clientName')} *</Label>
                 <Input
                   id="clientName"
                   value={formData.clientName}
                   onChange={(e) => handleChange('clientName', e.target.value)}
                   required
-                  placeholder="Nombre completo"
+                  placeholder={t('invoices.clientNamePlaceholder')}
                 />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="clientEmail">Email del Cliente</Label>
+                <Label htmlFor="clientEmail">{t('invoices.clientEmail')}</Label>
                 <Input
                   id="clientEmail"
                   type="email"
                   value={formData.clientEmail}
                   onChange={(e) => handleChange('clientEmail', e.target.value)}
-                  placeholder="correo@ejemplo.com"
+                  placeholder={t('invoices.clientEmailPlaceholder')}
                 />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="clientAddress">Dirección del Cliente</Label>
+                <Label htmlFor="clientAddress">{t('invoices.clientAddress')}</Label>
                 <Input
                   id="clientAddress"
                   value={formData.clientAddress}
                   onChange={(e) => handleChange('clientAddress', e.target.value)}
-                  placeholder="Dirección completa"
+                  placeholder={t('invoices.clientAddressPlaceholder')}
                 />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="date">Fecha *</Label>
+                <Label htmlFor="date">{t('invoices.date')} *</Label>
                 <Input
                   id="date"
                   type="date"
@@ -158,7 +160,7 @@ export default function FacturaNueva() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="dueDate">Fecha de Vencimiento</Label>
+                <Label htmlFor="dueDate">{t('invoices.dueDate')}</Label>
                 <Input
                   id="dueDate"
                   type="date"
@@ -168,22 +170,22 @@ export default function FacturaNueva() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="status">Estado *</Label>
+                <Label htmlFor="status">{t('invoices.status')} *</Label>
                 <Select value={formData.status} onValueChange={(value) => handleChange('status', value)}>
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="draft">Borrador</SelectItem>
-                    <SelectItem value="sent">Enviada</SelectItem>
-                    <SelectItem value="paid">Pagada</SelectItem>
-                    <SelectItem value="cancelled">Anulada</SelectItem>
+                    <SelectItem value="draft">{t('invoices.statuses.draft')}</SelectItem>
+                    <SelectItem value="sent">{t('invoices.statuses.sent')}</SelectItem>
+                    <SelectItem value="paid">{t('invoices.statuses.paid')}</SelectItem>
+                    <SelectItem value="cancelled">{t('invoices.statuses.cancelled')}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="subtotal">Subtotal (€) *</Label>
+                <Label htmlFor="subtotal">{t('invoices.subtotal')} *</Label>
                 <Input
                   id="subtotal"
                   type="number"
@@ -196,7 +198,7 @@ export default function FacturaNueva() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="taxAmount">IVA (€) *</Label>
+                <Label htmlFor="taxAmount">{t('invoices.taxAmount')} *</Label>
                 <Input
                   id="taxAmount"
                   type="number"
@@ -209,7 +211,7 @@ export default function FacturaNueva() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="total">Total (€) *</Label>
+                <Label htmlFor="total">{t('invoices.total')} *</Label>
                 <Input
                   id="total"
                   type="number"
@@ -224,23 +226,23 @@ export default function FacturaNueva() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="notes">Notas</Label>
+              <Label htmlFor="notes">{t('invoices.notes')}</Label>
               <Textarea
                 id="notes"
                 value={formData.notes}
                 onChange={(e) => handleChange('notes', e.target.value)}
-                placeholder="Notas adicionales sobre la factura..."
+                placeholder={t('invoices.notesPlaceholder')}
                 rows={4}
               />
             </div>
 
             <div className="flex gap-4 justify-end">
               <Button type="button" variant="outline" onClick={() => setLocation('/facturacion')}>
-                Cancelar
+                {t('common.cancel')}
               </Button>
               <Button type="submit" disabled={createMutation.isPending}>
                 <Save className="mr-2 h-4 w-4" />
-                {createMutation.isPending ? 'Guardando...' : 'Guardar Factura'}
+                {createMutation.isPending ? t('common.saving') : t('invoices.saveInvoice')}
               </Button>
             </div>
           </form>

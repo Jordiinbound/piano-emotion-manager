@@ -22,6 +22,7 @@ import {
 import { Plus, Trash2, ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
 import { nanoid } from "nanoid";
+import { useTranslation } from '@/hooks/use-translation';
 
 interface QuoteItem {
   id: string;
@@ -37,6 +38,7 @@ interface QuoteItem {
 }
 
 export default function PresupuestoNuevo() {
+  const { t } = useTranslation();
   const [, navigate] = useLocation();
   const [clientId, setClientId] = useState<number | null>(null);
   const [pianoId, setPianoId] = useState<number | null>(null);
@@ -63,11 +65,11 @@ export default function PresupuestoNuevo() {
 
   const createMutation = trpc.quotes.createQuote.useMutation({
     onSuccess: () => {
-      toast.success("Presupuesto creado correctamente");
+      toast.success(t('quotes.quoteCreated'));
       navigate("/presupuestos");
     },
     onError: (error) => {
-      toast.error(`Error: ${error.message}`);
+      toast.error(`${t('common.error')}: ${error.message}`);
     },
   });
 
@@ -130,17 +132,17 @@ export default function PresupuestoNuevo() {
     e.preventDefault();
 
     if (!clientId) {
-      toast.error("Selecciona un cliente");
+      toast.error(t('quotes.selectClient'));
       return;
     }
 
     if (!title.trim()) {
-      toast.error("Ingresa un título");
+      toast.error(t('quotes.enterTitle'));
       return;
     }
 
     if (items.length === 0) {
-      toast.error("Agrega al menos un concepto");
+      toast.error(t('quotes.addAtLeastOneItem'));
       return;
     }
 
@@ -168,9 +170,9 @@ export default function PresupuestoNuevo() {
           <ArrowLeft className="h-5 w-5" />
         </Button>
         <div>
-          <h1 className="text-3xl font-bold">Nuevo Presupuesto</h1>
+          <h1 className="text-3xl font-bold">{t('quotes.newQuote')}</h1>
           <p className="text-muted-foreground">
-            Crea un presupuesto para tu cliente
+            {t('quotes.createQuoteForClient')}
           </p>
         </div>
       </div>
@@ -179,12 +181,12 @@ export default function PresupuestoNuevo() {
         {/* Cliente y Piano */}
         <Card>
           <CardHeader>
-            <CardTitle>Información del Cliente</CardTitle>
+            <CardTitle>{t('quotes.clientInformation')}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid gap-4 md:grid-cols-2">
               <div className="space-y-2">
-                <Label htmlFor="client">Cliente *</Label>
+                <Label htmlFor="client">{t('quotes.client')} *</Label>
                 <Select
                   value={clientId?.toString() || ""}
                   onValueChange={(value) => {
@@ -193,7 +195,7 @@ export default function PresupuestoNuevo() {
                   }}
                 >
                   <SelectTrigger id="client">
-                    <SelectValue placeholder="Selecciona un cliente" />
+                    <SelectValue placeholder={t('quotes.selectClient')} />
                   </SelectTrigger>
                   <SelectContent>
                     {clients?.clients.map((client) => (
@@ -205,14 +207,14 @@ export default function PresupuestoNuevo() {
                 </Select>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="piano">Piano (opcional)</Label>
+                <Label htmlFor="piano">{t('quotes.pianoOptional')}</Label>
                 <Select
                   value={pianoId?.toString() || ""}
                   onValueChange={(value) => setPianoId(Number(value))}
                   disabled={!clientId}
                 >
                   <SelectTrigger id="piano">
-                    <SelectValue placeholder="Selecciona un piano" />
+                    <SelectValue placeholder={t('quotes.selectPiano')} />
                   </SelectTrigger>
                   <SelectContent>
                     {pianos?.pianos.map((piano) => (
@@ -230,31 +232,31 @@ export default function PresupuestoNuevo() {
         {/* Detalles del Presupuesto */}
         <Card>
           <CardHeader>
-            <CardTitle>Detalles del Presupuesto</CardTitle>
+            <CardTitle>{t('quotes.quoteDetails')}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="title">Título *</Label>
+              <Label htmlFor="title">{t('quotes.title')} *</Label>
               <Input
                 id="title"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                placeholder="Ej: Afinación y regulación completa"
+                placeholder={t('quotes.titlePlaceholder')}
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="description">Descripción</Label>
+              <Label htmlFor="description">{t('quotes.description')}</Label>
               <Textarea
                 id="description"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                placeholder="Descripción detallada del trabajo a realizar"
+                placeholder={t('quotes.descriptionPlaceholder')}
                 rows={3}
               />
             </div>
             <div className="grid gap-4 md:grid-cols-2">
               <div className="space-y-2">
-                <Label htmlFor="date">Fecha</Label>
+                <Label htmlFor="date">{t('quotes.date')}</Label>
                 <Input
                   id="date"
                   type="date"
@@ -263,7 +265,7 @@ export default function PresupuestoNuevo() {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="validUntil">Válido hasta</Label>
+                <Label htmlFor="validUntil">{t('quotes.validUntil')}</Label>
                 <Input
                   id="validUntil"
                   type="date"
@@ -279,24 +281,24 @@ export default function PresupuestoNuevo() {
         <Card>
           <CardHeader>
             <div className="flex justify-between items-center">
-              <CardTitle>Conceptos</CardTitle>
+              <CardTitle>{t('quotes.items')}</CardTitle>
               <Button type="button" onClick={addItem} variant="outline" size="sm">
                 <Plus className="h-4 w-4 mr-2" />
-                Agregar Concepto
+                {t('quotes.addItem')}
               </Button>
             </div>
           </CardHeader>
           <CardContent className="space-y-4">
             {items.length === 0 ? (
               <p className="text-center text-muted-foreground py-8">
-                No hay conceptos. Haz clic en "Agregar Concepto" para empezar.
+                {t('quotes.noItems')}
               </p>
             ) : (
               items.map((item, index) => (
                 <Card key={item.id} className="p-4">
                   <div className="space-y-4">
                     <div className="flex justify-between items-start">
-                      <h4 className="font-semibold">Concepto {index + 1}</h4>
+                      <h4 className="font-semibold">{t('quotes.item')} {index + 1}</h4>
                       <Button
                         type="button"
                         variant="ghost"
@@ -308,7 +310,7 @@ export default function PresupuestoNuevo() {
                     </div>
                     <div className="grid gap-4 md:grid-cols-2">
                       <div className="space-y-2">
-                        <Label>Tipo</Label>
+                        <Label>{t('quotes.type')}</Label>
                         <Select
                           value={item.type}
                           onValueChange={(value) =>
@@ -319,37 +321,37 @@ export default function PresupuestoNuevo() {
                             <SelectValue />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="service">Servicio</SelectItem>
-                            <SelectItem value="part">Repuesto</SelectItem>
-                            <SelectItem value="labor">Mano de obra</SelectItem>
-                            <SelectItem value="travel">Desplazamiento</SelectItem>
-                            <SelectItem value="material">Material</SelectItem>
-                            <SelectItem value="other">Otro</SelectItem>
+                            <SelectItem value="service">{t('quotes.types.service')}</SelectItem>
+                            <SelectItem value="part">{t('quotes.types.part')}</SelectItem>
+                            <SelectItem value="labor">{t('quotes.types.labor')}</SelectItem>
+                            <SelectItem value="travel">{t('quotes.types.travel')}</SelectItem>
+                            <SelectItem value="material">{t('quotes.types.material')}</SelectItem>
+                            <SelectItem value="other">{t('quotes.types.other')}</SelectItem>
                           </SelectContent>
                         </Select>
                       </div>
                       <div className="space-y-2">
-                        <Label>Nombre</Label>
+                        <Label>{t('quotes.name')}</Label>
                         <Input
                           value={item.name}
                           onChange={(e) => updateItem(item.id, { name: e.target.value })}
-                          placeholder="Nombre del concepto"
+                          placeholder={t('quotes.namePlaceholder')}
                         />
                       </div>
                     </div>
                     <div className="space-y-2">
-                      <Label>Descripción</Label>
+                      <Label>{t('quotes.description')}</Label>
                       <Input
                         value={item.description || ""}
                         onChange={(e) =>
                           updateItem(item.id, { description: e.target.value })
                         }
-                        placeholder="Descripción opcional"
+                        placeholder={t('quotes.descriptionOptional')}
                       />
                     </div>
                     <div className="grid gap-4 md:grid-cols-4">
                       <div className="space-y-2">
-                        <Label>Cantidad</Label>
+                        <Label>{t('quotes.quantity')}</Label>
                         <Input
                           type="number"
                           min="0.01"
@@ -361,7 +363,7 @@ export default function PresupuestoNuevo() {
                         />
                       </div>
                       <div className="space-y-2">
-                        <Label>Precio Unitario (€)</Label>
+                        <Label>{t('quotes.unitPrice')}</Label>
                         <Input
                           type="number"
                           min="0"
@@ -373,7 +375,7 @@ export default function PresupuestoNuevo() {
                         />
                       </div>
                       <div className="space-y-2">
-                        <Label>Descuento (%)</Label>
+                        <Label>{t('quotes.discount')}</Label>
                         <Input
                           type="number"
                           min="0"
@@ -386,7 +388,7 @@ export default function PresupuestoNuevo() {
                         />
                       </div>
                       <div className="space-y-2">
-                        <Label>IVA (%)</Label>
+                        <Label>{t('quotes.taxRate')}</Label>
                         <Input
                           type="number"
                           min="0"
@@ -400,8 +402,8 @@ export default function PresupuestoNuevo() {
                       </div>
                     </div>
                     <div className="flex justify-end gap-4 text-sm">
-                      <span>Subtotal: {item.subtotal.toFixed(2)}€</span>
-                      <span className="font-bold">Total: {item.total.toFixed(2)}€</span>
+                      <span>{t('quotes.subtotal')}: {item.subtotal.toFixed(2)}€</span>
+                      <span className="font-bold">{t('quotes.total')}: {item.total.toFixed(2)}€</span>
                     </div>
                   </div>
                 </Card>
@@ -412,19 +414,19 @@ export default function PresupuestoNuevo() {
             {items.length > 0 && (
               <div className="border-t pt-4 space-y-2">
                 <div className="flex justify-between text-sm">
-                  <span>Subtotal:</span>
+                  <span>{t('quotes.subtotal')}:</span>
                   <span>{totals.subtotal.toFixed(2)}€</span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span>Descuento:</span>
+                  <span>{t('quotes.discount')}:</span>
                   <span>-{totals.totalDiscount.toFixed(2)}€</span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span>IVA:</span>
+                  <span>{t('quotes.taxAmount')}:</span>
                   <span>{totals.taxAmount.toFixed(2)}€</span>
                 </div>
                 <div className="flex justify-between text-lg font-bold">
-                  <span>Total:</span>
+                  <span>{t('quotes.total')}:</span>
                   <span>{totals.total.toFixed(2)}€</span>
                 </div>
               </div>
@@ -435,26 +437,26 @@ export default function PresupuestoNuevo() {
         {/* Notas y Términos */}
         <Card>
           <CardHeader>
-            <CardTitle>Información Adicional</CardTitle>
+            <CardTitle>{t('quotes.additionalInformation')}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="notes">Notas</Label>
+              <Label htmlFor="notes">{t('quotes.notes')}</Label>
               <Textarea
                 id="notes"
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
-                placeholder="Notas internas o para el cliente"
+                placeholder={t('quotes.notesPlaceholder')}
                 rows={3}
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="terms">Términos y Condiciones</Label>
+              <Label htmlFor="terms">{t('quotes.termsAndConditions')}</Label>
               <Textarea
                 id="terms"
                 value={termsAndConditions}
                 onChange={(e) => setTermsAndConditions(e.target.value)}
-                placeholder="Términos y condiciones del presupuesto"
+                placeholder={t('quotes.termsPlaceholder')}
                 rows={3}
               />
             </div>
@@ -468,10 +470,10 @@ export default function PresupuestoNuevo() {
             variant="outline"
             onClick={() => navigate("/presupuestos")}
           >
-            Cancelar
+            {t('common.cancel')}
           </Button>
           <Button type="submit" disabled={createMutation.isPending}>
-            {createMutation.isPending ? "Creando..." : "Crear Presupuesto"}
+            {createMutation.isPending ? t('quotes.creating') : t('quotes.createQuote')}
           </Button>
         </div>
       </form>
