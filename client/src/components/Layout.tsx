@@ -28,6 +28,7 @@ import {
   ClipboardList,
   Megaphone,
   Route,
+  MapPin,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { LicenseNotificationBadge } from '@/components/LicenseNotificationBadge';
