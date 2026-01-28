@@ -597,3 +597,28 @@
 - [ ] Implementar conversión automática de presupuesto aceptado a factura
 - [ ] Vincular servicios con tipos de servicio predefinidos
 - [ ] Aplicar tarifas automáticamente al crear servicios desde tipos
+
+## Rediseño del Sistema Multi-Tenant (Modelo de Negocio Real)
+- [x] Analizar modelo de negocio actual y validar requisitos
+- [x] Diseñar nuevo esquema de base de datos para:
+  - [x] Licencias (userLicenses table)
+  - [x] Partners como vendedores (partnersV2 table)
+  - [x] Códigos de activación (partnerActivationCodes table)
+  - [x] Permisos configurables de organizaciones (organizationSettings table)
+  - [x] Transacciones de licencias (userLicenseTransactions table)
+- [x] Comentar tabla licenses antigua para evitar conflictos
+- [x] Actualizar schema.ts con nuevas tablas
+- [ ] Aplicar migraciones a la base de datos
+- [ ] Crear migraciones de base de datos
+- [ ] Rediseñar partners.router.ts para gestión de fabricantes/distribuidores
+- [ ] Crear licenses.router.ts para gestión de licencias
+- [ ] Crear activationCodes.router.ts para códigos de partners
+- [ ] Actualizar organizations.router.ts con permisos configurables
+- [ ] Eliminar technicianMetrics.router.ts
+- [ ] Crear tests para todos los nuevos routers
+- [ ] Crear interfaz de gestión de partners (fabricantes/distribuidores)
+- [ ] Crear interfaz de gestión de licencias
+- [ ] Crear interfaz de códigos de activación
+- [ ] Crear interfaz de configuración de permisos de organización
+- [ ] Implementar flujo de activación con código de partner
+- [ ] Probar sistema completo end-to-end

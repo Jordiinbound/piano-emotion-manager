@@ -469,34 +469,35 @@ export const licenseTemplates = mysqlTable("license_templates", {
 	updatedAt: datetime().default(sql`(CURRENT_TIMESTAMP)`).notNull(),
 });
 
-export const licenses = mysqlTable("licenses", {
-	id: int().autoincrement().notNull(),
-	code: varchar({ length: 50 }).notNull(),
-	licenseType: mysqlEnum("license_type", ['trial','free','pro','premium']),
-	status: mysqlEnum(['available','active','expired','revoked','suspended']).default('available'),
-	distributorId: int("distributor_id"),
-	templateId: int("template_id"),
-	activatedByUserId: int("activated_by_user_id"),
-	activatedAt: datetime(),
-	moduleConfig: json("module_config"),
-	maxUsers: int("max_users").default(1),
-	maxClients: int("max_clients"),
-	maxPianos: int("max_pianos"),
-	validFrom: datetime().default(sql`CURRENT_TIMESTAMP`),
-	validUntil: datetime(),
-	notes: text(),
-	metadata: json(),
-	createdByAdminId: int("created_by_admin_id"),
-	createdAt: datetime().default(sql`CURRENT_TIMESTAMP`).notNull(),
-	updatedAt: datetime().default(sql`(CURRENT_TIMESTAMP)`).notNull(),
-},
-(table) => [
-	index("licenses_code_idx").on(table.code),
-	index("licenses_status_idx").on(table.status),
-	index("licenses_distributor_idx").on(table.distributorId),
-	index("licenses_activated_by_idx").on(table.activatedByUserId),
-	index("code").on(table.code),
-]);
+// DEPRECATED: Old licenses table from original project - keeping for reference
+// export const licensesOld = mysqlTable("licenses_old", {
+// 	id: int().autoincrement().notNull(),
+// 	code: varchar({ length: 50 }).notNull(),
+// 	licenseType: mysqlEnum("license_type", ['trial','free','pro','premium']),
+// 	status: mysqlEnum(['available','active','expired','revoked','suspended']).default('available'),
+// 	distributorId: int("distributor_id"),
+// 	templateId: int("template_id"),
+// 	activatedByUserId: int("activated_by_user_id"),
+// 	activatedAt: datetime(),
+// 	moduleConfig: json("module_config"),
+// 	maxUsers: int("max_users").default(1),
+// 	maxClients: int("max_clients"),
+// 	maxPianos: int("max_pianos"),
+// 	validFrom: datetime().default(sql`CURRENT_TIMESTAMP`),
+// 	validUntil: datetime(),
+// 	notes: text(),
+// 	metadata: json(),
+// 	createdByAdminId: int("created_by_admin_id"),
+// 	createdAt: datetime().default(sql`CURRENT_TIMESTAMP`).notNull(),
+// 	updatedAt: datetime().default(sql`(CURRENT_TIMESTAMP)`).notNull(),
+// },
+// (table) => [
+// 	index("licenses_code_idx").on(table.code),
+// 	index("licenses_status_idx").on(table.status),
+// 	index("licenses_distributor_idx").on(table.distributorId),
+// 	index("licenses_activated_by_idx").on(table.activatedByUserId),
+// 	index("code").on(table.code),
+// ]);
 
 export const memberAbsences = mysqlTable("member_absences", {
 	id: int().autoincrement().notNull(),
@@ -747,40 +748,56 @@ export const partnerUsers = mysqlTable("partner_users", {
 	updatedAt: timestamp().defaultNow().onUpdateNow().notNull(),
 });
 
-export const partners = mysqlTable("partners", {
+// Old partners table (keeping for reference)
+// export const partnersOld = mysqlTable("partners_old", { ... });
+
+export const partnersV2 = mysqlTable("partners_v2", {
 	id: int().autoincrement().notNull(),
-	slug: varchar({ length: 50 }).notNull(),
 	name: varchar({ length: 255 }).notNull(),
+	slug: varchar({ length: 100 }).notNull(),
 	email: varchar({ length: 320 }).notNull(),
-	customDomain: varchar({ length: 255 }),
+	
+	// Tipo de partner
+	partnerType: mysqlEnum(['manufacturer','distributor']).default('distributor').notNull(),
+	
+	// Branding
 	logo: text(),
 	primaryColor: varchar({ length: 7 }).default('#3b82f6'),
 	secondaryColor: varchar({ length: 7 }).default('#10b981'),
 	brandName: varchar({ length: 255 }),
-	status: mysqlEnum(['active','suspended','inactive']).default('active').notNull(),
-	allowMultipleSuppliers: tinyint().default(0).notNull(),
-	defaultLanguage: varchar({ length: 5 }).default('es').notNull(),
-	supportEmail: varchar({ length: 320 }),
-	supportPhone: varchar({ length: 50 }),
-	// Onboarding Step 2: Datos Fiscales
+	
+	// Ecommerce
+	ecommerceUrl: varchar({ length: 500 }),
+	ecommerceApiKey: text(), // encrypted
+	ecommerceType: mysqlEnum(['woocommerce','shopify','custom']),
+	
+	// Datos fiscales
 	legalName: varchar({ length: 255 }),
-	businessName: varchar({ length: 255 }),
-	taxId: varchar({ length: 20 }),
-	addressStreet: varchar({ length: 255 }),
-	addressPostalCode: varchar({ length: 5 }),
-	addressCity: varchar({ length: 100 }),
-	addressProvince: varchar({ length: 100 }),
-	iban: varchar({ length: 34 }),
-	bankName: varchar({ length: 255 }),
-	// Onboarding Step 3: Modo de Negocio
-	businessMode: mysqlEnum(['individual','team']).default('individual'),
-	// Onboarding Step 4: Cliente de Correo
-	emailClientPreference: mysqlEnum(['gmail','outlook','default']).default('gmail'),
+	taxId: varchar({ length: 50 }),
+	address: text(),
+	city: varchar({ length: 100 }),
+	postalCode: varchar({ length: 20 }),
+	country: varchar({ length: 2 }).default('ES'),
+	
+	// Contacto
+	contactName: varchar({ length: 255 }),
+	contactEmail: varchar({ length: 320 }),
+	contactPhone: varchar({ length: 50 }),
+	
+	// Estado
+	status: mysqlEnum(['active','suspended','inactive']).default('active').notNull(),
+	
+	// Licencias
+	totalLicensesPurchased: int().default(0).notNull(),
+	licensesAvailable: int().default(0).notNull(),
+	licensesAssigned: int().default(0).notNull(),
+	
 	createdAt: timestamp().defaultNow().notNull(),
 	updatedAt: timestamp().defaultNow().onUpdateNow().notNull(),
 },
 (table) => [
 	index("partners_slug_unique").on(table.slug),
+	index("partners_email_idx").on(table.email),
 ]);
 
 export const pianos = mysqlTable("pianos", {
@@ -1117,6 +1134,137 @@ export const serviceTasks = mysqlTable("service_tasks", {
 (table) => [
 	index("service_tasks_type_idx").on(table.serviceTypeId),
 	index("service_tasks_order_idx").on(table.serviceTypeId, table.orderIndex),
+]);
+
+// ============================================================================
+// MULTI-TENANT SYSTEM: LICENSES AND ACTIVATION CODES
+// ============================================================================
+
+export const userLicenses = mysqlTable("user_licenses", {
+	id: int().autoincrement().notNull(),
+	
+	// A quién pertenece la licencia (uno de los dos debe estar presente)
+	userId: int().references(() => users.id, { onDelete: "cascade" }),
+	organizationId: int().references(() => organizations.id, { onDelete: "cascade" }),
+	
+	// Origen de la licencia
+	licenseType: mysqlEnum(['direct','partner']).default('direct').notNull(),
+	partnerId: int().references(() => partnersV2.id, { onDelete: "set null" }),
+	activationCodeId: int(),
+	
+	// Estado
+	status: mysqlEnum(['active','expired','suspended','cancelled']).default('active').notNull(),
+	
+	// Fechas
+	activatedAt: timestamp().defaultNow().notNull(),
+	expiresAt: timestamp(),
+	renewsAt: timestamp(),
+	
+	// Facturación
+	billingCycle: mysqlEnum(['monthly','yearly']).default('monthly').notNull(),
+	price: decimal({ precision: 10, scale: 2 }).notNull(),
+	currency: varchar({ length: 3 }).default('EUR').notNull(),
+	
+	// Store integrada
+	storeUrl: varchar({ length: 500 }),
+	storePartnerId: int().references(() => partnersV2.id, { onDelete: "set null" }),
+	
+	createdAt: timestamp().defaultNow().notNull(),
+	updatedAt: timestamp().defaultNow().onUpdateNow().notNull(),
+},
+(table) => [
+	index("licenses_user_idx").on(table.userId),
+	index("licenses_org_idx").on(table.organizationId),
+	index("licenses_partner_idx").on(table.partnerId),
+	index("licenses_status_idx").on(table.status),
+	index("licenses_expires_idx").on(table.expiresAt),
+]);
+
+export const partnerActivationCodes = mysqlTable("partner_activation_codes", {
+	id: int().autoincrement().notNull(),
+	partnerId: int().notNull().references(() => partnersV2.id, { onDelete: "cascade" }),
+	
+	// Código
+	code: varchar({ length: 100 }).notNull(),
+	
+	// Tipo
+	codeType: mysqlEnum(['single_use','multi_use']).default('single_use').notNull(),
+	maxUses: int(),
+	usesCount: int().default(0).notNull(),
+	
+	// Estado
+	status: mysqlEnum(['active','used','expired','revoked']).default('active').notNull(),
+	
+	// Configuración de licencia
+	billingCycle: mysqlEnum(['monthly','yearly']).default('monthly').notNull(),
+	durationMonths: int().default(12).notNull(),
+	
+	// Fechas
+	expiresAt: timestamp(),
+	
+	createdAt: timestamp().defaultNow().notNull(),
+	updatedAt: timestamp().defaultNow().onUpdateNow().notNull(),
+},
+(table) => [
+	index("activation_codes_code_unique").on(table.code),
+	index("activation_codes_partner_idx").on(table.partnerId),
+	index("activation_codes_status_idx").on(table.status),
+]);
+
+export const userLicenseTransactions = mysqlTable("user_license_transactions", {
+	id: int().autoincrement().notNull(),
+	licenseId: int().notNull().references(() => userLicenses.id, { onDelete: "cascade" }),
+	
+	// Tipo de transacción
+	transactionType: mysqlEnum(['purchase','renewal','upgrade','downgrade','cancellation']).notNull(),
+	
+	// Montos
+	amount: decimal({ precision: 10, scale: 2 }).notNull(),
+	currency: varchar({ length: 3 }).default('EUR').notNull(),
+	
+	// Pago
+	paymentMethod: mysqlEnum(['stripe','invoice','partner']).notNull(),
+	paymentStatus: mysqlEnum(['pending','completed','failed','refunded']).default('pending').notNull(),
+	stripePaymentIntentId: varchar({ length: 255 }),
+	
+	// Fechas
+	transactionDate: timestamp().defaultNow().notNull(),
+	
+	createdAt: timestamp().defaultNow().notNull(),
+},
+(table) => [
+	index("license_transactions_license_idx").on(table.licenseId),
+	index("license_transactions_date_idx").on(table.transactionDate),
+	index("license_transactions_status_idx").on(table.paymentStatus),
+]);
+
+export const organizationSettings = mysqlTable("organization_settings", {
+	id: int().autoincrement().notNull(),
+	organizationId: int().notNull().references(() => organizations.id, { onDelete: "cascade" }),
+	
+	// Permisos de compartición
+	shareClients: tinyint().default(1).notNull(),
+	sharePianos: tinyint().default(1).notNull(),
+	shareInventory: tinyint().default(1).notNull(),
+	shareAgenda: tinyint().default(0).notNull(),
+	shareInvoices: tinyint().default(1).notNull(),
+	shareQuotes: tinyint().default(1).notNull(),
+	
+	// Permisos de visibilidad
+	membersCanViewOthersClients: tinyint().default(1).notNull(),
+	membersCanEditOthersClients: tinyint().default(0).notNull(),
+	membersCanViewOthersServices: tinyint().default(1).notNull(),
+	membersCanViewOthersInvoices: tinyint().default(1).notNull(),
+	
+	// Configuración de asignación de trabajos
+	autoAssignServices: tinyint().default(0).notNull(),
+	requireApprovalForInvoices: tinyint().default(0).notNull(),
+	
+	createdAt: timestamp().defaultNow().notNull(),
+	updatedAt: timestamp().defaultNow().onUpdateNow().notNull(),
+},
+(table) => [
+	index("organization_settings_org_unique").on(table.organizationId),
 ]);
 
 // ============================================================================
