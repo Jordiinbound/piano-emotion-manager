@@ -22,8 +22,10 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useTranslation } from "@/hooks/use-translation";
 
 export function PartnerDashboard() {
+  const { t } = useTranslation();
   const { data: partner, isLoading: partnerLoading } = trpc.partnersV2.getMyPartner.useQuery();
   const { data: codes, isLoading: codesLoading } = trpc.activationCodes.getMyPartnerCodes.useQuery();
   const { data: licenses, isLoading: licensesLoading } = trpc.licenses.getPartnerLicenses.useQuery();
@@ -32,7 +34,7 @@ export function PartnerDashboard() {
     return (
       <div className="container py-8">
         <div className="flex items-center justify-center h-64">
-          <p className="text-muted-foreground">Cargando dashboard...</p>
+          <p className="text-muted-foreground">{t('partnerDashboard.loadingDashboard')}</p>
         </div>
       </div>
     );
@@ -43,9 +45,9 @@ export function PartnerDashboard() {
       <div className="container py-8">
         <Card>
           <CardHeader>
-            <CardTitle>Acceso Denegado</CardTitle>
+            <CardTitle>{t('partnerDashboard.accessDenied')}</CardTitle>
             <CardDescription>
-              No tienes permisos de partner. Contacta con el administrador.
+              {t('partnerDashboard.noPartnerPermissions')}
             </CardDescription>
           </CardHeader>
         </Card>
@@ -62,7 +64,7 @@ export function PartnerDashboard() {
     <div className="container py-8 space-y-8">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold">Dashboard de Partner</h1>
+        <h1 className="text-3xl font-bold">{t('partnerDashboard.title')}</h1>
         <p className="text-muted-foreground mt-2">
           {partner.companyName} - {partner.contactEmail}
         </p>
@@ -73,14 +75,14 @@ export function PartnerDashboard() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
-              Códigos Activos
+              {t('partnerDashboard.activeCodes')}
             </CardTitle>
             <Key className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{activeCodes}</div>
             <p className="text-xs text-muted-foreground">
-              {usedCodes} códigos usados
+              {t('partnerDashboard.usedCodes', { count: usedCodes })}
             </p>
           </CardContent>
         </Card>
@@ -88,14 +90,14 @@ export function PartnerDashboard() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
-              Licencias Activas
+              {t('partnerDashboard.activeLicenses')}
             </CardTitle>
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{activeLicenses}</div>
             <p className="text-xs text-muted-foreground">
-              Clientes usando tu código
+              {t('partnerDashboard.clientsUsingCode')}
             </p>
           </CardContent>
         </Card>
@@ -103,7 +105,7 @@ export function PartnerDashboard() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
-              Ingresos Totales
+              {t('partnerDashboard.totalRevenue')}
             </CardTitle>
             <DollarSign className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
@@ -112,7 +114,7 @@ export function PartnerDashboard() {
               {totalRevenue.toFixed(2)} {partner.currency || 'EUR'}
             </div>
             <p className="text-xs text-muted-foreground">
-              Desde {new Date(partner.createdAt!).toLocaleDateString()}
+              {t('partnerDashboard.since', { date: new Date(partner.createdAt!).toLocaleDateString() })}
             </p>
           </CardContent>
         </Card>
@@ -120,7 +122,7 @@ export function PartnerDashboard() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
-              Tasa de Conversión
+              {t('partnerDashboard.conversionRate')}
             </CardTitle>
             <TrendingUp className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
@@ -131,7 +133,7 @@ export function PartnerDashboard() {
                 : 0}%
             </div>
             <p className="text-xs text-muted-foreground">
-              Códigos activados
+              {t('partnerDashboard.activatedCodes')}
             </p>
           </CardContent>
         </Card>
@@ -140,32 +142,32 @@ export function PartnerDashboard() {
       {/* Tabs */}
       <Tabs defaultValue="codes" className="space-y-4">
         <TabsList>
-          <TabsTrigger value="codes">Códigos de Activación</TabsTrigger>
-          <TabsTrigger value="licenses">Licencias Activas</TabsTrigger>
-          <TabsTrigger value="stats">Estadísticas</TabsTrigger>
+          <TabsTrigger value="codes">{t('partnerDashboard.activationCodes')}</TabsTrigger>
+          <TabsTrigger value="licenses">{t('partnerDashboard.activeLicenses')}</TabsTrigger>
+          <TabsTrigger value="stats">{t('partnerDashboard.statistics')}</TabsTrigger>
         </TabsList>
 
         {/* Códigos de Activación */}
         <TabsContent value="codes" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>Códigos de Activación</CardTitle>
+              <CardTitle>{t('partnerDashboard.activationCodes')}</CardTitle>
               <CardDescription>
-                Gestiona los códigos de activación generados para tus clientes
+                {t('partnerDashboard.manageActivationCodes')}
               </CardDescription>
             </CardHeader>
             <CardContent>
               {codesLoading ? (
-                <p className="text-center text-muted-foreground py-8">Cargando códigos...</p>
+                <p className="text-center text-muted-foreground py-8">{t('partnerDashboard.loadingCodes')}</p>
               ) : codes && codes.length > 0 ? (
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Código</TableHead>
-                      <TableHead>Estado</TableHead>
-                      <TableHead>Usos</TableHead>
-                      <TableHead>Expira</TableHead>
-                      <TableHead>Creado</TableHead>
+                      <TableHead>{t('partnerDashboard.code')}</TableHead>
+                      <TableHead>{t('partnerDashboard.status')}</TableHead>
+                      <TableHead>{t('partnerDashboard.uses')}</TableHead>
+                      <TableHead>{t('partnerDashboard.expires')}</TableHead>
+                      <TableHead>{t('partnerDashboard.created')}</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -176,7 +178,7 @@ export function PartnerDashboard() {
                         </TableCell>
                         <TableCell>
                           <Badge variant={code.status === 'active' ? 'default' : code.status === 'used' ? 'secondary' : 'destructive'}>
-                            {code.status === 'active' ? 'Activo' : code.status === 'used' ? 'Usado' : 'Expirado'}
+                            {code.status === 'active' ? t('partnerDashboard.active') : code.status === 'used' ? t('partnerDashboard.used') : t('partnerDashboard.expired')}
                           </Badge>
                         </TableCell>
                         <TableCell>
@@ -185,7 +187,7 @@ export function PartnerDashboard() {
                         <TableCell>
                           {code.expiresAt 
                             ? new Date(code.expiresAt).toLocaleDateString()
-                            : 'Sin expiración'}
+                            : t('partnerDashboard.noExpiration')}
                         </TableCell>
                         <TableCell>
                           {new Date(code.createdAt!).toLocaleDateString()}
@@ -196,7 +198,7 @@ export function PartnerDashboard() {
                 </Table>
               ) : (
                 <p className="text-center text-muted-foreground py-8">
-                  No hay códigos de activación generados
+                  {t('partnerDashboard.noActivationCodes')}
                 </p>
               )}
             </CardContent>
@@ -207,24 +209,24 @@ export function PartnerDashboard() {
         <TabsContent value="licenses" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>Licencias de Clientes</CardTitle>
+              <CardTitle>{t('partnerDashboard.clientLicenses')}</CardTitle>
               <CardDescription>
-                Clientes que han activado licencias con tus códigos
+                {t('partnerDashboard.clientsActivatedLicenses')}
               </CardDescription>
             </CardHeader>
             <CardContent>
               {licensesLoading ? (
-                <p className="text-center text-muted-foreground py-8">Cargando licencias...</p>
+                <p className="text-center text-muted-foreground py-8">{t('partnerDashboard.loadingLicenses')}</p>
               ) : licenses && licenses.length > 0 ? (
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>ID</TableHead>
-                      <TableHead>Usuario</TableHead>
-                      <TableHead>Estado</TableHead>
-                      <TableHead>Ciclo</TableHead>
-                      <TableHead>Precio</TableHead>
-                      <TableHead>Expira</TableHead>
+                      <TableHead>{t('partnerDashboard.id')}</TableHead>
+                      <TableHead>{t('partnerDashboard.user')}</TableHead>
+                      <TableHead>{t('partnerDashboard.status')}</TableHead>
+                      <TableHead>{t('partnerDashboard.cycle')}</TableHead>
+                      <TableHead>{t('partnerDashboard.price')}</TableHead>
+                      <TableHead>{t('partnerDashboard.expires')}</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -232,15 +234,15 @@ export function PartnerDashboard() {
                       <TableRow key={license.id}>
                         <TableCell>#{license.id}</TableCell>
                         <TableCell>
-                          Usuario #{license.userId}
+                          {t('partnerDashboard.userNumber', { id: license.userId })}
                         </TableCell>
                         <TableCell>
                           <Badge variant={license.status === 'active' ? 'default' : 'secondary'}>
-                            {license.status === 'active' ? 'Activa' : 'Inactiva'}
+                            {license.status === 'active' ? t('partnerDashboard.active') : t('partnerDashboard.inactive')}
                           </Badge>
                         </TableCell>
                         <TableCell>
-                          {license.billingCycle === 'monthly' ? 'Mensual' : 'Anual'}
+                          {license.billingCycle === 'monthly' ? t('partnerDashboard.monthly') : t('partnerDashboard.annual')}
                         </TableCell>
                         <TableCell>
                           {license.price} {license.currency}
@@ -256,7 +258,7 @@ export function PartnerDashboard() {
                 </Table>
               ) : (
                 <p className="text-center text-muted-foreground py-8">
-                  No hay licencias activas de clientes
+                  {t('partnerDashboard.noActiveLicenses')}
                 </p>
               )}
             </CardContent>
@@ -268,26 +270,26 @@ export function PartnerDashboard() {
           <div className="grid gap-4 md:grid-cols-2">
             <Card>
               <CardHeader>
-                <CardTitle>Resumen de Actividad</CardTitle>
+                <CardTitle>{t('partnerDashboard.activitySummary')}</CardTitle>
                 <CardDescription>
-                  Estadísticas generales de tu cuenta partner
+                  {t('partnerDashboard.generalStatistics')}
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium">Total de Códigos Generados</span>
+                  <span className="text-sm font-medium">{t('partnerDashboard.totalCodesGenerated')}</span>
                   <span className="text-2xl font-bold">{codes?.length || 0}</span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium">Códigos Activos</span>
+                  <span className="text-sm font-medium">{t('partnerDashboard.activeCodes')}</span>
                   <span className="text-2xl font-bold text-green-600">{activeCodes}</span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium">Códigos Usados</span>
+                  <span className="text-sm font-medium">{t('partnerDashboard.codesUsed')}</span>
                   <span className="text-2xl font-bold text-blue-600">{usedCodes}</span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium">Licencias Activas</span>
+                  <span className="text-sm font-medium">{t('partnerDashboard.activeLicenses')}</span>
                   <span className="text-2xl font-bold text-purple-600">{activeLicenses}</span>
                 </div>
               </CardContent>
@@ -295,28 +297,28 @@ export function PartnerDashboard() {
 
             <Card>
               <CardHeader>
-                <CardTitle>Información del Partner</CardTitle>
+                <CardTitle>{t('partnerDashboard.partnerInformation')}</CardTitle>
                 <CardDescription>
-                  Detalles de tu cuenta y configuración
+                  {t('partnerDashboard.accountDetails')}
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div>
-                  <p className="text-sm font-medium text-muted-foreground">Empresa</p>
+                  <p className="text-sm font-medium text-muted-foreground">{t('partnerDashboard.company')}</p>
                   <p className="text-lg font-semibold">{partner.companyName}</p>
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-muted-foreground">Email de Contacto</p>
+                  <p className="text-sm font-medium text-muted-foreground">{t('partnerDashboard.contactEmail')}</p>
                   <p className="text-lg">{partner.contactEmail}</p>
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-muted-foreground">URL del Ecommerce</p>
+                  <p className="text-sm font-medium text-muted-foreground">{t('partnerDashboard.ecommerceUrl')}</p>
                   <p className="text-lg text-blue-600 break-all">
-                    {partner.ecommerceUrl || 'No configurado'}
+                    {partner.ecommerceUrl || t('partnerDashboard.notConfigured')}
                   </p>
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-muted-foreground">Miembro desde</p>
+                  <p className="text-sm font-medium text-muted-foreground">{t('partnerDashboard.memberSince')}</p>
                   <p className="text-lg">
                     {new Date(partner.createdAt!).toLocaleDateString('es-ES', {
                       day: 'numeric',

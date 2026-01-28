@@ -10,8 +10,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea";
 import { Plus, Building2, Package, Users, TrendingUp } from "lucide-react";
 import { toast } from "sonner";
+import { useTranslation } from "@/hooks/use-translation";
 
 export function PartnersAdmin() {
+  const { t } = useTranslation();
   const [page, setPage] = useState(1);
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [isAddLicensesDialogOpen, setIsAddLicensesDialogOpen] = useState(false);
@@ -20,7 +22,7 @@ export function PartnersAdmin() {
   const { data, isLoading, refetch } = trpc.partnersV2.list.useQuery({ page, limit: 20 });
   const createMutation = trpc.partnersV2.create.useMutation({
     onSuccess: () => {
-      toast.success("Partner creado exitosamente");
+      toast.success(t('partnersAdmin.partnerCreatedSuccess'));
       setIsCreateDialogOpen(false);
       refetch();
     },
@@ -31,7 +33,7 @@ export function PartnersAdmin() {
 
   const addLicensesMutation = trpc.partnersV2.addLicenses.useMutation({
     onSuccess: () => {
-      toast.success("Licencias agregadas exitosamente");
+      toast.success(t('partnersAdmin.licensesAddedSuccess'));
       setIsAddLicensesDialogOpen(false);
       refetch();
     },
@@ -76,7 +78,7 @@ export function PartnersAdmin() {
     return (
       <div className="container py-8">
         <div className="flex items-center justify-center h-64">
-          <div className="text-muted-foreground">Cargando partners...</div>
+          <div className="text-muted-foreground">{t('partnersAdmin.loadingPartners')}</div>
         </div>
       </div>
     );
@@ -86,9 +88,9 @@ export function PartnersAdmin() {
     <div className="container py-8 space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold">Gestión de Partners</h1>
+          <h1 className="text-3xl font-bold">{t('partnersAdmin.title')}</h1>
           <p className="text-muted-foreground">
-            Fabricantes y distribuidores con licencias de marca blanca
+            {t('partnersAdmin.description')}
           </p>
         </div>
 
@@ -96,89 +98,89 @@ export function PartnersAdmin() {
           <DialogTrigger asChild>
             <Button>
               <Plus className="mr-2 h-4 w-4" />
-              Nuevo Partner
+              {t('partnersAdmin.newPartner')}
             </Button>
           </DialogTrigger>
           <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
             <form onSubmit={handleCreatePartner}>
               <DialogHeader>
-                <DialogTitle>Crear Nuevo Partner</DialogTitle>
+                <DialogTitle>{t('partnersAdmin.createNewPartner')}</DialogTitle>
                 <DialogDescription>
-                  Registra un fabricante o distribuidor para vender licencias de marca blanca
+                  {t('partnersAdmin.createPartnerDescription')}
                 </DialogDescription>
               </DialogHeader>
 
               <div className="grid gap-4 py-4">
                 <div className="grid gap-2">
-                  <Label htmlFor="name">Nombre *</Label>
+                  <Label htmlFor="name">{t('partnersAdmin.name')} *</Label>
                   <Input id="name" name="name" required />
                 </div>
 
                 <div className="grid gap-2">
-                  <Label htmlFor="slug">Slug * (para códigos de activación)</Label>
-                  <Input id="slug" name="slug" required placeholder="ej: acme" />
+                  <Label htmlFor="slug">{t('partnersAdmin.slug')} *</Label>
+                  <Input id="slug" name="slug" required placeholder={t('partnersAdmin.slugPlaceholder')} />
                 </div>
 
                 <div className="grid gap-2">
-                  <Label htmlFor="email">Email *</Label>
+                  <Label htmlFor="email">{t('partnersAdmin.email')} *</Label>
                   <Input id="email" name="email" type="email" required />
                 </div>
 
                 <div className="grid gap-2">
-                  <Label htmlFor="partnerType">Tipo *</Label>
+                  <Label htmlFor="partnerType">{t('partnersAdmin.type')} *</Label>
                   <Select name="partnerType" required defaultValue="distributor">
                     <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="manufacturer">Fabricante</SelectItem>
-                      <SelectItem value="distributor">Distribuidor</SelectItem>
+                      <SelectItem value="manufacturer">{t('partnersAdmin.manufacturer')}</SelectItem>
+                      <SelectItem value="distributor">{t('partnersAdmin.distributor')}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
 
                 <div className="grid gap-2">
-                  <Label htmlFor="brandName">Nombre de Marca</Label>
+                  <Label htmlFor="brandName">{t('partnersAdmin.brandName')}</Label>
                   <Input id="brandName" name="brandName" />
                 </div>
 
                 <div className="grid gap-2">
-                  <Label htmlFor="ecommerceUrl">URL de Ecommerce</Label>
+                  <Label htmlFor="ecommerceUrl">{t('partnersAdmin.ecommerceUrl')}</Label>
                   <Input id="ecommerceUrl" name="ecommerceUrl" type="url" placeholder="https://..." />
                 </div>
 
                 <div className="grid gap-2">
-                  <Label htmlFor="legalName">Razón Social</Label>
+                  <Label htmlFor="legalName">{t('partnersAdmin.legalName')}</Label>
                   <Input id="legalName" name="legalName" />
                 </div>
 
                 <div className="grid gap-2">
-                  <Label htmlFor="taxId">NIF/CIF</Label>
+                  <Label htmlFor="taxId">{t('partnersAdmin.taxId')}</Label>
                   <Input id="taxId" name="taxId" />
                 </div>
 
                 <div className="grid gap-2">
-                  <Label htmlFor="contactName">Nombre de Contacto</Label>
+                  <Label htmlFor="contactName">{t('partnersAdmin.contactName')}</Label>
                   <Input id="contactName" name="contactName" />
                 </div>
 
                 <div className="grid gap-2">
-                  <Label htmlFor="contactEmail">Email de Contacto</Label>
+                  <Label htmlFor="contactEmail">{t('partnersAdmin.contactEmail')}</Label>
                   <Input id="contactEmail" name="contactEmail" type="email" />
                 </div>
 
                 <div className="grid gap-2">
-                  <Label htmlFor="contactPhone">Teléfono de Contacto</Label>
+                  <Label htmlFor="contactPhone">{t('partnersAdmin.contactPhone')}</Label>
                   <Input id="contactPhone" name="contactPhone" />
                 </div>
               </div>
 
               <DialogFooter>
                 <Button type="button" variant="outline" onClick={() => setIsCreateDialogOpen(false)}>
-                  Cancelar
+                  {t('partnersAdmin.cancel')}
                 </Button>
                 <Button type="submit" disabled={createMutation.isPending}>
-                  {createMutation.isPending ? "Creando..." : "Crear Partner"}
+                  {createMutation.isPending ? t('partnersAdmin.creating') : t('partnersAdmin.createPartner')}
                 </Button>
               </DialogFooter>
             </form>
@@ -190,13 +192,13 @@ export function PartnersAdmin() {
         <Card>
           <CardContent className="flex flex-col items-center justify-center py-12">
             <Building2 className="h-12 w-12 text-muted-foreground mb-4" />
-            <h3 className="text-lg font-semibold mb-2">No hay partners registrados</h3>
+            <h3 className="text-lg font-semibold mb-2">{t('partnersAdmin.noPartnersRegistered')}</h3>
             <p className="text-muted-foreground text-center mb-4">
-              Crea tu primer partner para comenzar a vender licencias de marca blanca
+              {t('partnersAdmin.createFirstPartnerDescription')}
             </p>
             <Button onClick={() => setIsCreateDialogOpen(true)}>
               <Plus className="mr-2 h-4 w-4" />
-              Crear Primer Partner
+              {t('partnersAdmin.createFirstPartner')}
             </Button>
           </CardContent>
         </Card>
@@ -217,9 +219,9 @@ export function PartnersAdmin() {
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="flex items-center justify-between text-sm">
-                  <span className="text-muted-foreground">Tipo:</span>
+                  <span className="text-muted-foreground">{t('partnersAdmin.typeLabel')}:</span>
                   <Badge variant="outline">
-                    {partner.partnerType === 'manufacturer' ? 'Fabricante' : 'Distribuidor'}
+                    {partner.partnerType === 'manufacturer' ? t('partnersAdmin.manufacturer') : t('partnersAdmin.distributor')}
                   </Badge>
                 </div>
 
@@ -227,17 +229,17 @@ export function PartnersAdmin() {
                   <div className="space-y-1">
                     <Package className="h-4 w-4 mx-auto text-muted-foreground" />
                     <div className="text-2xl font-bold">{partner.totalLicensesPurchased}</div>
-                    <div className="text-xs text-muted-foreground">Compradas</div>
+                    <div className="text-xs text-muted-foreground">{t('partnersAdmin.purchased')}</div>
                   </div>
                   <div className="space-y-1">
                     <TrendingUp className="h-4 w-4 mx-auto text-green-500" />
                     <div className="text-2xl font-bold text-green-500">{partner.licensesAvailable}</div>
-                    <div className="text-xs text-muted-foreground">Disponibles</div>
+                    <div className="text-xs text-muted-foreground">{t('partnersAdmin.available')}</div>
                   </div>
                   <div className="space-y-1">
                     <Users className="h-4 w-4 mx-auto text-blue-500" />
                     <div className="text-2xl font-bold text-blue-500">{partner.licensesAssigned}</div>
-                    <div className="text-xs text-muted-foreground">Asignadas</div>
+                    <div className="text-xs text-muted-foreground">{t('partnersAdmin.assigned')}</div>
                   </div>
                 </div>
 
@@ -251,7 +253,7 @@ export function PartnersAdmin() {
                     }}
                   >
                     <Package className="mr-2 h-4 w-4" />
-                    Agregar Licencias
+                    {t('partnersAdmin.addLicenses')}
                   </Button>
                 </div>
               </CardContent>
@@ -265,32 +267,32 @@ export function PartnersAdmin() {
         <DialogContent>
           <form onSubmit={handleAddLicenses}>
             <DialogHeader>
-              <DialogTitle>Agregar Licencias</DialogTitle>
+              <DialogTitle>{t('partnersAdmin.addLicenses')}</DialogTitle>
               <DialogDescription>
-                Agrega licencias al inventario del partner
+                {t('partnersAdmin.addLicensesDescription')}
               </DialogDescription>
             </DialogHeader>
 
             <div className="grid gap-4 py-4">
               <div className="grid gap-2">
-                <Label htmlFor="quantity">Cantidad de Licencias *</Label>
+                <Label htmlFor="quantity">{t('partnersAdmin.quantityOfLicenses')} *</Label>
                 <Input
                   id="quantity"
                   name="quantity"
                   type="number"
                   min="1"
                   required
-                  placeholder="ej: 100"
+                  placeholder={t('partnersAdmin.quantityPlaceholder')}
                 />
               </div>
             </div>
 
             <DialogFooter>
               <Button type="button" variant="outline" onClick={() => setIsAddLicensesDialogOpen(false)}>
-                Cancelar
+                {t('partnersAdmin.cancel')}
               </Button>
               <Button type="submit" disabled={addLicensesMutation.isPending}>
-                {addLicensesMutation.isPending ? "Agregando..." : "Agregar Licencias"}
+                {addLicensesMutation.isPending ? t('partnersAdmin.adding') : t('partnersAdmin.addLicenses')}
               </Button>
             </DialogFooter>
           </form>
@@ -305,17 +307,17 @@ export function PartnersAdmin() {
             onClick={() => setPage(p => Math.max(1, p - 1))}
             disabled={page === 1}
           >
-            Anterior
+            {t('partnersAdmin.previous')}
           </Button>
           <span className="text-sm text-muted-foreground">
-            Página {page} de {Math.ceil(data.total / data.limit)}
+            {t('partnersAdmin.pageOf', { current: page, total: Math.ceil(data.total / data.limit) })}
           </span>
           <Button
             variant="outline"
             onClick={() => setPage(p => p + 1)}
             disabled={page >= Math.ceil(data.total / data.limit)}
           >
-            Siguiente
+            {t('partnersAdmin.next')}
           </Button>
         </div>
       )}
