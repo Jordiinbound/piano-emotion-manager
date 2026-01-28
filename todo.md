@@ -1438,3 +1438,41 @@
 - [ ] Verificar que el campo se guarda y muestra correctamente
 - [ ] Escribir tests para campo provincia
 
+
+## FASE 4.7: Actualizar Formularios de Usuario con Campo Provincia
+- [ ] Buscar o crear componente de perfil de usuario
+- [ ] Agregar campo provincia en formulario de perfil
+- [ ] Implementar dropdown con provincias/estados según país
+- [ ] Actualizar endpoint tRPC para guardar provincia
+- [ ] Verificar que el campo se guarda correctamente en base de datos
+- [ ] Mostrar provincia en perfil de usuario
+- [ ] Escribir tests para actualización de provincia
+
+## FASE 4.8: Integrar Firma Digital en Servicios y Facturas
+- [ ] Agregar campo signature_url a tabla services en schema
+- [ ] Agregar campo signature_url a tabla invoices en schema
+- [ ] Ejecutar migración de base de datos para agregar campos
+- [ ] Integrar SignatureCanvas en página ServicioNuevo.tsx
+- [ ] Integrar SignatureCanvas en página ServicioEditar.tsx
+- [ ] Integrar SignatureCanvas en página FacturaNueva.tsx
+- [ ] Integrar SignatureCanvas en página FacturaEditar.tsx
+- [ ] Actualizar endpoints tRPC para guardar firma en R2
+- [ ] Incluir firma en PDFs generados de servicios
+- [ ] Incluir firma en PDFs generados de facturas
+- [ ] Escribir tests para funcionalidad de firma
+
+## FASE 4.9: Mapa de Clientes con Filtros por Región
+- [x] Crear página /mapa-clientes como ruta independiente
+- [x] Integrar Google Maps con MapView component
+- [x] Implementar marcadores para cada cliente usando geocodificación de dirección
+- [x] Agregar clustering con @googlemaps/markerclusterer
+- [x] Implementar InfoWindow con datos del cliente al hacer click
+- [x] Agregar filtro por provincia/región adaptado a cada país
+- [x] Agregar filtro por ciudad
+- [x] Implementar búsqueda de cliente por nombre o dirección
+- [x] Agregar enlace en sidebar bajo sección HERRAMIENTAS
+- [x] Agregar opción de centrar mapa en ubicación actual con geolocation API
+- [x] Agregar traducciones para 10 idiomas (es, en, fr, de, it, pt, nl, no, da, sv)
+- [ ] Agregar filtro por grupo de ruta (futuro)
+- [ ] Escribir tests para componente de mapa
+

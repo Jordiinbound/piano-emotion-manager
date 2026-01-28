@@ -18,6 +18,7 @@
     "@azure/msal-node": "^5.0.2",
     "@clerk/backend": "^2.29.5",
     "@clerk/clerk-react": "^5.59.6",
+    "@googlemaps/markerclusterer": "^2.6.2",
     "@hookform/resolvers": "^5.2.2",
     "@microsoft/microsoft-graph-client": "^3.0.7",
     "@paralleldrive/cuid2": "^3.3.0",

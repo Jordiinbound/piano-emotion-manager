@@ -34,6 +34,7 @@ import Alertas from "./pages/Alertas";
 import ConfiguracionAlertas from "./pages/ConfiguracionAlertas";
 import HerramientasAvanzadas from "./pages/HerramientasAvanzadas";
 import OptimizadorRutas from "./pages/OptimizadorRutas";
+import MapaClientes from "./pages/MapaClientes";
 import Configuracion from "./pages/Configuracion";
 import SignIn from "./pages/SignIn";
 import SignUp from "./pages/SignUp";
@@ -429,6 +430,14 @@ function Router() {
         <ProtectedRoute>
           <Layout>
             <OptimizadorRutas />
+          </Layout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/mapa-clientes">
+        <ProtectedRoute>
+          <Layout>
+            <MapaClientes />
           </Layout>
         </ProtectedRoute>
       </Route>

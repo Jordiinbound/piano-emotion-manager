@@ -83,6 +83,7 @@ const menuSections: MenuSection[] = [
       { name: 'Alertas', href: '/alertas', icon: Bell },
       { name: 'Herramientas Avanzadas', href: '/herramientas-avanzadas', icon: Hammer },
       { name: 'Optimizador de Rutas', href: '/optimizador-rutas', icon: Route },
+      { name: 'Mapa de Clientes', href: '/mapa-clientes', icon: MapPin },
       { name: 'Configuración', href: '/configuracion', icon: Settings },
     ],
   },
