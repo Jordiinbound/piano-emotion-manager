@@ -953,3 +953,21 @@
 - [ ] CONSULTAR CON USUARIO sobre estrategia de migración (A/B/C/D)
 - [ ] Migrar elementos faltantes al proyecto Manus (según decisión del usuario)
 - [ ] Verificar integridad completa del proyecto migrado
+
+## FASE 2: Servicios Backend Críticos - Migración desde GitHub
+- [x] Migrar servicio de Email con Nodemailer (soporte Gmail OAuth2, Outlook OAuth2, SMTP)
+- [x] Crear emailSMTP.ts y emailUnified.ts con funciones sendEmail, sendBulkEmail
+- [ ] Migrar servicio de generación PDF con PDFKit
+- [ ] Crear pdfService.ts con generación de facturas, presupuestos, informes
+- [ ] Migrar servicio de Excel con ExcelJS
+- [ ] Crear excelService.ts con exportación/importación de datos
+- [ ] Migrar integración WhatsApp (wa.me)
+- [ ] Crear whatsappService.ts con generación de enlaces y mensajes pre-rellenados
+- [ ] Migrar servicio de Backups a S3
+- [ ] Crear backupService.ts con backup automático de base de datos
+- [ ] Migrar sincronización Google Calendar
+- [ ] Crear googleCalendarService.ts con sync bidireccional
+- [ ] Migrar sincronización Outlook Calendar
+- [ ] Crear outlookCalendarService.ts con sync bidireccional
+- [ ] Crear routers tRPC para todos los servicios migrados
+- [ ] Crear tests para todos los servicios migrados

@@ -127,9 +127,6 @@ importers:
       '@trpc/server':
         specifier: ^11.6.0
         version: 11.6.0(typescript@5.9.3)
-      '@types/nodemailer':
-        specifier: ^7.0.9
-        version: 7.0.9
       '@types/pdfkit':
         specifier: ^0.17.4
         version: 0.17.4
@@ -266,6 +263,9 @@ importers:
       '@types/node':
         specifier: ^24.7.0
         version: 24.7.0
+      '@types/nodemailer':
+        specifier: ^7.0.9
+        version: 7.0.9
       '@types/react':
         specifier: ^19.2.1
         version: 19.2.1
