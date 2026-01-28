@@ -1253,3 +1253,91 @@
 ### Tests
 - [ ] Escribir tests para BeforeAfterSlider
 - [ ] Escribir tests para modo de selección de fotos
+
+## FASE 4: Funcionalidades de Media Prioridad
+
+### Historial de Propietarios del Piano
+- [x] Crear tabla `piano_ownership_history` en schema.ts
+- [x] Campos: id, pianoId, ownerName, ownerContact, ownerAddress, purchaseDate, saleDate, purchasePrice, salePrice, notes, createdAt
+- [x] Crear endpoint tRPC `getPianoOwnershipHistory` en pianoTechnical.router.ts
+- [x] Crear endpoint tRPC `addOwnershipRecord` en pianoTechnical.router.ts
+- [x] Crear endpoint tRPC `updateOwnershipRecord` en pianoTechnical.router.ts
+- [x] Crear endpoint tRPC `deleteOwnershipRecord` en pianoTechnical.router.ts
+- [x] Crear componente OwnershipHistoryCard.tsx para visualización
+- [x] Agregar timeline visual con fechas de compra/venta
+- [x] Integrar en página PianoDetalle como quinta tab
+- [ ] Escribir tests para endpoints de ownership history
+
+### Historial de Precios del Piano
+- [x] Crear tabla `piano_price_history` en schema.ts
+- [x] Campos: id, pianoId, price, priceType (purchase/sale/appraisal/market/insurance), date, source, notes, createdAt
+- [x] Crear endpoint tRPC `getPianoPriceHistory` en pianoTechnical.router.ts
+- [x] Crear endpoint tRPC `addPriceRecord` en pianoTechnical.router.ts
+- [x] Crear endpoint tRPC `updatePriceRecord` en pianoTechnical.router.ts
+- [x] Crear endpoint tRPC `deletePriceRecord` en pianoTechnical.router.ts
+- [x] Crear componente PriceHistoryCard.tsx con gráfico de línea
+- [x] Usar Recharts para visualización de tendencias con 5 tipos de precio
+- [x] Integrar en página PianoDetalle como sexta tab
+- [ ] Escribir tests para endpoints de price history
+
+### Optimizador de Rutas para Visitas
+- [ ] Crear endpoint tRPC `optimizeRoute` en appointments.router.ts
+- [ ] Integrar Google Maps Directions API para cálculo de rutas
+- [ ] Implementar algoritmo de optimización (TSP simplificado o Google Routes API)
+- [ ] Crear componente RouteOptimizerCard.tsx
+- [ ] Permitir seleccionar múltiples citas del día
+- [ ] Mostrar ruta optimizada en mapa con marcadores
+- [ ] Calcular tiempo total y distancia
+- [ ] Agregar opción de exportar ruta a Google Maps
+- [ ] Integrar en página Agenda/Appointments
+- [ ] Escribir tests para optimización de rutas
+
+## FASE 5: Funcionalidades de Baja Prioridad
+
+### Escáner de Códigos de Barras
+- [ ] Instalar librería de escaneo (html5-qrcode o quagga2)
+- [ ] Crear componente BarcodeScanner.tsx
+- [ ] Implementar acceso a cámara del dispositivo
+- [ ] Agregar soporte para múltiples formatos (EAN, UPC, Code128)
+- [ ] Integrar en página de Inventario para búsqueda rápida
+- [ ] Agregar opción de escanear código en formulario de agregar producto
+- [ ] Implementar búsqueda automática por código escaneado
+- [ ] Escribir tests para escáner de códigos
+
+### Firma Digital
+- [ ] Instalar librería signature_pad
+- [ ] Crear componente SignaturePad.tsx
+- [ ] Implementar canvas para captura de firma
+- [ ] Agregar botones de limpiar y confirmar
+- [ ] Convertir firma a imagen PNG/base64
+- [ ] Subir firma a R2 usando storagePut()
+- [ ] Agregar campo signatureUrl a tabla services
+- [ ] Agregar campo signatureUrl a tabla invoices
+- [ ] Integrar en formulario de completar servicio
+- [ ] Integrar en formulario de confirmar factura
+- [ ] Mostrar firma en PDF de factura/servicio
+- [ ] Escribir tests para firma digital
+
+### Mapa de Clientes
+- [ ] Crear componente ClientMap.tsx usando Google Maps
+- [ ] Agregar campos latitude y longitude a tabla clients
+- [ ] Implementar geocoding automático al agregar/editar cliente
+- [ ] Crear endpoint tRPC `getClientsWithLocation`
+- [ ] Mostrar marcadores de clientes en mapa
+- [ ] Agregar clustering para muchos clientes
+- [ ] Implementar filtros por zona geográfica
+- [ ] Agregar info window con datos del cliente al hacer click
+- [ ] Integrar en página Clientes como vista alternativa
+- [ ] Escribir tests para mapa de clientes
+
+### Sistema Premium Completo
+- [ ] Crear tabla `subscriptions` en schema.ts
+- [ ] Campos: id, userId, plan (free/basic/premium), status, startDate, endDate, stripeSubscriptionId
+- [ ] Crear componente PremiumBadge.tsx
+- [ ] Crear componente PremiumFeature.tsx como wrapper
+- [ ] Crear componente UpgradeModal.tsx
+- [ ] Implementar lógica de restricción por plan
+- [ ] Definir límites por plan (ej: 10 pianos en free, 100 en basic, ilimitado en premium)
+- [ ] Integrar con Stripe Subscriptions
+- [ ] Agregar página de planes y precios
+- [ ] Escribir tests para sistema premium

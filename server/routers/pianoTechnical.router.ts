@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { router, protectedProcedure } from '../_core/trpc';
 import { getDb } from '../db';
-import { pianoTechnicalData, pianoInspectionReports, pianos, clients } from '../../drizzle/schema';
+import { pianoTechnicalData, pianoInspectionReports, pianos, clients, pianoOwnershipHistory, pianoPriceHistory } from '../../drizzle/schema';
 import { eq, and, desc } from 'drizzle-orm';
 import { createId } from '@paralleldrive/cuid2';
 import { generateInspectionPDF } from '../services/pdfInspectionService';
@@ -332,5 +332,170 @@ export const pianoTechnicalRouter = router({
         byUrgency,
         byType,
       };
+    }),
+
+  // ============ HISTORIAL DE PROPIETARIOS ============
+  
+  /**
+   * Obtener historial de propietarios de un piano
+   */
+  getPianoOwnershipHistory: protectedProcedure
+    .input(z.object({
+      pianoId: z.number(),
+    }))
+    .query(async ({ input }) => {
+      const db = await getDb();
+      const history = await db.query.pianoOwnershipHistory.findMany({
+        where: eq(pianoOwnershipHistory.pianoId, input.pianoId),
+        orderBy: [desc(pianoOwnershipHistory.purchaseDate)],
+      });
+      return history;
+    }),
+
+  /**
+   * Agregar registro de propietario
+   */
+  addOwnershipRecord: protectedProcedure
+    .input(z.object({
+      pianoId: z.number(),
+      ownerName: z.string(),
+      ownerContact: z.string().optional(),
+      ownerAddress: z.string().optional(),
+      purchaseDate: z.string().optional(),
+      saleDate: z.string().optional(),
+      purchasePrice: z.string().optional(),
+      salePrice: z.string().optional(),
+      notes: z.string().optional(),
+    }))
+    .mutation(async ({ input }) => {
+      const db = await getDb();
+      await db.insert(pianoOwnershipHistory).values({
+        pianoId: input.pianoId,
+        ownerName: input.ownerName,
+        ownerContact: input.ownerContact || null,
+        ownerAddress: input.ownerAddress || null,
+        purchaseDate: input.purchaseDate || null,
+        saleDate: input.saleDate || null,
+        purchasePrice: input.purchasePrice || null,
+        salePrice: input.salePrice || null,
+        notes: input.notes || null,
+      });
+      return { success: true };
+    }),
+
+  /**
+   * Actualizar registro de propietario
+   */
+  updateOwnershipRecord: protectedProcedure
+    .input(z.object({
+      id: z.number(),
+      ownerName: z.string().optional(),
+      ownerContact: z.string().optional(),
+      ownerAddress: z.string().optional(),
+      purchaseDate: z.string().optional(),
+      saleDate: z.string().optional(),
+      purchasePrice: z.string().optional(),
+      salePrice: z.string().optional(),
+      notes: z.string().optional(),
+    }))
+    .mutation(async ({ input }) => {
+      const db = await getDb();
+      const { id, ...data } = input;
+      await db.update(pianoOwnershipHistory)
+        .set(data)
+        .where(eq(pianoOwnershipHistory.id, id));
+      return { success: true };
+    }),
+
+  /**
+   * Eliminar registro de propietario
+   */
+  deleteOwnershipRecord: protectedProcedure
+    .input(z.object({
+      id: z.number(),
+    }))
+    .mutation(async ({ input }) => {
+      const db = await getDb();
+      await db.delete(pianoOwnershipHistory)
+        .where(eq(pianoOwnershipHistory.id, input.id));
+      return { success: true };
+    }),
+
+  // ============ HISTORIAL DE PRECIOS ============
+  
+  /**
+   * Obtener historial de precios de un piano
+   */
+  getPianoPriceHistory: protectedProcedure
+    .input(z.object({
+      pianoId: z.number(),
+    }))
+    .query(async ({ input }) => {
+      const db = await getDb();
+      const history = await db.query.pianoPriceHistory.findMany({
+        where: eq(pianoPriceHistory.pianoId, input.pianoId),
+        orderBy: [desc(pianoPriceHistory.date)],
+      });
+      return history;
+    }),
+
+  /**
+   * Agregar registro de precio
+   */
+  addPriceRecord: protectedProcedure
+    .input(z.object({
+      pianoId: z.number(),
+      price: z.string(),
+      priceType: z.enum(['purchase', 'sale', 'appraisal', 'market', 'insurance']),
+      date: z.string(),
+      source: z.string().optional(),
+      notes: z.string().optional(),
+    }))
+    .mutation(async ({ input }) => {
+      const db = await getDb();
+      await db.insert(pianoPriceHistory).values({
+        pianoId: input.pianoId,
+        price: input.price,
+        priceType: input.priceType,
+        date: input.date,
+        source: input.source || null,
+        notes: input.notes || null,
+      });
+      return { success: true };
+    }),
+
+  /**
+   * Actualizar registro de precio
+   */
+  updatePriceRecord: protectedProcedure
+    .input(z.object({
+      id: z.number(),
+      price: z.string().optional(),
+      priceType: z.enum(['purchase', 'sale', 'appraisal', 'market', 'insurance']).optional(),
+      date: z.string().optional(),
+      source: z.string().optional(),
+      notes: z.string().optional(),
+    }))
+    .mutation(async ({ input }) => {
+      const db = await getDb();
+      const { id, ...data } = input;
+      await db.update(pianoPriceHistory)
+        .set(data)
+        .where(eq(pianoPriceHistory.id, id));
+      return { success: true };
+    }),
+
+  /**
+   * Eliminar registro de precio
+   */
+  deletePriceRecord: protectedProcedure
+    .input(z.object({
+      id: z.number(),
+    }))
+    .mutation(async ({ input }) => {
+      const db = await getDb();
+      await db.delete(pianoPriceHistory)
+        .where(eq(pianoPriceHistory.id, input.id));
+      return { success: true };
     }),
 });

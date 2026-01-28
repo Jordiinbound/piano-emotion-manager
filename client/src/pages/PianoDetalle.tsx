@@ -4,12 +4,14 @@ import { trpc } from '../lib/trpc';
 import { Button } from '../components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
-import { ArrowLeft, Edit, FileText, Image, Wrench, Calendar } from 'lucide-react';
+import { ArrowLeft, Edit, FileText, Image, Wrench, Calendar, User, TrendingUp } from 'lucide-react';
 import { useTranslation } from '@/hooks/use-translation';
 import TechnicalDataCard from '../components/TechnicalDataCard';
 import InspectionReportsCard from '../components/InspectionReportsCard';
 import PhotoGalleryCard from '../components/PhotoGalleryCard';
 import { PhotoTimeline } from '../components/PhotoTimeline';
+import OwnershipHistoryCard from '../components/OwnershipHistoryCard';
+import PriceHistoryCard from '../components/PriceHistoryCard';
 
 export default function PianoDetalle() {
   const { t } = useTranslation();
@@ -108,7 +110,7 @@ export default function PianoDetalle() {
 
       {/* Tabs para secciones adicionales */}
       <Tabs defaultValue="technical" className="w-full">
-        <TabsList className="grid w-full grid-cols-4">
+        <TabsList className="grid w-full grid-cols-6">
           <TabsTrigger value="technical">
             <Wrench className="mr-2 h-4 w-4" />
             {t('pianos.technicalData')}
@@ -124,6 +126,14 @@ export default function PianoDetalle() {
           <TabsTrigger value="timeline">
             <Calendar className="mr-2 h-4 w-4" />
             {t('pianos.photoTimeline')}
+          </TabsTrigger>
+          <TabsTrigger value="ownership">
+            <User className="mr-2 h-4 w-4" />
+            {t('pianos.ownershipHistory')}
+          </TabsTrigger>
+          <TabsTrigger value="prices">
+            <TrendingUp className="mr-2 h-4 w-4" />
+            {t('pianos.priceHistory')}
           </TabsTrigger>
         </TabsList>
 
@@ -141,6 +151,14 @@ export default function PianoDetalle() {
 
         <TabsContent value="timeline" className="mt-6">
           <PhotoTimeline photos={(piano.photos as string[]) || []} />
+        </TabsContent>
+
+        <TabsContent value="ownership" className="mt-6">
+          <OwnershipHistoryCard pianoId={pianoId} />
+        </TabsContent>
+
+        <TabsContent value="prices" className="mt-6">
+          <PriceHistoryCard pianoId={pianoId} />
         </TabsContent>
       </Tabs>
     </div>

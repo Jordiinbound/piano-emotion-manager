@@ -1,4 +1,4 @@
-import { mysqlTable, mysqlSchema, AnyMySqlColumn, index, int, varchar, timestamp, foreignKey, mysqlEnum, text, json, decimal, datetime, tinyint } from "drizzle-orm/mysql-core"
+import { mysqlTable, mysqlSchema, AnyMySqlColumn, index, int, varchar, timestamp, foreignKey, mysqlEnum, text, json, decimal, datetime, tinyint, date } from "drizzle-orm/mysql-core"
 import { sql } from "drizzle-orm"
 
 export const aiUsageTracking = mysqlTable("ai_usage_tracking", {
@@ -1707,5 +1707,79 @@ export const pianoInspectionReportsRelations = relations(pianoInspectionReports,
   client: one(clients, {
     fields: [pianoInspectionReports.clientId],
     references: [clients.id],
+  }),
+}));
+
+// Historial de propietarios del piano
+export const pianoOwnershipHistory = mysqlTable('piano_ownership_history', {
+  id: int().autoincrement().notNull().primaryKey(),
+  pianoId: int('piano_id').notNull().references(() => pianos.id, { onDelete: 'cascade' }),
+  
+  // Información del propietario
+  ownerName: varchar('owner_name', { length: 200 }).notNull(),
+  ownerContact: varchar('owner_contact', { length: 200 }), // teléfono o email
+  ownerAddress: text('owner_address'),
+  
+  // Fechas de propiedad
+  purchaseDate: date('purchase_date'), // fecha de compra
+  saleDate: date('sale_date'), // fecha de venta (null si es el propietario actual)
+  
+  // Precios
+  purchasePrice: decimal('purchase_price', { precision: 10, scale: 2 }),
+  salePrice: decimal('sale_price', { precision: 10, scale: 2 }),
+  
+  // Notas adicionales
+  notes: text(),
+  
+  // Metadata
+  createdAt: timestamp('created_at').defaultNow(),
+  updatedAt: timestamp('updated_at').defaultNow().onUpdateNow(),
+},
+(table) => [
+  index('idx_piano_ownership').on(table.pianoId),
+  index('idx_purchase_date').on(table.purchaseDate),
+]);
+
+// Historial de precios del piano
+export const pianoPriceHistory = mysqlTable('piano_price_history', {
+  id: int().autoincrement().notNull().primaryKey(),
+  pianoId: int('piano_id').notNull().references(() => pianos.id, { onDelete: 'cascade' }),
+  
+  // Precio y tipo
+  price: decimal({ precision: 10, scale: 2 }).notNull(),
+  priceType: mysqlEnum('price_type', ['purchase', 'sale', 'appraisal', 'market', 'insurance']).notNull(),
+  
+  // Fecha del precio
+  date: date().notNull(),
+  
+  // Fuente del precio
+  source: varchar({ length: 200 }), // ej: "Tasación profesional", "Venta privada", "Mercado online"
+  
+  // Notas adicionales
+  notes: text(),
+  
+  // Metadata
+  createdAt: timestamp('created_at').defaultNow(),
+  updatedAt: timestamp('updated_at').defaultNow().onUpdateNow(),
+},
+(table) => [
+  index('idx_piano_price').on(table.pianoId),
+  index('idx_price_date').on(table.date),
+  index('idx_price_type').on(table.priceType),
+]);
+
+// Relaciones de historial de propietarios
+export const pianoOwnershipHistoryRelations = relations(pianoOwnershipHistory, ({ one }) => ({
+  piano: one(pianos, {
+    fields: [pianoOwnershipHistory.pianoId],
+    references: [pianos.id],
+  }),
+}));
+
+// Relaciones de historial de precios
+export const pianoPriceHistoryRelations = relations(pianoPriceHistory, ({ one }) => ({
+  piano: one(pianos, {
+    fields: [pianoPriceHistory.pianoId],
+    references: [pianos.id],
   }),
 }));

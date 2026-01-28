@@ -1,5 +1,5 @@
-import { mysqlTable, int, varchar, timestamp, tinyint, text, index } from "drizzle-orm/mysql-core";
-import { users } from "./schema.js";
+import { mysqlTable, int, varchar, timestamp, tinyint, index } from "drizzle-orm/mysql-core";
+import { users } from "./schema";
 
 export const onboardingProgress = mysqlTable("onboarding_progress", {
   id: int().autoincrement().notNull(),
