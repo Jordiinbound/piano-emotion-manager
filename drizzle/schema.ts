@@ -1037,7 +1037,7 @@ export const users = mysqlTable("users", {
 	name: text(),
 	email: varchar({ length: 320 }),
 	loginMethod: varchar({ length: 64 }),
-	role: mysqlEnum(['user','admin']).default('user').notNull(),
+	role: mysqlEnum(['user','admin','partner','technician']).default('user').notNull(),
 	createdAt: timestamp().defaultNow().notNull(),
 	updatedAt: timestamp().defaultNow().onUpdateNow().notNull(),
 	lastSignedIn: timestamp().defaultNow().notNull(),
@@ -1272,6 +1272,40 @@ export const organizationSettings = mysqlTable("organization_settings", {
 // ACCOUNTING TABLES
 // ============================================================================
 
+// ============================================================================
+// ROLES AND PERMISSIONS SYSTEM
+// ============================================================================
+
+export const rolePermissions = mysqlTable("role_permissions", {
+	id: int().autoincrement().notNull(),
+	role: mysqlEnum(['user','admin','partner','technician']).notNull(),
+	permission: varchar({ length: 100 }).notNull(),
+	createdAt: timestamp().defaultNow().notNull(),
+},
+(table) => [
+	index("idx_role").on(table.role),
+	index("idx_permission").on(table.permission),
+]);
+
+export const userPermissions = mysqlTable("user_permissions", {
+	id: int().autoincrement().notNull(),
+	userId: int().notNull().references(() => users.id, { onDelete: "cascade" }),
+	permission: varchar({ length: 100 }).notNull(),
+	granted: tinyint().default(1).notNull(),
+	createdAt: timestamp().defaultNow().notNull(),
+	updatedAt: timestamp().defaultNow().onUpdateNow().notNull(),
+},
+(table) => [
+	index("idx_user_permission").on(table.userId, table.permission),
+]);
+
+export type RolePermission = typeof rolePermissions.$inferSelect;
+export type InsertRolePermission = typeof rolePermissions.$inferInsert;
+export type UserPermission = typeof userPermissions.$inferSelect;
+export type InsertUserPermission = typeof userPermissions.$inferInsert;
+
+// ============================================================================
+
 export * from './accounting-schema';
 
 // ============================================================================
@@ -1279,3 +1313,4 @@ export * from './accounting-schema';
 // ============================================================================
 export * from './distributor-schema';
 export * from './crm-schema';
+export * from './onboarding-schema';

@@ -676,3 +676,30 @@
 - [x] Usar sistema de notificaciones del owner (notifyOwner)
 - [x] Crear página LicenseReminders para administrar recordatorios
 - [x] Registrar router y ruta en App.tsx
+
+## Funcionalidades Avanzadas del Sistema
+- [x] Implementar sistema de roles y permisos granulares
+- [x] Actualizar schema con tabla de roles y permisos (role_permissions, user_permissions)
+- [x] Extender enum de role (user, admin, partner, technician)
+- [x] Crear helper de permisos (permissions.ts)
+- [x] Crear middleware de autorización en tRPC (authMiddleware.ts)
+- [x] Crear router de gestión de roles (roles.router.ts)
+- [x] Insertar permisos por defecto en BD
+- [x] Crear interfaz de gestión de roles (RolesManagement.tsx)
+- [x] Agregar asignación de roles a usuarios
+- [x] Registrar router y ruta en App.tsx
+- [x] Crear dashboard de analytics global
+- [x] Implementar cálculo de MRR (Monthly Recurring Revenue)
+- [x] Calcular churn rate y LTV (Lifetime Value)
+- [x] Agregar gráficos de tendencias temporales (6 meses)
+- [x] Mostrar distribución por tipo de licencia
+- [x] Mostrar top partners por licencias activas
+- [x] Crear router analytics.router.ts
+- [x] Crear página GlobalAnalytics.tsx con visualizaciones
+- [x] Registrar router y ruta en App.tsx
+- [ ] Desarrollar sistema de onboarding guiado
+- [ ] Crear flujo paso a paso para nuevos usuarios
+- [ ] Implementar tour interactivo de funcionalidades
+- [ ] Agregar checklist de configuración inicial
+- [ ] Crear wizard de creación de primera organización
+- [ ] Implementar sistema de progreso de onboarding

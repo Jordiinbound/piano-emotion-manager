@@ -1,0 +1,9 @@
+{
+  "query": "INSERT INTO role_permissions (role, permission) VALUES\n-- Admin permissions\n('admin', 'manage_users'),\n('admin', 'manage_roles'),\n('admin', 'manage_partners'),\n('admin', 'manage_licenses'),\n('admin', 'view_analytics'),\n('admin', 'manage_organizations'),\n('admin', 'manage_all_data'),\n-- Partner permissions\n('partner', 'view_partner_dashboard'),\n('partner', 'manage_activation_codes'),\n('partner', 'view_partner_licenses'),\n('partner', 'view_partner_stats'),\n-- Technician permissions\n('technician', 'manage_clients'),\n('technician', 'manage_pianos'),\n('technician', 'manage_services'),\n('technician', 'view_own_data'),\n('technician', 'manage_inventory'),\n-- User permissions (basic)\n('user', 'view_own_profile'),\n('user', 'edit_own_profile');",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2ghn282qNtTBYRw.2c60fb684332 --database U7erxBowPGSR3wjYQtQi9z --execute INSERT INTO role_permissions (role, permission) VALUES\n-- Admin permissions\n('admin', 'manage_users'),\n('admin', 'manage_roles'),\n('admin', 'manage_partners'),\n('admin', 'manage_licenses'),\n('admin', 'view_analytics'),\n('admin', 'manage_organizations'),\n('admin', 'manage_all_data'),\n-- Partner permissions\n('partner', 'view_partner_dashboard'),\n('partner', 'manage_activation_codes'),\n('partner', 'view_partner_licenses'),\n('partner', 'view_partner_stats'),\n-- Technician permissions\n('technician', 'manage_clients'),\n('technician', 'manage_pianos'),\n('technician', 'manage_services'),\n('technician', 'view_own_data'),\n('technician', 'manage_inventory'),\n-- User permissions (basic)\n('user', 'view_own_profile'),\n('user', 'edit_own_profile');",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 380
+}

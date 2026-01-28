@@ -51,6 +51,8 @@ import { LicenseNotifications } from "./pages/LicenseNotifications";
 import { RenewalSuccess } from "./pages/RenewalSuccess";
 import { PartnerDashboard } from "./pages/PartnerDashboard";
 import { LicenseReminders } from "./pages/LicenseReminders";
+import { RolesManagement } from "./pages/RolesManagement";
+import { GlobalAnalytics } from "./pages/GlobalAnalytics";
 
 function Router() {
   return (
@@ -303,6 +305,22 @@ function Router() {
         <ProtectedRoute>
           <Layout>
             <LicenseReminders />
+          </Layout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/admin/roles">
+        <ProtectedRoute>
+          <Layout>
+            <RolesManagement />
+          </Layout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/admin/analytics">
+        <ProtectedRoute>
+          <Layout>
+            <GlobalAnalytics />
           </Layout>
         </ProtectedRoute>
       </Route>
