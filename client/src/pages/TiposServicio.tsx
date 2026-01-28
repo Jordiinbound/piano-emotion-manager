@@ -47,28 +47,10 @@ import {
   ListChecks,
 } from "lucide-react";
 import { toast } from "sonner";
-
-const categoryLabels: Record<string, string> = {
-  tuning: "Afinación",
-  maintenance: "Mantenimiento",
-  regulation: "Regulación",
-  repair: "Reparación",
-  restoration: "Restauración",
-  inspection: "Inspección",
-  other: "Otro",
-};
-
-const categoryColors: Record<string, string> = {
-  tuning: "bg-blue-500",
-  maintenance: "bg-green-500",
-  regulation: "bg-purple-500",
-  repair: "bg-orange-500",
-  restoration: "bg-pink-500",
-  inspection: "bg-cyan-500",
-  other: "bg-gray-500",
-};
+import { useTranslation } from "@/hooks/use-translation";
 
 export default function TiposServicio() {
+  const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState("rates");
   const [search, setSearch] = useState("");
   const [categoryFilter, setCategoryFilter] = useState<string>("all");
@@ -119,23 +101,23 @@ export default function TiposServicio() {
     onSuccess: () => {
       utils.serviceTypes.getServiceRates.invalidate();
       utils.serviceTypes.getStats.invalidate();
-      toast.success("Tarifa creada correctamente");
+      toast.success(t('serviceTypes.rateCreatedSuccess'));
       resetRateForm();
       setIsCreateRateDialogOpen(false);
     },
     onError: (error) => {
-      toast.error(`Error: ${error.message}`);
+      toast.error(t('serviceTypes.error', { message: error.message }));
     },
   });
 
   const updateRateMutation = trpc.serviceTypes.updateServiceRate.useMutation({
     onSuccess: () => {
       utils.serviceTypes.getServiceRates.invalidate();
-      toast.success("Tarifa actualizada correctamente");
+      toast.success(t('serviceTypes.rateUpdatedSuccess'));
       setIsEditRateDialogOpen(false);
     },
     onError: (error) => {
-      toast.error(`Error: ${error.message}`);
+      toast.error(t('serviceTypes.error', { message: error.message }));
     },
   });
 
@@ -143,20 +125,20 @@ export default function TiposServicio() {
     onSuccess: () => {
       utils.serviceTypes.getServiceRates.invalidate();
       utils.serviceTypes.getStats.invalidate();
-      toast.success("Tarifa eliminada correctamente");
+      toast.success(t('serviceTypes.rateDeletedSuccess'));
     },
     onError: (error) => {
-      toast.error(`Error: ${error.message}`);
+      toast.error(t('serviceTypes.error', { message: error.message }));
     },
   });
 
   const deleteTypeMutation = trpc.serviceTypes.deleteServiceType.useMutation({
     onSuccess: () => {
       utils.serviceTypes.getServiceTypes.invalidate();
-      toast.success("Tipo de servicio eliminado correctamente");
+      toast.success(t('serviceTypes.typeDeletedSuccess'));
     },
     onError: (error) => {
-      toast.error(`Error: ${error.message}`);
+      toast.error(t('serviceTypes.error', { message: error.message }));
     },
   });
 
@@ -174,11 +156,11 @@ export default function TiposServicio() {
 
   const handleCreateRate = () => {
     if (!rateName.trim()) {
-      toast.error("Ingresa un nombre");
+      toast.error(t('serviceTypes.enterName'));
       return;
     }
     if (!rateBasePrice || parseFloat(rateBasePrice) < 0) {
-      toast.error("Ingresa un precio válido");
+      toast.error(t('serviceTypes.enterValidPrice'));
       return;
     }
 
@@ -221,13 +203,13 @@ export default function TiposServicio() {
   };
 
   const handleDeleteRate = (id: number) => {
-    if (confirm("¿Eliminar esta tarifa?")) {
+    if (confirm(t('serviceTypes.confirmDeleteRate'))) {
       deleteRateMutation.mutate({ id });
     }
   };
 
   const handleDeleteType = (id: number) => {
-    if (confirm("¿Eliminar este tipo de servicio y todas sus tareas asociadas?")) {
+    if (confirm(t('serviceTypes.confirmDeleteType'))) {
       deleteTypeMutation.mutate({ id });
     }
   };
@@ -253,7 +235,7 @@ export default function TiposServicio() {
   };
 
   const formatDuration = (minutes: number | null) => {
-    if (!minutes) return "No especificado";
+    if (!minutes) return t('serviceTypes.notSpecified');
     const hours = Math.floor(minutes / 60);
     const mins = minutes % 60;
     if (hours > 0 && mins > 0) return `${hours}h ${mins}m`;
@@ -261,19 +243,42 @@ export default function TiposServicio() {
     return `${mins}m`;
   };
 
+  const getCategoryLabel = (category: string) => {
+    const labels: Record<string, string> = {
+      tuning: t('serviceTypes.tuning'),
+      maintenance: t('serviceTypes.maintenance'),
+      regulation: t('serviceTypes.regulation'),
+      repair: t('serviceTypes.repair'),
+      restoration: t('serviceTypes.restoration'),
+      inspection: t('serviceTypes.inspection'),
+      other: t('serviceTypes.other'),
+    };
+    return labels[category] || category;
+  };
+
+  const categoryColors: Record<string, string> = {
+    tuning: "bg-blue-500",
+    maintenance: "bg-green-500",
+    regulation: "bg-purple-500",
+    repair: "bg-orange-500",
+    restoration: "bg-pink-500",
+    inspection: "bg-cyan-500",
+    other: "bg-gray-500",
+  };
+
   return (
     <div className="container mx-auto p-6 space-y-6">
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold">Tipos de Servicio y Tarifas</h1>
+          <h1 className="text-3xl font-bold">{t('serviceTypes.title')}</h1>
           <p className="text-muted-foreground">
-            Gestiona el catálogo de servicios, tarifas y tareas predefinidas
+            {t('serviceTypes.description')}
           </p>
         </div>
         <Button onClick={() => setIsCreateRateDialogOpen(true)}>
           <Plus className="mr-2 h-4 w-4" />
-          Nueva Tarifa
+          {t('serviceTypes.newRate')}
         </Button>
       </div>
 
@@ -282,7 +287,7 @@ export default function TiposServicio() {
         <div className="grid gap-4 md:grid-cols-4">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Tarifas Activas</CardTitle>
+              <CardTitle className="text-sm font-medium">{t('serviceTypes.activeRates')}</CardTitle>
               <CheckCircle className="h-4 w-4 text-green-500" />
             </CardHeader>
             <CardContent>
@@ -291,7 +296,7 @@ export default function TiposServicio() {
           </Card>
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Afinación</CardTitle>
+              <CardTitle className="text-sm font-medium">{t('serviceTypes.tuning')}</CardTitle>
               <Wrench className="h-4 w-4 text-blue-500" />
             </CardHeader>
             <CardContent>
@@ -300,7 +305,7 @@ export default function TiposServicio() {
           </Card>
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Mantenimiento</CardTitle>
+              <CardTitle className="text-sm font-medium">{t('serviceTypes.maintenance')}</CardTitle>
               <Wrench className="h-4 w-4 text-green-500" />
             </CardHeader>
             <CardContent>
@@ -309,7 +314,7 @@ export default function TiposServicio() {
           </Card>
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Reparación</CardTitle>
+              <CardTitle className="text-sm font-medium">{t('serviceTypes.repair')}</CardTitle>
               <Wrench className="h-4 w-4 text-orange-500" />
             </CardHeader>
             <CardContent>
@@ -322,7 +327,7 @@ export default function TiposServicio() {
       {/* Filters */}
       <Card>
         <CardHeader>
-          <CardTitle>Filtros</CardTitle>
+          <CardTitle>{t('serviceTypes.filters')}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="flex gap-4">
@@ -330,7 +335,7 @@ export default function TiposServicio() {
               <div className="relative">
                 <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                 <Input
-                  placeholder="Buscar servicios..."
+                  placeholder={t('serviceTypes.searchServices')}
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                   className="pl-9"
@@ -339,17 +344,17 @@ export default function TiposServicio() {
             </div>
             <Select value={categoryFilter} onValueChange={setCategoryFilter}>
               <SelectTrigger className="w-[200px]">
-                <SelectValue placeholder="Categoría" />
+                <SelectValue placeholder={t('serviceTypes.category')} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">Todas las categorías</SelectItem>
-                <SelectItem value="tuning">Afinación</SelectItem>
-                <SelectItem value="maintenance">Mantenimiento</SelectItem>
-                <SelectItem value="regulation">Regulación</SelectItem>
-                <SelectItem value="repair">Reparación</SelectItem>
-                <SelectItem value="restoration">Restauración</SelectItem>
-                <SelectItem value="inspection">Inspección</SelectItem>
-                <SelectItem value="other">Otro</SelectItem>
+                <SelectItem value="all">{t('serviceTypes.allCategories')}</SelectItem>
+                <SelectItem value="tuning">{t('serviceTypes.tuning')}</SelectItem>
+                <SelectItem value="maintenance">{t('serviceTypes.maintenance')}</SelectItem>
+                <SelectItem value="regulation">{t('serviceTypes.regulation')}</SelectItem>
+                <SelectItem value="repair">{t('serviceTypes.repair')}</SelectItem>
+                <SelectItem value="restoration">{t('serviceTypes.restoration')}</SelectItem>
+                <SelectItem value="inspection">{t('serviceTypes.inspection')}</SelectItem>
+                <SelectItem value="other">{t('serviceTypes.other')}</SelectItem>
               </SelectContent>
             </Select>
             <Select
@@ -359,12 +364,12 @@ export default function TiposServicio() {
               }
             >
               <SelectTrigger className="w-[150px]">
-                <SelectValue placeholder="Estado" />
+                <SelectValue placeholder={t('serviceTypes.status')} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">Todos</SelectItem>
-                <SelectItem value="active">Activos</SelectItem>
-                <SelectItem value="inactive">Inactivos</SelectItem>
+                <SelectItem value="all">{t('serviceTypes.all')}</SelectItem>
+                <SelectItem value="active">{t('serviceTypes.active')}</SelectItem>
+                <SelectItem value="inactive">{t('serviceTypes.inactive')}</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -374,8 +379,8 @@ export default function TiposServicio() {
       {/* Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList>
-          <TabsTrigger value="rates">Tarifas de Servicio</TabsTrigger>
-          <TabsTrigger value="types">Tipos de Servicio</TabsTrigger>
+          <TabsTrigger value="rates">{t('serviceTypes.serviceRates')}</TabsTrigger>
+          <TabsTrigger value="types">{t('serviceTypes.serviceTypes')}</TabsTrigger>
         </TabsList>
 
         {/* Service Rates Tab */}
@@ -383,7 +388,7 @@ export default function TiposServicio() {
           {isLoadingRates ? (
             <div className="text-center py-12">
               <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-              <p className="mt-4 text-muted-foreground">Cargando tarifas...</p>
+              <p className="mt-4 text-muted-foreground">{t('serviceTypes.loadingRates')}</p>
             </div>
           ) : rates && rates.items.length > 0 ? (
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
@@ -394,7 +399,7 @@ export default function TiposServicio() {
                       <div className="flex-1">
                         <div className="flex items-center gap-2 mb-2">
                           <Badge className={categoryColors[rate.category]}>
-                            {categoryLabels[rate.category]}
+                            {getCategoryLabel(rate.category)}
                           </Badge>
                           {rate.isActive === 1 ? (
                             <CheckCircle className="h-4 w-4 text-green-500" />
@@ -413,19 +418,19 @@ export default function TiposServicio() {
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2 text-sm text-muted-foreground">
                         <Euro className="h-4 w-4" />
-                        <span>Precio base:</span>
+                        <span>{t('serviceTypes.basePrice')}:</span>
                       </div>
                       <span className="text-lg font-bold">{formatCurrency(rate.basePrice)}</span>
                     </div>
                     <div className="flex items-center justify-between text-sm">
-                      <span className="text-muted-foreground">IVA:</span>
+                      <span className="text-muted-foreground">{t('serviceTypes.vat')}:</span>
                       <span>{rate.taxRate}%</span>
                     </div>
                     {rate.estimatedDuration && (
                       <div className="flex items-center justify-between text-sm">
                         <div className="flex items-center gap-2 text-muted-foreground">
                           <Clock className="h-4 w-4" />
-                          <span>Duración:</span>
+                          <span>{t('serviceTypes.duration')}:</span>
                         </div>
                         <span>{formatDuration(rate.estimatedDuration)}</span>
                       </div>
@@ -438,7 +443,7 @@ export default function TiposServicio() {
                         onClick={() => handleEditRate(rate)}
                       >
                         <Edit className="h-4 w-4 mr-1" />
-                        Editar
+                        {t('serviceTypes.edit')}
                       </Button>
                       <Button
                         variant="outline"
@@ -467,13 +472,13 @@ export default function TiposServicio() {
             <Card>
               <CardContent className="text-center py-12">
                 <Wrench className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
-                <h3 className="text-lg font-semibold mb-2">No hay tarifas</h3>
+                <h3 className="text-lg font-semibold mb-2">{t('serviceTypes.noRates')}</h3>
                 <p className="text-muted-foreground mb-4">
-                  Comienza creando tu primera tarifa de servicio
+                  {t('serviceTypes.createFirstRate')}
                 </p>
                 <Button onClick={() => setIsCreateRateDialogOpen(true)}>
                   <Plus className="mr-2 h-4 w-4" />
-                  Crear Tarifa
+                  {t('serviceTypes.createRate')}
                 </Button>
               </CardContent>
             </Card>
@@ -485,7 +490,7 @@ export default function TiposServicio() {
           {isLoadingTypes ? (
             <div className="text-center py-12">
               <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-              <p className="mt-4 text-muted-foreground">Cargando tipos...</p>
+              <p className="mt-4 text-muted-foreground">{t('serviceTypes.loadingTypes')}</p>
             </div>
           ) : types && types.items.length > 0 ? (
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
@@ -509,14 +514,14 @@ export default function TiposServicio() {
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2 text-sm text-muted-foreground">
                         <Euro className="h-4 w-4" />
-                        <span>Precio:</span>
+                        <span>{t('serviceTypes.price')}:</span>
                       </div>
                       <span className="text-lg font-bold">{formatCurrency(type.price)}</span>
                     </div>
                     <div className="flex items-center justify-between text-sm">
                       <div className="flex items-center gap-2 text-muted-foreground">
                         <Clock className="h-4 w-4" />
-                        <span>Duración:</span>
+                        <span>{t('serviceTypes.duration')}:</span>
                       </div>
                       <span>{formatDuration(type.duration)}</span>
                     </div>
@@ -528,7 +533,7 @@ export default function TiposServicio() {
                         onClick={() => handleViewTasks(type.id)}
                       >
                         <ListChecks className="h-4 w-4 mr-1" />
-                        Tareas
+                        {t('serviceTypes.tasks')}
                       </Button>
                       <Button
                         variant="outline"
@@ -546,9 +551,9 @@ export default function TiposServicio() {
             <Card>
               <CardContent className="text-center py-12">
                 <Wrench className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
-                <h3 className="text-lg font-semibold mb-2">No hay tipos de servicio</h3>
+                <h3 className="text-lg font-semibold mb-2">{t('serviceTypes.noServiceTypes')}</h3>
                 <p className="text-muted-foreground mb-4">
-                  Los tipos de servicio se crean automáticamente desde la app móvil
+                  {t('serviceTypes.serviceTypesCreatedFromMobile')}
                 </p>
               </CardContent>
             </Card>
@@ -570,52 +575,52 @@ export default function TiposServicio() {
         <DialogContent className="max-w-2xl">
           <DialogHeader>
             <DialogTitle>
-              {isEditRateDialogOpen ? "Editar Tarifa" : "Nueva Tarifa de Servicio"}
+              {isEditRateDialogOpen ? t('serviceTypes.editRate') : t('serviceTypes.newServiceRate')}
             </DialogTitle>
             <DialogDescription>
-              Configura los detalles de la tarifa de servicio
+              {t('serviceTypes.configureRateDetails')}
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div className="space-y-2">
-              <Label htmlFor="name">Nombre *</Label>
+              <Label htmlFor="name">{t('serviceTypes.nameRequired')}</Label>
               <Input
                 id="name"
                 value={rateName}
                 onChange={(e) => setRateName(e.target.value)}
-                placeholder="Ej: Afinación completa"
+                placeholder={t('serviceTypes.namePlaceholder')}
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="description">Descripción</Label>
+              <Label htmlFor="description">{t('serviceTypes.descriptionLabel')}</Label>
               <Textarea
                 id="description"
                 value={rateDescription}
                 onChange={(e) => setRateDescription(e.target.value)}
-                placeholder="Descripción detallada del servicio"
+                placeholder={t('serviceTypes.descriptionPlaceholder')}
                 rows={3}
               />
             </div>
             <div className="grid gap-4 md:grid-cols-2">
               <div className="space-y-2">
-                <Label htmlFor="category">Categoría *</Label>
+                <Label htmlFor="category">{t('serviceTypes.categoryRequired')}</Label>
                 <Select value={rateCategory} onValueChange={setRateCategory}>
                   <SelectTrigger id="category">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="tuning">Afinación</SelectItem>
-                    <SelectItem value="maintenance">Mantenimiento</SelectItem>
-                    <SelectItem value="regulation">Regulación</SelectItem>
-                    <SelectItem value="repair">Reparación</SelectItem>
-                    <SelectItem value="restoration">Restauración</SelectItem>
-                    <SelectItem value="inspection">Inspección</SelectItem>
-                    <SelectItem value="other">Otro</SelectItem>
+                    <SelectItem value="tuning">{t('serviceTypes.tuning')}</SelectItem>
+                    <SelectItem value="maintenance">{t('serviceTypes.maintenance')}</SelectItem>
+                    <SelectItem value="regulation">{t('serviceTypes.regulation')}</SelectItem>
+                    <SelectItem value="repair">{t('serviceTypes.repair')}</SelectItem>
+                    <SelectItem value="restoration">{t('serviceTypes.restoration')}</SelectItem>
+                    <SelectItem value="inspection">{t('serviceTypes.inspection')}</SelectItem>
+                    <SelectItem value="other">{t('serviceTypes.other')}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="basePrice">Precio Base (€) *</Label>
+                <Label htmlFor="basePrice">{t('serviceTypes.basePriceRequired')}</Label>
                 <Input
                   id="basePrice"
                   type="number"
@@ -629,7 +634,7 @@ export default function TiposServicio() {
             </div>
             <div className="grid gap-4 md:grid-cols-2">
               <div className="space-y-2">
-                <Label htmlFor="taxRate">IVA (%) *</Label>
+                <Label htmlFor="taxRate">{t('serviceTypes.vatRequired')}</Label>
                 <Input
                   id="taxRate"
                   type="number"
@@ -641,7 +646,7 @@ export default function TiposServicio() {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="duration">Duración Estimada (minutos)</Label>
+                <Label htmlFor="duration">{t('serviceTypes.estimatedDuration')}</Label>
                 <Input
                   id="duration"
                   type="number"
@@ -660,7 +665,7 @@ export default function TiposServicio() {
                 onChange={(e) => setRateIsActive(e.target.checked)}
                 className="h-4 w-4"
               />
-              <Label htmlFor="isActive">Tarifa activa</Label>
+              <Label htmlFor="isActive">{t('serviceTypes.activeRate')}</Label>
             </div>
           </div>
           <DialogFooter>
@@ -672,13 +677,13 @@ export default function TiposServicio() {
                 resetRateForm();
               }}
             >
-              Cancelar
+              {t('serviceTypes.cancel')}
             </Button>
             <Button
               onClick={isEditRateDialogOpen ? handleUpdateRate : handleCreateRate}
               disabled={createRateMutation.isPending || updateRateMutation.isPending}
             >
-              {isEditRateDialogOpen ? "Actualizar" : "Crear"}
+              {isEditRateDialogOpen ? t('serviceTypes.update') : t('serviceTypes.create')}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -688,9 +693,9 @@ export default function TiposServicio() {
       <Dialog open={isTasksDialogOpen} onOpenChange={setIsTasksDialogOpen}>
         <DialogContent className="max-w-2xl">
           <DialogHeader>
-            <DialogTitle>Tareas del Servicio</DialogTitle>
+            <DialogTitle>{t('serviceTypes.serviceTasks')}</DialogTitle>
             <DialogDescription>
-              Lista de tareas que componen este tipo de servicio
+              {t('serviceTypes.serviceTasksDescription')}
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-2 py-4">
@@ -705,12 +710,12 @@ export default function TiposServicio() {
               ))
             ) : (
               <p className="text-center text-muted-foreground py-8">
-                No hay tareas definidas para este servicio
+                {t('serviceTypes.noTasksDefined')}
               </p>
             )}
           </div>
           <DialogFooter>
-            <Button onClick={() => setIsTasksDialogOpen(false)}>Cerrar</Button>
+            <Button onClick={() => setIsTasksDialogOpen(false)}>{t('serviceTypes.close')}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
