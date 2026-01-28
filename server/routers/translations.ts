@@ -3,7 +3,7 @@ import { publicProcedure, protectedProcedure, router } from "../_core/trpc";
 import { readFileSync, writeFileSync } from "fs";
 import { join } from "path";
 
-const LANGUAGES = ["es", "en", "fr", "de", "it", "pt", "ca", "eu", "gl"] as const;
+const LANGUAGES = ["es", "en", "fr", "de", "it", "pt", "nl", "ca", "eu", "gl"] as const;
 const TRANSLATIONS_DIR = join(process.cwd(), "locales");
 
 // Helper para leer archivo de traducción
@@ -49,6 +49,7 @@ export const translationsRouter = router({
         de: "Deutsch",
         it: "Italiano",
         pt: "Português",
+        nl: "Nederlands",
         ca: "Català",
         eu: "Euskara",
         gl: "Galego",

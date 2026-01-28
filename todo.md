@@ -1415,3 +1415,26 @@
 - [ ] Agregar enlace en sidebar bajo sección HERRAMIENTAS
 - [ ] Escribir tests para componente de mapa
 
+
+## FASE 4.6: Campo Provincia en Datos de Usuario
+- [x] Revisar schema de tabla users en drizzle/schema.ts
+- [x] Agregar campo provincia (province) a tabla users
+- [x] Ejecutar migración de base de datos (ALTER TABLE users ADD COLUMN province)
+- [x] Actualizar traducciones en todos los idiomas:
+  - [x] Español: Provincia
+  - [x] Inglés: State/Province
+  - [x] Francés: Département (usado también para Bélgica)
+  - [x] Alemán: Bundesland
+  - [x] Italiano: Provincia
+  - [x] Portugués: Estado/Distrito
+  - [x] Noruego: Fylke
+  - [x] Danés: Region
+  - [x] Sueco: Län
+  - [x] Neerlandés: Provincie (nuevo idioma agregado para Holanda)
+- [x] Crear archivo de traducción nl.json para neerlandés
+- [x] Agregar neerlandés a la lista de idiomas en translations.ts
+- [ ] Actualizar router de usuarios para incluir campo provincia en endpoints
+- [ ] Actualizar formularios de registro/edición de usuario con campo provincia
+- [ ] Verificar que el campo se guarda y muestra correctamente
+- [ ] Escribir tests para campo provincia
+

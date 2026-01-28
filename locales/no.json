@@ -895,5 +895,6 @@
   "accounting.expensesByCategory": "Utgifter etter kategori",
   "accounting.quickActions": "Raske handlinger",
   "shop.noShops": "Ingen butikker tilgjengelige",
-  "shop.noShopsDesc": "Det er for øyeblikket ingen konfigurerte butikker"
+  "shop.noShopsDesc": "Det er for øyeblikket ingen konfigurerte butikker",
+  "user.province": "Fylke"
 }

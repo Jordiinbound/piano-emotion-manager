@@ -895,5 +895,6 @@
   "accounting.expensesByCategory": "Ausgaben nach Kategorie",
   "accounting.quickActions": "Schnellaktionen",
   "shop.noShops": "Keine Geschäfte verfügbar",
-  "shop.noShopsDesc": "Derzeit sind keine Geschäfte konfiguriert"
+  "shop.noShopsDesc": "Derzeit sind keine Geschäfte konfiguriert",
+  "user.province": "Bundesland"
 }

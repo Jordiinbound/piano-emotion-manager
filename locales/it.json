@@ -895,5 +895,6 @@
   "accounting.expensesByCategory": "Spese per categoria",
   "accounting.quickActions": "Azioni rapide",
   "shop.noShops": "Nessun negozio disponibile",
-  "shop.noShopsDesc": "Attualmente non ci sono negozi configurati"
+  "shop.noShopsDesc": "Attualmente non ci sono negozi configurati",
+  "user.province": "Provincia"
 }

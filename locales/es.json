@@ -952,5 +952,6 @@
   "translationManager.exportSuccess": "Traducciones exportadas correctamente",
   "translationManager.exportError": "Error al exportar: {{message}}",
   "translationManager.importSuccess": "{{count}} traducciones importadas correctamente",
-  "translationManager.importError": "Error al importar: {{message}}"
+  "translationManager.importError": "Error al importar: {{message}}",
+  "user.province": "Provincia"
 }

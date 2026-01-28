@@ -895,5 +895,6 @@
   "accounting.expensesByCategory": "Utgifter per kategori",
   "accounting.quickActions": "Snabba åtgärder",
   "shop.noShops": "Inga butiker tillgängliga",
-  "shop.noShopsDesc": "Det finns för närvarande inga konfigurerade butiker"
+  "shop.noShopsDesc": "Det finns för närvarande inga konfigurerade butiker",
+  "user.province": "Län"
 }

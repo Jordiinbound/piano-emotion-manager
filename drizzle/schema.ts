@@ -1051,6 +1051,7 @@ export const users = mysqlTable("users", {
 	subscriptionEndDate: timestamp(),
 	partnerId: int().default(1).notNull(),
 	preferredLanguage: varchar({ length: 5 }),
+	province: varchar({ length: 100 }),
 	smtpHost: varchar({ length: 255 }),
 	smtpPort: int().default(587),
 	smtpUser: varchar({ length: 320 }),
