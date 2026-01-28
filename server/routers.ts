@@ -23,6 +23,7 @@ import { organizationsRouter } from "./routers/organizations.router";
 import { partnersV2Router } from "./routers/partnersV2.router";
 import { licensesRouter } from "./routers/licenses.router";
 import { activationCodesRouter } from "./routers/activationCodes.router";
+import { licenseNotificationsRouter } from "./routers/licenseNotifications.router";
 
 export const appRouter = router({
     // if you need to use socket.io, read and register route in server/_core/index.ts, all api should start with '/api/' so that the gateway can route correctly
@@ -62,6 +63,7 @@ export const appRouter = router({
   partnersV2: partnersV2Router,
   licenses: licensesRouter,
   activationCodes: activationCodesRouter,
+  licenseNotifications: licenseNotificationsRouter,
 
   // TODO: add more feature routers here
 });

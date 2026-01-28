@@ -45,12 +45,16 @@ import TiposServicio from "./pages/TiposServicio";
 import { PartnersAdmin } from "./pages/PartnersAdmin";
 import { ActivationCodesAdmin } from "./pages/ActivationCodesAdmin";
 import { LicensesAdmin } from "./pages/LicensesAdmin";
+import { ActivateLicense } from "./pages/ActivateLicense";
+import { OrganizationSettings } from "./pages/OrganizationSettings";
+import { LicenseNotifications } from "./pages/LicenseNotifications";
 
 function Router() {
   return (
     <Switch>
       {/* Rutas públicas sin autenticación */}
       <Route path="/pay/:token" component={PayInvoice} />
+      <Route path="/activate" component={ActivateLicense} />
       
       {/* Rutas del portal del cliente */}
       <Route path="/client-portal/login" component={ClientPortalLogin} />
@@ -256,6 +260,22 @@ function Router() {
         <ProtectedRoute>
           <Layout>
             <LicensesAdmin />
+          </Layout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/organization/settings">
+        <ProtectedRoute>
+          <Layout>
+            <OrganizationSettings />
+          </Layout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/licenses/notifications">
+        <ProtectedRoute>
+          <Layout>
+            <LicenseNotifications />
           </Layout>
         </ProtectedRoute>
       </Route>
