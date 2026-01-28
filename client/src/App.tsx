@@ -48,6 +48,7 @@ import { LicensesAdmin } from "./pages/LicensesAdmin";
 import { ActivateLicense } from "./pages/ActivateLicense";
 import { OrganizationSettings } from "./pages/OrganizationSettings";
 import { LicenseNotifications } from "./pages/LicenseNotifications";
+import { RenewalSuccess } from "./pages/RenewalSuccess";
 
 function Router() {
   return (
