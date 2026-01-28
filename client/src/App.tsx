@@ -36,6 +36,7 @@ import HerramientasAvanzadas from "./pages/HerramientasAvanzadas";
 import OptimizadorRutas from "./pages/OptimizadorRutas";
 import MapaClientes from "./pages/MapaClientes";
 import Configuracion from "./pages/Configuracion";
+import ConfiguracionPerfil from "./pages/ConfiguracionPerfil";
 import SignIn from "./pages/SignIn";
 import SignUp from "./pages/SignUp";
 import PayInvoice from "./pages/PayInvoice";
@@ -445,6 +446,13 @@ function Router() {
         <ProtectedRoute>
           <Layout>
             <Configuracion />
+          </Layout>
+        </ProtectedRoute>
+      </Route>
+      <Route path="/configuracion/perfil">
+        <ProtectedRoute>
+          <Layout>
+            <ConfiguracionPerfil />
           </Layout>
         </ProtectedRoute>
       </Route>

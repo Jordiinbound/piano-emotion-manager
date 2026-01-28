@@ -909,5 +909,13 @@
   "workflows.triggers.lowStock": "Lågt lager",
   "workflows.triggers.newAppointment": "Nytt möte",
   "workflows.triggers.newClient": "Ny kund",
-  "workflows.triggers.serviceCompleted": "Service slutförd"
+  "workflows.triggers.serviceCompleted": "Service slutförd",
+  "settings.userProfile": "Användarprofil",
+  "settings.personalInformation": "Personlig Information",
+  "settings.profileUpdated": "Profil uppdaterad",
+  "settings.couldNotUpdateProfile": "Kunde inte uppdatera profil",
+  "settings.backToSettings": "Tillbaka till Inställningar",
+  "settings.saveProfile": "Spara Profil",
+  "user.selectProvince": "Välj län",
+  "common.saving": "Sparar..."
 }

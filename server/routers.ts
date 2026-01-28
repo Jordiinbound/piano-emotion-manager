@@ -1,7 +1,12 @@
-import { COOKIE_NAME } from "@shared/const";
 import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
 import { publicProcedure, router } from "./_core/trpc";
+import { z } from "zod";
+import { getDb } from "./db";
+import { users } from "../drizzle/schema";
+import { eq } from "drizzle-orm";
+
+const COOKIE_NAME = 'session';
 import { dashboardRouter } from "./routers/dashboard.router";
 import { clientsRouter } from "./routers/clients.router";
 import { servicesRouter } from "./routers/services.router";
@@ -52,6 +57,34 @@ export const appRouter = router({
         success: true,
       } as const;
     }),
+    updateProfile: publicProcedure
+      .input(z.object({
+        name: z.string().optional(),
+        phone: z.string().optional(),
+        country: z.string().optional(),
+        province: z.string().optional(),
+        city: z.string().optional(),
+        address: z.string().optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        if (!ctx.user) {
+          throw new Error('Not authenticated');
+        }
+        
+        const db = await getDb();
+        await db.update(users)
+          .set({
+            name: input.name,
+            phone: input.phone,
+            country: input.country,
+            province: input.province,
+            city: input.city,
+            address: input.address,
+          })
+          .where(eq(users.id, ctx.user.id));
+        
+        return { success: true };
+      }),
   }),
 
   // Feature routers

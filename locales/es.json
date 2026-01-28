@@ -966,5 +966,13 @@
   "workflows.triggers.lowStock": "Stock bajo",
   "workflows.triggers.newAppointment": "Nueva cita",
   "workflows.triggers.newClient": "Nuevo cliente",
-  "workflows.triggers.serviceCompleted": "Servicio completado"
+  "workflows.triggers.serviceCompleted": "Servicio completado",
+  "settings.userProfile": "Perfil de Usuario",
+  "settings.personalInformation": "Información Personal",
+  "settings.profileUpdated": "Perfil actualizado correctamente",
+  "settings.couldNotUpdateProfile": "No se pudo actualizar el perfil",
+  "settings.backToSettings": "Volver a Configuración",
+  "settings.saveProfile": "Guardar Perfil",
+  "user.selectProvince": "Seleccionar provincia",
+  "common.saving": "Guardando..."
 }

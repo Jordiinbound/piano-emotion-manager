@@ -909,5 +909,13 @@
   "workflows.triggers.lowStock": "Lavt lager",
   "workflows.triggers.newAppointment": "Ny avtale",
   "workflows.triggers.newClient": "Ny klient",
-  "workflows.triggers.serviceCompleted": "Service fullført"
+  "workflows.triggers.serviceCompleted": "Service fullført",
+  "settings.userProfile": "Brukerprofil",
+  "settings.personalInformation": "Personlig Informasjon",
+  "settings.profileUpdated": "Profil oppdatert",
+  "settings.couldNotUpdateProfile": "Kunne ikke oppdatere profil",
+  "settings.backToSettings": "Tilbake til Innstillinger",
+  "settings.saveProfile": "Lagre Profil",
+  "user.selectProvince": "Velg fylke",
+  "common.saving": "Lagrer..."
 }

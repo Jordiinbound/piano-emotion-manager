@@ -909,5 +909,13 @@
   "workflows.triggers.lowStock": "Low stock",
   "workflows.triggers.newAppointment": "New appointment",
   "workflows.triggers.newClient": "New client",
-  "workflows.triggers.serviceCompleted": "Service completed"
+  "workflows.triggers.serviceCompleted": "Service completed",
+  "settings.userProfile": "Gebruikersprofiel",
+  "settings.personalInformation": "Persoonlijke Informatie",
+  "settings.profileUpdated": "Profiel succesvol bijgewerkt",
+  "settings.couldNotUpdateProfile": "Kon profiel niet bijwerken",
+  "settings.backToSettings": "Terug naar Instellingen",
+  "settings.saveProfile": "Profiel Opslaan",
+  "user.selectProvince": "Selecteer provincie",
+  "common.saving": "Opslaan..."
 }

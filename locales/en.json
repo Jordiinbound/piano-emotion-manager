@@ -909,5 +909,13 @@
   "workflows.triggers.lowStock": "Low stock",
   "workflows.triggers.newAppointment": "New appointment",
   "workflows.triggers.newClient": "New client",
-  "workflows.triggers.serviceCompleted": "Service completed"
+  "workflows.triggers.serviceCompleted": "Service completed",
+  "settings.userProfile": "User Profile",
+  "settings.personalInformation": "Personal Information",
+  "settings.profileUpdated": "Profile updated successfully",
+  "settings.couldNotUpdateProfile": "Could not update profile",
+  "settings.backToSettings": "Back to Settings",
+  "settings.saveProfile": "Save Profile",
+  "user.selectProvince": "Select state/province",
+  "common.saving": "Saving..."
 }

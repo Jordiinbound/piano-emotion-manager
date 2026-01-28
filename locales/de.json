@@ -909,5 +909,13 @@
   "workflows.triggers.lowStock": "Geringer Lagerbestand",
   "workflows.triggers.newAppointment": "Neuer Termin",
   "workflows.triggers.newClient": "Neuer Kunde",
-  "workflows.triggers.serviceCompleted": "Dienstleistung abgeschlossen"
+  "workflows.triggers.serviceCompleted": "Dienstleistung abgeschlossen",
+  "settings.userProfile": "Benutzerprofil",
+  "settings.personalInformation": "Persönliche Informationen",
+  "settings.profileUpdated": "Profil erfolgreich aktualisiert",
+  "settings.couldNotUpdateProfile": "Profil konnte nicht aktualisiert werden",
+  "settings.backToSettings": "Zurück zu Einstellungen",
+  "settings.saveProfile": "Profil Speichern",
+  "user.selectProvince": "Bundesland auswählen",
+  "common.saving": "Speichern..."
 }
