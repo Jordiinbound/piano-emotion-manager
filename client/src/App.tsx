@@ -37,6 +37,7 @@ import OptimizadorRutas from "./pages/OptimizadorRutas";
 import MapaClientes from "./pages/MapaClientes";
 import Configuracion from "./pages/Configuracion";
 import ConfiguracionPerfil from "./pages/ConfiguracionPerfil";
+import CommunicationsSettings from "./pages/CommunicationsSettings";
 import SignIn from "./pages/SignIn";
 import SignUp from "./pages/SignUp";
 import PayInvoice from "./pages/PayInvoice";
@@ -460,6 +461,13 @@ function Router() {
         <ProtectedRoute>
           <Layout>
             <ConfiguracionPerfil />
+          </Layout>
+        </ProtectedRoute>
+      </Route>
+      <Route path="/configuracion/comunicaciones">
+        <ProtectedRoute>
+          <Layout>
+            <CommunicationsSettings />
           </Layout>
         </ProtectedRoute>
       </Route>

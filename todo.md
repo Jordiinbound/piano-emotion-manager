@@ -1650,3 +1650,13 @@
 - [x] Preparar infraestructura opcional para WhatsApp Business API
 - [x] Actualizar motor de ejecución para usar integraciones opcionales
 - [x] Probar configuración de nodos y funcionalidad completa
+
+
+## FASE 7 - UI de Configuración de Comunicaciones
+- [x] Crear página de configuración de comunicaciones en Settings
+- [x] Implementar sección de configuración de Email (Gmail/Outlook OAuth2, SMTP, SendGrid/Mailgun)
+- [x] Implementar sección de configuración de WhatsApp (personal por defecto, Business API opcional)
+- [x] Crear backend para guardar y validar configuraciones
+- [ ] Actualizar motor de workflows para usar configuraciones de usuario
+- [ ] Integrar Gmail MCP para envío de emails desde workflows
+- [ ] Probar configuración completa de comunicaciones

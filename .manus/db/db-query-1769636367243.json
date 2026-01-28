@@ -1,0 +1,9 @@
+{
+  "query": "CREATE TABLE `user_settings` (\n  `id` int AUTO_INCREMENT NOT NULL PRIMARY KEY,\n  `userId` int NOT NULL,\n  `emailConfig` text,\n  `whatsappConfig` text,\n  `calendarConfig` text,\n  `createdAt` timestamp DEFAULT CURRENT_TIMESTAMP,\n  `updatedAt` timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,\n  FOREIGN KEY (`userId`) REFERENCES `users`(`id`) ON DELETE CASCADE,\n  INDEX `idx_user_settings_user` (`userId`)\n);",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2ghn282qNtTBYRw.2c60fb684332 --database U7erxBowPGSR3wjYQtQi9z --execute CREATE TABLE `user_settings` (\n  `id` int AUTO_INCREMENT NOT NULL PRIMARY KEY,\n  `userId` int NOT NULL,\n  `emailConfig` text,\n  `whatsappConfig` text,\n  `calendarConfig` text,\n  `createdAt` timestamp DEFAULT CURRENT_TIMESTAMP,\n  `updatedAt` timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,\n  FOREIGN KEY (`userId`) REFERENCES `users`(`id`) ON DELETE CASCADE,\n  INDEX `idx_user_settings_user` (`userId`)\n);",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 574
+}

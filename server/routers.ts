@@ -45,6 +45,7 @@ import { remindersRouter } from "./routers/reminders.router";
 import { marketingRouter } from "./routers/marketing.router";
 import { pianoTechnicalRouter } from "./routers/pianoTechnical.router";
 import { workflowsRouter } from "./routers/workflows.router";
+import { settingsRouter } from "./routers/settings.router";
 
 export const appRouter = router({
     // if you need to use socket.io, read and register route in server/_core/index.ts, all api should start with '/api/' so that the gateway can route correctly
@@ -129,6 +130,7 @@ export const appRouter = router({
   marketing: marketingRouter,
   pianoTechnical: pianoTechnicalRouter,
   workflows: workflowsRouter,
+  settings: settingsRouter,
 
   // TODO: add more feature routers here
 });

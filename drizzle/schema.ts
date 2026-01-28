@@ -1927,3 +1927,31 @@ export const workflowExecutionsRelations = relations(workflowExecutions, ({ one 
     references: [workflows.id],
   }),
 }));
+
+// ============================================
+// USER SETTINGS (Configuraciones de Usuario)
+// ============================================
+
+export const userSettings = mysqlTable('user_settings', {
+  id: int().autoincrement().notNull(),
+  userId: int().notNull().references(() => users.id, { onDelete: 'cascade' }),
+  
+  // Configuración de Email (JSON)
+  emailConfig: text(),
+  
+  // Configuración de WhatsApp (JSON)
+  whatsappConfig: text(),
+  
+  // Configuración de Calendario (JSON)
+  calendarConfig: text(),
+  
+  // Metadata
+  createdAt: timestamp().defaultNow(),
+  updatedAt: timestamp().defaultNow().onUpdateNow(),
+},
+(table) => [
+  index('idx_user_settings_user').on(table.userId),
+]);
+
+export type UserSettings = typeof userSettings.$inferSelect;
+export type InsertUserSettings = typeof userSettings.$inferInsert;

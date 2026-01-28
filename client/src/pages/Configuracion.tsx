@@ -14,6 +14,7 @@ import {
   FileText,
   CreditCard,
   LayoutGrid,
+  MessageSquare,
 } from 'lucide-react';
 import { useTranslation } from '@/hooks/use-translation';
 
@@ -23,6 +24,7 @@ export default function Configuracion() {
 
   const SETTINGS_SECTIONS = [
     { key: 'profile', icon: Brain, label: t('settings.userProfile'), color: '#10B981', href: '/configuracion/perfil' },
+    { key: 'communications', icon: MessageSquare, label: 'Comunicaciones', color: '#10B981', href: '/configuracion/comunicaciones' },
     { key: 'ai', icon: Brain, label: t('settings.aiConfiguration'), color: '#8B5CF6', href: null },
     { key: 'calendar', icon: Calendar, label: t('settings.calendar'), color: '#A855F7', href: null },
     { key: 'inventory', icon: Package, label: t('settings.inventory'), color: '#F59E0B', href: null },
