@@ -32,38 +32,40 @@ import {
   Eye,
 } from "lucide-react";
 import { toast } from "sonner";
-
-const statusColors: Record<string, string> = {
-  draft: "bg-gray-500",
-  sent: "bg-blue-500",
-  accepted: "bg-green-500",
-  rejected: "bg-red-500",
-  expired: "bg-orange-500",
-  converted: "bg-purple-500",
-};
-
-const statusLabels: Record<string, string> = {
-  draft: "Borrador",
-  sent: "Enviado",
-  accepted: "Aceptado",
-  rejected: "Rechazado",
-  expired: "Expirado",
-  converted: "Convertido",
-};
-
-const statusIcons: Record<string, any> = {
-  draft: FileText,
-  sent: Send,
-  accepted: Check,
-  rejected: X,
-  expired: Clock,
-  converted: FileCheck,
-};
+import { useTranslation } from "@/hooks/use-translation";
 
 export default function Presupuestos() {
+  const { t } = useTranslation();
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
+
+  const statusColors: Record<string, string> = {
+    draft: "bg-gray-500",
+    sent: "bg-blue-500",
+    accepted: "bg-green-500",
+    rejected: "bg-red-500",
+    expired: "bg-orange-500",
+    converted: "bg-purple-500",
+  };
+
+  const statusLabels: Record<string, string> = {
+    draft: t('quotes.status.draft'),
+    sent: t('quotes.status.sent'),
+    accepted: t('quotes.status.accepted'),
+    rejected: t('quotes.status.rejected'),
+    expired: t('quotes.status.expired'),
+    converted: t('quotes.status.converted'),
+  };
+
+  const statusIcons: Record<string, any> = {
+    draft: FileText,
+    sent: Send,
+    accepted: Check,
+    rejected: X,
+    expired: Clock,
+    converted: FileCheck,
+  };
 
   const { data: stats } = trpc.quotes.getStats.useQuery();
   const { data, isLoading } = trpc.quotes.getQuotes.useQuery({
@@ -78,10 +80,10 @@ export default function Presupuestos() {
     onSuccess: () => {
       utils.quotes.getQuotes.invalidate();
       utils.quotes.getStats.invalidate();
-      toast.success("Estado actualizado correctamente");
+      toast.success(t('quotes.statusUpdated'));
     },
     onError: (error) => {
-      toast.error(`Error: ${error.message}`);
+      toast.error(`${t('common.error')}: ${error.message}`);
     },
   });
 
@@ -89,10 +91,10 @@ export default function Presupuestos() {
     onSuccess: (result) => {
       utils.quotes.getQuotes.invalidate();
       utils.quotes.getStats.invalidate();
-      toast.success(`Factura ${result.invoiceNumber} creada correctamente`);
+      toast.success(t('quotes.invoiceCreated', { invoiceNumber: result.invoiceNumber }));
     },
     onError: (error) => {
-      toast.error(`Error: ${error.message}`);
+      toast.error(`${t('common.error')}: ${error.message}`);
     },
   });
 
@@ -101,7 +103,7 @@ export default function Presupuestos() {
   };
 
   const handleConvertToInvoice = (id: number) => {
-    if (confirm("¿Convertir este presupuesto a factura?")) {
+    if (confirm(t('quotes.convertConfirmation'))) {
       convertToInvoiceMutation.mutate({ id });
     }
   };
@@ -127,15 +129,15 @@ export default function Presupuestos() {
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold">Presupuestos</h1>
+          <h1 className="text-3xl font-bold">{t('quotes.title')}</h1>
           <p className="text-muted-foreground">
-            Gestiona tus presupuestos y conviértelos en facturas
+            {t('quotes.subtitle')}
           </p>
         </div>
         <Link href="/presupuestos/nuevo">
           <Button>
             <Plus className="mr-2 h-4 w-4" />
-            Nuevo Presupuesto
+            {t('quotes.newQuote')}
           </Button>
         </Link>
       </div>
@@ -145,7 +147,7 @@ export default function Presupuestos() {
         <div className="grid gap-4 md:grid-cols-4">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Total</CardTitle>
+              <CardTitle className="text-sm font-medium">{t('quotes.stats.total')}</CardTitle>
               <FileText className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
@@ -154,7 +156,7 @@ export default function Presupuestos() {
           </Card>
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Borradores</CardTitle>
+              <CardTitle className="text-sm font-medium">{t('quotes.stats.drafts')}</CardTitle>
               <FileText className="h-4 w-4 text-gray-500" />
             </CardHeader>
             <CardContent>
@@ -163,7 +165,7 @@ export default function Presupuestos() {
           </Card>
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Aceptados</CardTitle>
+              <CardTitle className="text-sm font-medium">{t('quotes.stats.accepted')}</CardTitle>
               <Check className="h-4 w-4 text-green-500" />
             </CardHeader>
             <CardContent>
@@ -172,7 +174,7 @@ export default function Presupuestos() {
           </Card>
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Valor Total</CardTitle>
+              <CardTitle className="text-sm font-medium">{t('quotes.stats.totalValue')}</CardTitle>
               <FileCheck className="h-4 w-4 text-purple-500" />
             </CardHeader>
             <CardContent>
@@ -185,7 +187,7 @@ export default function Presupuestos() {
       {/* Filters */}
       <Card>
         <CardHeader>
-          <CardTitle>Filtros</CardTitle>
+          <CardTitle>{t('common.filters')}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="flex gap-4">
@@ -193,7 +195,7 @@ export default function Presupuestos() {
               <div className="relative">
                 <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                 <Input
-                  placeholder="Buscar por número, cliente, título..."
+                  placeholder={t('quotes.searchPlaceholder')}
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                   className="pl-9"
@@ -202,16 +204,16 @@ export default function Presupuestos() {
             </div>
             <Select value={statusFilter} onValueChange={setStatusFilter}>
               <SelectTrigger className="w-[200px]">
-                <SelectValue placeholder="Estado" />
+                <SelectValue placeholder={t('common.status')} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">Todos los estados</SelectItem>
-                <SelectItem value="draft">Borrador</SelectItem>
-                <SelectItem value="sent">Enviado</SelectItem>
-                <SelectItem value="accepted">Aceptado</SelectItem>
-                <SelectItem value="rejected">Rechazado</SelectItem>
-                <SelectItem value="expired">Expirado</SelectItem>
-                <SelectItem value="converted">Convertido</SelectItem>
+                <SelectItem value="all">{t('quotes.filters.allStatuses')}</SelectItem>
+                <SelectItem value="draft">{t('quotes.status.draft')}</SelectItem>
+                <SelectItem value="sent">{t('quotes.status.sent')}</SelectItem>
+                <SelectItem value="accepted">{t('quotes.status.accepted')}</SelectItem>
+                <SelectItem value="rejected">{t('quotes.status.rejected')}</SelectItem>
+                <SelectItem value="expired">{t('quotes.status.expired')}</SelectItem>
+                <SelectItem value="converted">{t('quotes.status.converted')}</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -222,7 +224,7 @@ export default function Presupuestos() {
       {isLoading ? (
         <div className="text-center py-12">
           <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-          <p className="mt-4 text-muted-foreground">Cargando presupuestos...</p>
+          <p className="mt-4 text-muted-foreground">{t('quotes.loading')}</p>
         </div>
       ) : data && data.items.length > 0 ? (
         <div className="space-y-4">
@@ -242,9 +244,9 @@ export default function Presupuestos() {
                       </div>
                       <p className="text-xl font-bold">{quote.title}</p>
                       <div className="flex items-center gap-6 text-sm text-muted-foreground">
-                        <span>Cliente: {quote.clientName}</span>
-                        <span>Fecha: {formatDate(quote.date)}</span>
-                        <span>Válido hasta: {formatDate(quote.validUntil)}</span>
+                        <span>{t('quotes.client')}: {quote.clientName}</span>
+                        <span>{t('quotes.date')}: {formatDate(quote.date)}</span>
+                        <span>{t('quotes.validUntil')}: {formatDate(quote.validUntil)}</span>
                       </div>
                       {quote.description && (
                         <p className="text-sm text-muted-foreground">{quote.description}</p>
@@ -256,7 +258,7 @@ export default function Presupuestos() {
                         <Link href={`/presupuestos/${quote.id}`}>
                           <Button variant="outline" size="sm">
                             <Eye className="h-4 w-4 mr-1" />
-                            Ver
+                            {t('common.view')}
                           </Button>
                         </Link>
                         {quote.status === "draft" && (
@@ -266,7 +268,7 @@ export default function Presupuestos() {
                             onClick={() => handleStatusChange(quote.id, "sent")}
                           >
                             <Send className="h-4 w-4 mr-1" />
-                            Enviar
+                            {t('common.send')}
                           </Button>
                         )}
                         {quote.status === "accepted" && (
@@ -276,7 +278,7 @@ export default function Presupuestos() {
                             onClick={() => handleConvertToInvoice(quote.id)}
                           >
                             <FileCheck className="h-4 w-4 mr-1" />
-                            Convertir
+                            {t('quotes.convert')}
                           </Button>
                         )}
                       </div>
@@ -295,17 +297,17 @@ export default function Presupuestos() {
                 onClick={() => setPage(page - 1)}
                 disabled={page === 1}
               >
-                Anterior
+                {t('common.previous')}
               </Button>
               <span className="flex items-center px-4">
-                Página {page} de {data.pagination.totalPages}
+                {t('common.pageOf', { page, totalPages: data.pagination.totalPages })}
               </span>
               <Button
                 variant="outline"
                 onClick={() => setPage(page + 1)}
                 disabled={page === data.pagination.totalPages}
               >
-                Siguiente
+                {t('common.next')}
               </Button>
             </div>
           )}
@@ -314,14 +316,14 @@ export default function Presupuestos() {
         <Card>
           <CardContent className="text-center py-12">
             <FileText className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
-            <h3 className="text-lg font-semibold mb-2">No hay presupuestos</h3>
+            <h3 className="text-lg font-semibold mb-2">{t('quotes.noQuotes')}</h3>
             <p className="text-muted-foreground mb-4">
-              Comienza creando tu primer presupuesto
+              {t('quotes.createFirstQuote')}
             </p>
             <Link href="/presupuestos/nuevo">
               <Button>
                 <Plus className="mr-2 h-4 w-4" />
-                Crear Presupuesto
+                {t('quotes.createQuote')}
               </Button>
             </Link>
           </CardContent>

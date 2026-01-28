@@ -812,9 +812,9 @@
 - [x] Pianos.tsx
 - [x] Servicios.tsx
 - [x] Inventario.tsx
-- [ ] Agenda.tsx
-- [ ] Facturacion.tsx
-- [ ] Presupuestos.tsx
+- [x] Agenda.tsx
+- [x] Facturacion.tsx
+- [x] Presupuestos.tsx
 - [ ] Store.tsx
 - [ ] TiposServicio.tsx
 

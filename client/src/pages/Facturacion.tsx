@@ -13,11 +13,13 @@ import InvoiceFormModal from '@/components/InvoiceFormModal';
 import DeleteConfirmModal from '@/components/DeleteConfirmModal';
 import { toast } from 'sonner';
 import { exportToExcel, exportToCSV, generateFilename } from '@/utils/exportInvoices';
+import { useTranslation } from '@/hooks/use-translation';
 
 type FilterType = 'all' | 'draft' | 'sent' | 'paid' | 'cancelled';
 type PeriodType = 'all' | 'thisMonth' | 'lastMonth' | 'thisYear';
 
 export default function Facturacion() {
+  const { t } = useTranslation();
   const [search, setSearch] = useState('');
   const [filter, setFilter] = useState<FilterType>('all');
   const [period, setPeriod] = useState<PeriodType>('all');
@@ -41,13 +43,13 @@ export default function Facturacion() {
       // Abrir Stripe Checkout en nueva pestaña
       if (data.url) {
         window.open(data.url, '_blank');
-        toast.success('Redirigiendo a la página de pago', {
-          description: 'Se ha abierto una nueva pestaña con el formulario de pago de Stripe',
+        toast.success(t('invoices.redirectingToPayment'), {
+          description: t('invoices.stripeTabOpened'),
         });
       }
     },
     onError: (error) => {
-      toast.error('Error al procesar el pago', {
+      toast.error(t('invoices.paymentError'), {
         description: error.message,
       });
     },
@@ -56,12 +58,12 @@ export default function Facturacion() {
   // Mutación para enviar factura por email
   const sendInvoiceEmailMutation = trpc.invoices.sendInvoiceEmail.useMutation({
     onSuccess: () => {
-      toast.success('Factura enviada', {
-        description: 'La factura ha sido enviada por email al cliente',
+      toast.success(t('invoices.invoiceSent'), {
+        description: t('invoices.invoiceSentByEmail'),
       });
     },
     onError: (error) => {
-      toast.error('Error al enviar factura', {
+      toast.error(t('invoices.sendError'), {
         description: error.message,
       });
     },
@@ -81,7 +83,7 @@ export default function Facturacion() {
   const handleDownloadReceipt = async (invoiceId: number) => {
     try {
       const response = await fetch(`/api/trpc/invoices.generateReceipt?input=${encodeURIComponent(JSON.stringify({ invoiceId }))}`);
-      if (!response.ok) throw new Error('Error al generar recibo');
+      if (!response.ok) throw new Error(t('invoices.receiptGenerationError'));
       
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
@@ -93,12 +95,12 @@ export default function Facturacion() {
       window.URL.revokeObjectURL(url);
       document.body.removeChild(a);
       
-      toast.success('Recibo descargado', {
-        description: 'El recibo ha sido descargado exitosamente',
+      toast.success(t('invoices.receiptDownloaded'), {
+        description: t('invoices.receiptDownloadedSuccess'),
       });
     } catch (error) {
-      toast.error('Error al descargar recibo', {
-        description: error instanceof Error ? error.message : 'Error desconocido',
+      toast.error(t('invoices.receiptDownloadError'), {
+        description: error instanceof Error ? error.message : t('common.unknownError'),
       });
     }
   };
@@ -106,33 +108,33 @@ export default function Facturacion() {
   // Handlers para exportación
   const handleExportExcel = () => {
     if (!invoices || invoices.length === 0) {
-      toast.error('No hay facturas para exportar');
+      toast.error(t('invoices.noInvoicesToExport'));
       return;
     }
     const filename = generateFilename('facturas');
     const success = exportToExcel(invoices, filename);
     if (success) {
-      toast.success('Facturas exportadas a Excel', {
-        description: `Se han exportado ${invoices.length} facturas`,
+      toast.success(t('invoices.exportedToExcel'), {
+        description: t('invoices.exportedCount', { count: invoices.length }),
       });
     } else {
-      toast.error('Error al exportar a Excel');
+      toast.error(t('invoices.exportExcelError'));
     }
   };
 
   const handleExportCSV = () => {
     if (!invoices || invoices.length === 0) {
-      toast.error('No hay facturas para exportar');
+      toast.error(t('invoices.noInvoicesToExport'));
       return;
     }
     const filename = generateFilename('facturas');
     const success = exportToCSV(invoices, filename);
     if (success) {
-      toast.success('Facturas exportadas a CSV', {
-        description: `Se han exportado ${invoices.length} facturas`,
+      toast.success(t('invoices.exportedToCSV'), {
+        description: t('invoices.exportedCount', { count: invoices.length }),
       });
     } else {
-      toast.error('Error al exportar a CSV');
+      toast.error(t('invoices.exportCSVError'));
     }
   };
 
@@ -151,18 +153,18 @@ export default function Facturacion() {
   const invoices = invoicesData?.invoices || [];
 
   const statusFilters: { key: FilterType; label: string }[] = [
-    { key: 'all', label: 'Todas' },
-    { key: 'draft', label: 'Borrador' },
-    { key: 'sent', label: 'Enviada' },
-    { key: 'paid', label: 'Pagada' },
-    { key: 'cancelled', label: 'Anulada' },
+    { key: 'all', label: t('invoices.filters.all') },
+    { key: 'draft', label: t('invoices.filters.draft') },
+    { key: 'sent', label: t('invoices.filters.sent') },
+    { key: 'paid', label: t('invoices.filters.paid') },
+    { key: 'cancelled', label: t('invoices.filters.cancelled') },
   ];
 
   const periodFilters: { key: PeriodType; label: string }[] = [
-    { key: 'all', label: 'Todo' },
-    { key: 'thisMonth', label: 'Este mes' },
-    { key: 'lastMonth', label: 'Mes anterior' },
-    { key: 'thisYear', label: 'Este año' },
+    { key: 'all', label: t('invoices.periods.all') },
+    { key: 'thisMonth', label: t('invoices.periods.thisMonth') },
+    { key: 'lastMonth', label: t('invoices.periods.lastMonth') },
+    { key: 'thisYear', label: t('invoices.periods.thisYear') },
   ];
 
   return (
@@ -180,7 +182,7 @@ export default function Facturacion() {
             ) : (
               <>
                 <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
-                  Total
+                  {t('invoices.stats.total')}
                 </p>
                 <p className="text-2xl font-bold text-[#003a8c]">
                   €{stats?.total.toFixed(2) || '0.00'}
@@ -199,7 +201,7 @@ export default function Facturacion() {
             ) : (
               <>
                 <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
-                  Pendiente
+                  {t('invoices.stats.pending')}
                 </p>
                 <p className="text-2xl font-bold text-[#e07a5f]">
                   €{stats?.pending.toFixed(2) || '0.00'}
@@ -218,7 +220,7 @@ export default function Facturacion() {
             ) : (
               <>
                 <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
-                  Cobrado
+                  {t('invoices.stats.paid')}
                 </p>
                 <p className="text-2xl font-bold text-[#4A7C59]">
                   €{stats?.paid.toFixed(2) || '0.00'}
@@ -237,7 +239,7 @@ export default function Facturacion() {
             ) : (
               <>
                 <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
-                  Borradores
+                  {t('invoices.stats.drafts')}
                 </p>
                 <p className="text-2xl font-bold text-gray-600">
                   {stats?.draft || 0}
@@ -256,7 +258,7 @@ export default function Facturacion() {
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Buscar factura..."
+            placeholder={t('invoices.searchPlaceholder')}
             className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#003a8c] focus:border-transparent"
           />
         </div>
@@ -335,13 +337,13 @@ export default function Facturacion() {
             </svg>
             <h3 className="mt-2 text-sm font-medium text-gray-900">
               {search || filter !== 'all' || period !== 'all'
-                ? 'No hay resultados'
-                : 'No hay facturas'}
+                ? t('invoices.noResults')
+                : t('invoices.noInvoices')}
             </h3>
             <p className="mt-1 text-sm text-gray-500">
               {search || filter !== 'all' || period !== 'all'
-                ? 'Intenta ajustar los filtros'
-                : 'Comienza creando tu primera factura'}
+                ? t('invoices.adjustFilters')
+                : t('invoices.createFirstInvoice')}
             </p>
           </div>
         ) : (
@@ -367,8 +369,8 @@ export default function Facturacion() {
         <button
           onClick={handleExportExcel}
           className="w-14 h-14 bg-green-600 text-white rounded-full shadow-lg hover:bg-green-700 transition-colors flex items-center justify-center"
-          aria-label="Exportar a Excel"
-          title="Exportar a Excel"
+          aria-label={t('invoices.exportToExcel')}
+          title={t('invoices.exportToExcel')}
         >
           <FileSpreadsheet className="w-6 h-6" />
         </button>
@@ -377,8 +379,8 @@ export default function Facturacion() {
         <button
           onClick={handleExportCSV}
           className="w-14 h-14 bg-blue-600 text-white rounded-full shadow-lg hover:bg-blue-700 transition-colors flex items-center justify-center"
-          aria-label="Exportar a CSV"
-          title="Exportar a CSV"
+          aria-label={t('invoices.exportToCSV')}
+          title={t('invoices.exportToCSV')}
         >
           <Download className="w-6 h-6" />
         </button>
@@ -387,7 +389,7 @@ export default function Facturacion() {
         <button
           onClick={() => setIsModalOpen(true)}
           className="w-14 h-14 bg-[#e07a5f] text-white rounded-full shadow-lg hover:bg-[#d16a4f] transition-colors flex items-center justify-center"
-          aria-label="Agregar factura"
+          aria-label={t('invoices.addInvoice')}
         >
           <Plus className="w-6 h-6" />
         </button>
@@ -417,8 +419,8 @@ export default function Facturacion() {
             deleteInvoiceMutation.mutate({ id: deletingInvoiceId });
           }}
           isDeleting={deleteInvoiceMutation.isPending}
-          title="Eliminar Factura"
-          message="¿Estás seguro de que deseas eliminar esta factura? Esta acción no se puede deshacer."
+          title={t('invoices.deleteInvoice')}
+          message={t('invoices.deleteConfirmation')}
           entityName={invoices.find((i: any) => i.id === deletingInvoiceId)?.invoiceNumber}
         />
       )}

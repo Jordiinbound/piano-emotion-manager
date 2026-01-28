@@ -11,10 +11,12 @@ import { AppointmentCard } from '@/components/AppointmentCard';
 import { Plus } from 'lucide-react';
 import AppointmentFormModal from '@/components/AppointmentFormModal';
 import DeleteConfirmModal from '@/components/DeleteConfirmModal';
+import { useTranslation } from '@/hooks/use-translation';
 
 type FilterType = 'all' | 'scheduled' | 'confirmed' | 'completed' | 'cancelled';
 
 export default function Agenda() {
+  const { t } = useTranslation();
   const [filter, setFilter] = useState<FilterType>('all');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingAppointmentId, setEditingAppointmentId] = useState<number | null>(null);
@@ -58,9 +60,9 @@ export default function Agenda() {
       if (!group) {
         let label: string;
         if (aptDate === today) {
-          label = 'Hoy';
+          label = t('appointments.today');
         } else if (aptDate === tomorrow) {
-          label = 'Mañana';
+          label = t('appointments.tomorrow');
         } else {
           const date = new Date(aptDate);
           label = date.toLocaleDateString('es-ES', { 
@@ -76,14 +78,14 @@ export default function Agenda() {
     });
 
     return groups;
-  }, [filteredAppointments]);
+  }, [filteredAppointments, t]);
 
   const filters: { key: FilterType; label: string }[] = [
-    { key: 'all', label: 'Todas' },
-    { key: 'scheduled', label: 'Programadas' },
-    { key: 'confirmed', label: 'Confirmadas' },
-    { key: 'completed', label: 'Completadas' },
-    { key: 'cancelled', label: 'Canceladas' },
+    { key: 'all', label: t('appointments.filters.all') },
+    { key: 'scheduled', label: t('appointments.filters.scheduled') },
+    { key: 'confirmed', label: t('appointments.filters.confirmed') },
+    { key: 'completed', label: t('appointments.filters.completed') },
+    { key: 'cancelled', label: t('appointments.filters.cancelled') },
   ];
 
   return (
@@ -101,7 +103,7 @@ export default function Agenda() {
             ) : (
               <>
                 <p className="text-3xl font-bold text-[#003a8c]">{stats?.total || 0}</p>
-                <p className="text-sm font-medium text-gray-600 mt-1">Total</p>
+                <p className="text-sm font-medium text-gray-600 mt-1">{t('appointments.stats.total')}</p>
               </>
             )}
           </div>
@@ -116,7 +118,7 @@ export default function Agenda() {
             ) : (
               <>
                 <p className="text-3xl font-bold text-[#003a8c]">{stats?.scheduled || 0}</p>
-                <p className="text-sm font-medium text-gray-600 mt-1">Programadas</p>
+                <p className="text-sm font-medium text-gray-600 mt-1">{t('appointments.stats.scheduled')}</p>
               </>
             )}
           </div>
@@ -131,7 +133,7 @@ export default function Agenda() {
             ) : (
               <>
                 <p className="text-3xl font-bold text-green-600">{stats?.confirmed || 0}</p>
-                <p className="text-sm font-medium text-gray-600 mt-1">Confirmadas</p>
+                <p className="text-sm font-medium text-gray-600 mt-1">{t('appointments.stats.confirmed')}</p>
               </>
             )}
           </div>
@@ -146,7 +148,7 @@ export default function Agenda() {
             ) : (
               <>
                 <p className="text-3xl font-bold text-green-600">{stats?.completed || 0}</p>
-                <p className="text-sm font-medium text-gray-600 mt-1">Completadas</p>
+                <p className="text-sm font-medium text-gray-600 mt-1">{t('appointments.stats.completed')}</p>
               </>
             )}
           </div>
@@ -212,12 +214,12 @@ export default function Agenda() {
               />
             </svg>
             <h3 className="mt-2 text-sm font-medium text-gray-900">
-              {filter !== 'all' ? 'No hay citas con este estado' : 'No hay citas programadas'}
+              {filter !== 'all' ? t('appointments.noAppointmentsWithStatus') : t('appointments.noAppointments')}
             </h3>
             <p className="mt-1 text-sm text-gray-500">
               {filter !== 'all'
-                ? 'Intenta ajustar los filtros'
-                : 'Comienza agregando tu primera cita'}
+                ? t('appointments.adjustFilters')
+                : t('appointments.addFirstAppointment')}
             </p>
           </div>
         ) : (
@@ -228,7 +230,7 @@ export default function Agenda() {
                 <div className="flex items-center justify-between mb-3">
                   <h2 className="text-lg font-semibold text-gray-900 capitalize">{group.label}</h2>
                   <span className="text-sm text-gray-500">
-                    {group.appointments.length} {group.appointments.length === 1 ? 'cita' : 'citas'}
+                    {group.appointments.length} {group.appointments.length === 1 ? t('appointments.appointment') : t('appointments.appointments')}
                   </span>
                 </div>
 
@@ -253,7 +255,7 @@ export default function Agenda() {
       <button
         onClick={() => setIsModalOpen(true)}
         className="fixed bottom-6 right-6 w-14 h-14 bg-[#e07a5f] text-white rounded-full shadow-lg hover:bg-[#d16a4f] transition-colors flex items-center justify-center"
-        aria-label="Agregar cita"
+        aria-label={t('appointments.addAppointment')}
       >
         <Plus className="w-6 h-6" />
       </button>
@@ -282,8 +284,8 @@ export default function Agenda() {
             deleteAppointmentMutation.mutate({ id: deletingAppointmentId });
           }}
           isDeleting={deleteAppointmentMutation.isPending}
-          title="Eliminar Cita"
-          message="¿Estás seguro de que deseas eliminar esta cita? Esta acción no se puede deshacer."
+          title={t('appointments.deleteAppointment')}
+          message={t('appointments.deleteConfirmation')}
           entityName={appointments.find((a: any) => a.id === deletingAppointmentId)?.title}
         />
       )}
