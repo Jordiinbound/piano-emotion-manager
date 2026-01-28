@@ -19,6 +19,7 @@ import ReactFlow, {
 } from 'reactflow';
 import 'reactflow/dist/style.css';
 import { nodeTypes as customNodeTypes } from './workflow-nodes/CustomNodes';
+import { NodeConfigDialog } from './workflow-nodes/NodeConfigForms';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import {
@@ -67,6 +68,10 @@ export default function WorkflowEditor({ workflowId, onSave, onTest }: WorkflowE
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
   const [selectedNodeType, setSelectedNodeType] = useState<string | null>(null);
+  const [configDialogOpen, setConfigDialogOpen] = useState(false);
+  const [configNodeId, setConfigNodeId] = useState<string | null>(null);
+  const [configNodeType, setConfigNodeType] = useState<'trigger' | 'condition' | 'action' | 'delay'>('trigger');
+  const [configNodeData, setConfigNodeData] = useState<any>(null);
 
   // Manejar conexiones entre nodos
   const onConnect = useCallback(
@@ -131,6 +136,7 @@ export default function WorkflowEditor({ workflowId, onSave, onTest }: WorkflowE
       data: {
         label: `${label} ${newId}`,
         description: `Descripción del ${label.toLowerCase()}`,
+        onConfigure: handleNodeConfigure,
       },
       position: {
         x: Math.random() * 400 + 100,
@@ -143,11 +149,43 @@ export default function WorkflowEditor({ workflowId, onSave, onTest }: WorkflowE
   };
 
   // Guardar workflow
+  const handleNodeConfigure = (nodeId: string, nodeData: any) => {
+    const node = nodes.find(n => n.id === nodeId);
+    if (!node) return;
+    
+    setConfigNodeId(nodeId);
+    setConfigNodeType(node.type as any);
+    setConfigNodeData(nodeData);
+    setConfigDialogOpen(true);
+  };
+
+  const handleConfigSave = (newConfig: any) => {
+    if (!configNodeId) return;
+    
+    setNodes((nds) =>
+      nds.map((node) => {
+        if (node.id === configNodeId) {
+          return {
+            ...node,
+            data: {
+              ...node.data,
+              ...newConfig,
+              onConfigure: handleNodeConfigure,
+            },
+          };
+        }
+        return node;
+      })
+    );
+    
+    toast.success('Configuración guardada');
+  };
+
   const handleSave = () => {
     if (onSave) {
       onSave(nodes, edges);
     }
-    toast.success(t('workflows.toast.updated'));
+    toast.success('Workflow guardado');
   };
 
   // Probar workflow
@@ -293,6 +331,15 @@ export default function WorkflowEditor({ workflowId, onSave, onTest }: WorkflowE
           </ReactFlow>
         </div>
       </div>
+
+      {/* Diálogo de configuración de nodos */}
+      <NodeConfigDialog
+        open={configDialogOpen}
+        onOpenChange={setConfigDialogOpen}
+        nodeType={configNodeType}
+        initialConfig={configNodeData}
+        onSave={handleConfigSave}
+      />
     </div>
   );
 }

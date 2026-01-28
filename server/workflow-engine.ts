@@ -6,6 +6,8 @@
 import { getDb } from './db';
 import { workflows, workflowNodes, workflowConnections, workflowExecutions } from '../drizzle/schema';
 import { eq, and } from 'drizzle-orm';
+import { sendEmail as sendEmailIntegration, replaceEmailVariables, emailTemplates, isEmailConfigured } from './integrations/email';
+import { sendWhatsAppMessage, replaceWhatsAppVariables, isWhatsAppConfigured } from './integrations/whatsapp';
 
 interface WorkflowNode {
   id: number;
@@ -284,22 +286,99 @@ async function executeDelay(node: WorkflowNode, context: ExecutionContext) {
 
 async function sendEmail(config: any, context: ExecutionContext) {
   console.log('[Workflow Engine] Sending email:', {
-    to: config.to,
-    subject: config.subject,
-    template: config.template,
+    to: config.emailTo,
+    subject: config.emailSubject,
+    template: config.emailTemplate,
   });
   
-  // TODO: Integrar con servicio de email real
-  // Por ahora solo registramos la acción
+  // Verificar si el email está configurado
+  if (!isEmailConfigured()) {
+    console.warn('[Workflow Engine] Email service not configured, skipping email action');
+    return;
+  }
+
+  try {
+    // Preparar variables para reemplazo
+    const variables = {
+      ...context.variables,
+      ...context.triggerData,
+    };
+
+    // Reemplazar variables en destinatario, asunto y contenido
+    const to = replaceEmailVariables(config.emailTo || '', variables);
+    const subject = replaceEmailVariables(config.emailSubject || '', variables);
+    
+    let html = '';
+    let text = '';
+
+    // Usar plantilla predefinida o contenido personalizado
+    if (config.emailTemplate && config.emailTemplate !== 'custom') {
+      const template = emailTemplates[config.emailTemplate as keyof typeof emailTemplates];
+      if (template) {
+        html = replaceEmailVariables(template.html, variables);
+      }
+    } else if (config.emailBody) {
+      html = replaceEmailVariables(config.emailBody, variables);
+    }
+
+    // Enviar email
+    const result = await sendEmailIntegration({
+      to,
+      subject,
+      html,
+      text,
+    });
+
+    if (result.success) {
+      console.log('[Workflow Engine] Email sent successfully');
+    } else {
+      console.error('[Workflow Engine] Failed to send email:', result.error);
+    }
+
+  } catch (error: any) {
+    console.error('[Workflow Engine] Error in sendEmail action:', error);
+  }
 }
 
 async function sendWhatsApp(config: any, context: ExecutionContext) {
   console.log('[Workflow Engine] Sending WhatsApp:', {
-    to: config.phoneNumber,
-    message: config.message,
+    to: config.whatsappPhone,
+    message: config.whatsappMessage,
   });
   
-  // TODO: Integrar con API de WhatsApp
+  // Verificar si WhatsApp está configurado
+  if (!isWhatsAppConfigured()) {
+    console.warn('[Workflow Engine] WhatsApp service not configured, skipping WhatsApp action');
+    return;
+  }
+
+  try {
+    // Preparar variables para reemplazo
+    const variables = {
+      ...context.variables,
+      ...context.triggerData,
+    };
+
+    // Reemplazar variables en número y mensaje
+    const phone = replaceWhatsAppVariables(config.whatsappPhone || '', variables);
+    const message = replaceWhatsAppVariables(config.whatsappMessage || '', variables);
+
+    // Enviar mensaje de WhatsApp
+    const result = await sendWhatsAppMessage({
+      to: phone,
+      type: 'text',
+      text: message,
+    });
+
+    if (result.success) {
+      console.log('[Workflow Engine] WhatsApp message sent successfully');
+    } else {
+      console.error('[Workflow Engine] Failed to send WhatsApp message:', result.error);
+    }
+
+  } catch (error: any) {
+    console.error('[Workflow Engine] Error in sendWhatsApp action:', error);
+  }
 }
 
 async function createReminder(config: any, context: ExecutionContext) {

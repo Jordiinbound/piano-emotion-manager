@@ -6,6 +6,7 @@
 import { Handle, Position, NodeProps } from 'reactflow';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import {
   Zap,
   GitBranch,
@@ -19,10 +20,11 @@ import {
   User,
   FileText,
   DollarSign,
+  Edit2,
 } from 'lucide-react';
 
 // Nodo de Trigger
-export function TriggerNode({ data }: NodeProps) {
+export function TriggerNode({ data, id }: NodeProps) {
   const getTriggerIcon = (triggerType: string) => {
     switch (triggerType) {
       case 'client_created':
@@ -59,6 +61,15 @@ export function TriggerNode({ data }: NodeProps) {
             <span>Configurado</span>
           </div>
         )}
+        <Button
+          size="sm"
+          variant="ghost"
+          className="mt-2 w-full"
+          onClick={() => data.onConfigure?.(id, data)}
+        >
+          <Edit2 className="h-3 w-3 mr-1" />
+          Configurar
+        </Button>
       </div>
       <Handle
         type="source"
@@ -70,7 +81,7 @@ export function TriggerNode({ data }: NodeProps) {
 }
 
 // Nodo de Condición
-export function ConditionNode({ data }: NodeProps) {
+export function ConditionNode({ data, id }: NodeProps) {
   return (
     <Card className="min-w-[200px] bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-blue-400 shadow-lg">
       <Handle
@@ -94,6 +105,15 @@ export function ConditionNode({ data }: NodeProps) {
             <code className="text-blue-700">{data.condition}</code>
           </div>
         )}
+        <Button
+          size="sm"
+          variant="ghost"
+          className="mt-2 w-full"
+          onClick={() => data.onConfigure?.(id, data)}
+        >
+          <Edit2 className="h-3 w-3 mr-1" />
+          Configurar
+        </Button>
       </div>
       <div className="flex justify-between px-4 pb-2">
         <div className="text-xs text-green-600 font-medium">✓ Sí</div>
@@ -116,7 +136,7 @@ export function ConditionNode({ data }: NodeProps) {
 }
 
 // Nodo de Acción
-export function ActionNode({ data }: NodeProps) {
+export function ActionNode({ data, id }: NodeProps) {
   const getActionIcon = (actionType: string) => {
     switch (actionType) {
       case 'send_email':
@@ -162,6 +182,15 @@ export function ActionNode({ data }: NodeProps) {
             ))}
           </div>
         )}
+        <Button
+          size="sm"
+          variant="ghost"
+          className="mt-2 w-full"
+          onClick={() => data.onConfigure?.(id, data)}
+        >
+          <Edit2 className="h-3 w-3 mr-1" />
+          Configurar
+        </Button>
       </div>
       <Handle
         type="source"
@@ -173,7 +202,7 @@ export function ActionNode({ data }: NodeProps) {
 }
 
 // Nodo de Delay
-export function DelayNode({ data }: NodeProps) {
+export function DelayNode({ data, id }: NodeProps) {
   return (
     <Card className="min-w-[200px] bg-gradient-to-br from-purple-50 to-pink-50 border-2 border-purple-400 shadow-lg">
       <Handle
@@ -202,6 +231,15 @@ export function DelayNode({ data }: NodeProps) {
             </div>
           </div>
         )}
+        <Button
+          size="sm"
+          variant="ghost"
+          className="mt-2 w-full"
+          onClick={() => data.onConfigure?.(id, data)}
+        >
+          <Edit2 className="h-3 w-3 mr-1" />
+          Configurar
+        </Button>
       </div>
       <Handle
         type="source"

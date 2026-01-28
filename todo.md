@@ -1640,3 +1640,13 @@
 - [x] Desarrollar motor de ejecución de workflows en background
 - [x] Integrar editor visual en página de workflows
 - [x] Probar funcionalidad completa de workflows
+
+
+## FASE 6 - Sistema de Workflows (avanzado - parte 2)
+- [x] Crear formularios modales de configuración para todos los nodos (Trigger, Condition, Action, Delay)
+- [x] Actualizar nodos personalizados para abrir formularios y mostrar configuraciones
+- [x] Completar integración de formularios con WorkflowEditor
+- [x] Preparar infraestructura opcional para SendGrid/Mailgun
+- [x] Preparar infraestructura opcional para WhatsApp Business API
+- [x] Actualizar motor de ejecución para usar integraciones opcionales
+- [x] Probar configuración de nodos y funcionalidad completa
