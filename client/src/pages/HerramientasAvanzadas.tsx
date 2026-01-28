@@ -20,7 +20,6 @@ import {
   Wallet,
   Calculator,
   GitBranch,
-  Brain,
   Sparkles,
   TrendingUp,
 } from 'lucide-react';
@@ -174,16 +173,6 @@ const ADVANCED_MODULES: Module[] = [
     color: '#6366F1', 
     tier: 'premium',
     route: '/workflows',
-    implemented: true
-  },
-  { 
-    key: 'predictions', 
-    icon: Brain, 
-    label: 'IA Avanzada', 
-    description: 'Predicciones y análisis con IA',
-    color: '#8B5CF6', 
-    tier: 'premium',
-    route: '/ia-avanzada',
     implemented: true
   },
 ];

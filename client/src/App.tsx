@@ -55,7 +55,6 @@ import { RolesManagement } from "./pages/RolesManagement";
 import { GlobalAnalytics } from "./pages/GlobalAnalytics";
 import Contabilidad from "./pages/Contabilidad";
 import Workflows from "./pages/Workflows";
-import IAAvanzada from "./pages/IAAvanzada";
 
 function Router() {
   return (
@@ -341,14 +340,6 @@ function Router() {
         <ProtectedRoute>
           <Layout>
             <Workflows />
-          </Layout>
-        </ProtectedRoute>
-      </Route>
-
-      <Route path="/ia-avanzada">
-        <ProtectedRoute>
-          <Layout>
-            <IAAvanzada />
           </Layout>
         </ProtectedRoute>
       </Route>

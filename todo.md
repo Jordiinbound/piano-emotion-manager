@@ -736,4 +736,9 @@
 ### Módulos PREMIUM
 - [x] Contabilidad - Integración contable y gestión fiscal
 - [x] Workflows - Automatizaciones y flujos de trabajo
-- [x] IA Avanzada - Predicciones y análisis con IA
+
+## Eliminar módulo de IA Avanzada
+- [x] Eliminar módulo de IA Avanzada de HerramientasAvanzadas.tsx
+- [x] Eliminar ruta /ia-avanzada de App.tsx
+- [x] Eliminar archivo IAAvanzada.tsx
+- [x] Actualizar todo.md para reflejar eliminación
