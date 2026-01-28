@@ -657,3 +657,22 @@
 - [x] Integrar pago con Stripe desde notificaciones
 - [x] Agregar botón de renovación rápida en dropdown
 - [x] Registrar rutas en App.tsx
+
+## Mejoras Avanzadas al Sistema Multi-Tenant
+- [x] Crear webhook de Stripe para renovaciones automáticas
+- [x] Extender endpoint /api/stripe/webhook existente
+- [x] Procesar evento checkout.session.completed con license_id
+- [x] Renovar licencia automáticamente tras pago exitoso
+- [x] Implementar panel de administración para partners
+- [x] Crear página PartnerDashboard con estadísticas
+- [x] Mostrar códigos de activación generados
+- [x] Mostrar licencias activas de clientes
+- [x] Agregar gráficos de uso y conversión
+- [x] Crear procedimientos getMyPartner, getMyPartnerCodes, getPartnerLicenses
+- [x] Registrar ruta en App.tsx
+- [x] Desarrollar sistema de recordatorios por notificaciones
+- [x] Crear router licenseReminders para verificar licencias
+- [x] Implementar envío de notificaciones 30, 15 y 7 días antes
+- [x] Usar sistema de notificaciones del owner (notifyOwner)
+- [x] Crear página LicenseReminders para administrar recordatorios
+- [x] Registrar router y ruta en App.tsx

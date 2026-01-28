@@ -49,6 +49,8 @@ import { ActivateLicense } from "./pages/ActivateLicense";
 import { OrganizationSettings } from "./pages/OrganizationSettings";
 import { LicenseNotifications } from "./pages/LicenseNotifications";
 import { RenewalSuccess } from "./pages/RenewalSuccess";
+import { PartnerDashboard } from "./pages/PartnerDashboard";
+import { LicenseReminders } from "./pages/LicenseReminders";
 
 function Router() {
   return (
@@ -285,6 +287,22 @@ function Router() {
         <ProtectedRoute>
           <Layout>
             <RenewalSuccess />
+          </Layout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/partner/dashboard">
+        <ProtectedRoute>
+          <Layout>
+            <PartnerDashboard />
+          </Layout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/licenses/reminders">
+        <ProtectedRoute>
+          <Layout>
+            <LicenseReminders />
           </Layout>
         </ProtectedRoute>
       </Route>

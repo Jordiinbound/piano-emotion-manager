@@ -200,6 +200,22 @@ export const partnersV2Router = router({
       return { success: true };
     }),
 
+  // Obtener mi información de partner (usuario actual)
+  getMyPartner: protectedProcedure
+    .query(async ({ ctx }) => {
+      const db = await getDb();
+      if (!db) throw new Error('Database not available');
+
+      // Buscar si el usuario actual es un partner
+      const [partner] = await db
+        .select()
+        .from(partnersV2)
+        .where(eq(partnersV2.contactEmail, ctx.user.email))
+        .limit(1);
+
+      return partner || null;
+    }),
+
   // Obtener estadísticas de un partner
   getStats: protectedProcedure
     .input(z.object({ partnerId: z.number() }))

@@ -341,4 +341,31 @@ export const licensesRouter = router({
 
       return transactions;
     }),
+
+  // Obtener licencias del partner actual
+  getPartnerLicenses: protectedProcedure
+    .query(async ({ ctx }) => {
+      const db = await getDb();
+      if (!db) throw new Error('Database not available');
+
+      // Buscar si el usuario actual es un partner
+      const [partner] = await db
+        .select()
+        .from(partnersV2)
+        .where(eq(partnersV2.contactEmail, ctx.user.email))
+        .limit(1);
+
+      if (!partner) {
+        return [];
+      }
+
+      // Obtener todas las licencias activadas con códigos de este partner
+      const licenses = await db
+        .select()
+        .from(userLicenses)
+        .where(eq(userLicenses.partnerId, partner.id))
+        .orderBy(desc(userLicenses.createdAt));
+
+      return licenses;
+    }),
 });

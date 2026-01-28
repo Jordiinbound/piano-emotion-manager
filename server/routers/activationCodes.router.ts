@@ -244,4 +244,31 @@ export const activationCodesRouter = router({
         used: usedResult.count,
       };
     }),
+
+  // Obtener códigos del partner actual
+  getMyPartnerCodes: protectedProcedure
+    .query(async ({ ctx }) => {
+      const db = await getDb();
+      if (!db) throw new Error('Database not available');
+
+      // Buscar si el usuario actual es un partner
+      const [partner] = await db
+        .select()
+        .from(partnersV2)
+        .where(eq(partnersV2.contactEmail, ctx.user.email))
+        .limit(1);
+
+      if (!partner) {
+        return [];
+      }
+
+      // Obtener todos los códigos del partner
+      const codes = await db
+        .select()
+        .from(partnerActivationCodes)
+        .where(eq(partnerActivationCodes.partnerId, partner.id))
+        .orderBy(desc(partnerActivationCodes.createdAt));
+
+      return codes;
+    }),
 });

@@ -2,7 +2,7 @@ import { Router } from "express";
 import { getStripe } from "./stripe.js";
 import { ENV } from "./env.js";
 import { getDb } from "../db.js";
-import { invoices } from "../../drizzle/schema.js";
+import { invoices, userLicenses } from "../../drizzle/schema.js";
 import { eq } from "drizzle-orm";
 
 export const stripeWebhookRouter = Router();
@@ -47,11 +47,63 @@ stripeWebhookRouter.post("/api/stripe/webhook", async (req, res) => {
     console.log("[Stripe Webhook] Session metadata:", session.metadata);
 
     const invoiceId = session.metadata?.invoice_id;
+    const licenseId = session.metadata?.license_id;
     const paymentIntentId = session.payment_intent;
 
+    // Procesar renovación de licencia
+    if (licenseId) {
+      console.log(`[Stripe Webhook] Processing license renewal for license_id: ${licenseId}`);
+      
+      try {
+        const db = await getDb();
+        if (!db) {
+          throw new Error("Database not available");
+        }
+
+        // Obtener la licencia
+        const [license] = await db
+          .select()
+          .from(userLicenses)
+          .where(eq(userLicenses.id, parseInt(licenseId)))
+          .limit(1);
+
+        if (!license) {
+          console.error(`[Stripe Webhook] License ${licenseId} not found`);
+          return res.status(404).send("License not found");
+        }
+
+        // Calcular nueva fecha de expiración
+        const currentExpiration = license.expiresAt ? new Date(license.expiresAt) : new Date();
+        const newExpiration = new Date(currentExpiration);
+        
+        if (license.billingCycle === 'monthly') {
+          newExpiration.setMonth(newExpiration.getMonth() + 1);
+        } else {
+          newExpiration.setFullYear(newExpiration.getFullYear() + 1);
+        }
+
+        // Actualizar la licencia
+        await db
+          .update(userLicenses)
+          .set({
+            expiresAt: newExpiration.toISOString(),
+            status: 'active',
+            updatedAt: new Date().toISOString(),
+          })
+          .where(eq(userLicenses.id, parseInt(licenseId)));
+
+        console.log(`[Stripe Webhook] License ${licenseId} renewed until ${newExpiration.toISOString()}`);
+        return res.json({ received: true, renewed: true });
+      } catch (error: any) {
+        console.error("[Stripe Webhook] Error renewing license:", error.message);
+        return res.status(500).send("Error renewing license");
+      }
+    }
+
+    // Procesar pago de factura
     if (!invoiceId) {
-      console.error("[Stripe Webhook] No invoice_id in metadata");
-      return res.status(400).send("No invoice_id in metadata");
+      console.error("[Stripe Webhook] No invoice_id or license_id in metadata");
+      return res.status(400).send("No invoice_id or license_id in metadata");
     }
 
     try {
