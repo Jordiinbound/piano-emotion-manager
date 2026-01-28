@@ -9,8 +9,10 @@ import { Textarea } from '../components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { ArrowLeft, Save } from 'lucide-react';
 import { toast } from 'sonner';
+import { useTranslation } from '@/hooks/use-translation';
 
 export default function ServicioNuevo() {
+  const { t } = useTranslation();
   const [, setLocation] = useLocation();
   const createMutation = trpc.services.createService.useMutation();
   const { data: clients } = trpc.clients.getClients.useQuery({ page: 1, pageSize: 1000 });
@@ -39,10 +41,10 @@ export default function ServicioNuevo() {
         duration: formData.duration ? Number(formData.duration) : undefined,
         notes: formData.notes || undefined,
       });
-      toast.success('Servicio creado correctamente');
+      toast.success(t('services.serviceCreated'));
       setLocation('/servicios');
     } catch (error) {
-      toast.error('No se pudo crear el servicio');
+      toast.error(t('services.couldNotCreateService'));
     }
   };
 
@@ -55,23 +57,23 @@ export default function ServicioNuevo() {
       <div className="mb-6">
         <Button variant="ghost" onClick={() => setLocation('/servicios')} className="mb-4">
           <ArrowLeft className="mr-2 h-4 w-4" />
-          Volver a Servicios
+          {t('services.backToServices')}
         </Button>
-        <h1 className="text-3xl font-bold">Nuevo Servicio</h1>
+        <h1 className="text-3xl font-bold">{t('services.newService')}</h1>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle>Información del Servicio</CardTitle>
+          <CardTitle>{t('services.serviceInformation')}</CardTitle>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="clientId">Cliente *</Label>
+                <Label htmlFor="clientId">{t('services.client')} *</Label>
                 <Select value={formData.clientId} onValueChange={(value) => handleChange('clientId', value)} required>
                   <SelectTrigger>
-                    <SelectValue placeholder="Seleccionar cliente..." />
+                    <SelectValue placeholder={t('services.selectClient')} />
                   </SelectTrigger>
                   <SelectContent>
                     {clients?.clients.map((client: any) => (
@@ -84,13 +86,13 @@ export default function ServicioNuevo() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="pianoId">Piano *</Label>
+                <Label htmlFor="pianoId">{t('services.piano')} *</Label>
                 <Select value={formData.pianoId} onValueChange={(value) => handleChange('pianoId', value)} required>
                   <SelectTrigger>
-                    <SelectValue placeholder="Seleccionar piano..." />
+                    <SelectValue placeholder={t('services.selectPiano')} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">Sin piano</SelectItem>
+                    <SelectItem value="">{t('services.noPiano')}</SelectItem>
                     {pianos?.pianos.map((piano: any) => (
                       <SelectItem key={piano.id} value={String(piano.id)}>
                         {piano.brand} {piano.model} ({piano.serialNumber || 'S/N'})
@@ -101,27 +103,27 @@ export default function ServicioNuevo() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="serviceType">Tipo de Servicio *</Label>
+                <Label htmlFor="serviceType">{t('services.serviceType')} *</Label>
                 <Select value={formData.serviceType} onValueChange={(value) => handleChange('serviceType', value)}>
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="tuning">Afinación</SelectItem>
-                    <SelectItem value="repair">Reparación</SelectItem>
-                    <SelectItem value="regulation">Regulación</SelectItem>
-                    <SelectItem value="maintenance_basic">Mantenimiento Básico</SelectItem>
-                    <SelectItem value="maintenance_complete">Mantenimiento Completo</SelectItem>
-                    <SelectItem value="maintenance_premium">Mantenimiento Premium</SelectItem>
-                    <SelectItem value="inspection">Inspección</SelectItem>
-                    <SelectItem value="restoration">Restauración</SelectItem>
-                    <SelectItem value="other">Otro</SelectItem>
+                    <SelectItem value="tuning">{t('services.types.tuning')}</SelectItem>
+                    <SelectItem value="repair">{t('services.types.repair')}</SelectItem>
+                    <SelectItem value="regulation">{t('services.types.regulation')}</SelectItem>
+                    <SelectItem value="maintenance_basic">{t('services.types.maintenance_basic')}</SelectItem>
+                    <SelectItem value="maintenance_complete">{t('services.types.maintenance_complete')}</SelectItem>
+                    <SelectItem value="maintenance_premium">{t('services.types.maintenance_premium')}</SelectItem>
+                    <SelectItem value="inspection">{t('services.types.inspection')}</SelectItem>
+                    <SelectItem value="restoration">{t('services.types.restoration')}</SelectItem>
+                    <SelectItem value="other">{t('services.types.other')}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="date">Fecha *</Label>
+                <Label htmlFor="date">{t('services.date')} *</Label>
                 <Input
                   id="date"
                   type="date"
@@ -132,7 +134,7 @@ export default function ServicioNuevo() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="cost">Coste (€) *</Label>
+                <Label htmlFor="cost">{t('services.cost')} *</Label>
                 <Input
                   id="cost"
                   type="number"
@@ -145,7 +147,7 @@ export default function ServicioNuevo() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="duration">Duración (minutos)</Label>
+                <Label htmlFor="duration">{t('services.duration')}</Label>
                 <Input
                   id="duration"
                   type="number"
@@ -157,23 +159,23 @@ export default function ServicioNuevo() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="notes">Notas</Label>
+              <Label htmlFor="notes">{t('services.notes')}</Label>
               <Textarea
                 id="notes"
                 value={formData.notes}
                 onChange={(e) => handleChange('notes', e.target.value)}
-                placeholder="Notas adicionales sobre el servicio..."
+                placeholder={t('services.notesPlaceholder')}
                 rows={4}
               />
             </div>
 
             <div className="flex gap-4 justify-end">
               <Button type="button" variant="outline" onClick={() => setLocation('/servicios')}>
-                Cancelar
+                {t('common.cancel')}
               </Button>
               <Button type="submit" disabled={createMutation.isPending}>
                 <Save className="mr-2 h-4 w-4" />
-                {createMutation.isPending ? 'Guardando...' : 'Guardar Servicio'}
+                {createMutation.isPending ? t('common.saving') : t('services.saveService')}
               </Button>
             </div>
           </form>

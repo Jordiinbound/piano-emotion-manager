@@ -9,8 +9,10 @@ import { Textarea } from '../components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { ArrowLeft, Save } from 'lucide-react';
 import { toast } from 'sonner';
+import { useTranslation } from '@/hooks/use-translation';
 
 export default function PianoEditar() {
+  const { t } = useTranslation();
   const [, setLocation] = useLocation();
   const params = useParams();
   const pianoId = Number(params.id);
@@ -60,10 +62,10 @@ export default function PianoEditar() {
         location: formData.location || undefined,
         notes: formData.notes || undefined,
       });
-      toast.success('Piano actualizado correctamente');
+      toast.success(t('pianos.pianoUpdated'));
       setLocation('/pianos');
     } catch (error) {
-      toast.error('No se pudo actualizar el piano');
+      toast.error(t('pianos.couldNotUpdatePiano'));
     }
   };
 
@@ -72,11 +74,11 @@ export default function PianoEditar() {
   };
 
   if (isLoading) {
-    return <div className="container mx-auto py-6">Cargando...</div>;
+    return <div className="container mx-auto py-6">{t('common.loading')}</div>;
   }
 
   if (!piano) {
-    return <div className="container mx-auto py-6">Piano no encontrado</div>;
+    return <div className="container mx-auto py-6">{t('pianos.pianoNotFound')}</div>;
   }
 
   return (
@@ -84,23 +86,23 @@ export default function PianoEditar() {
       <div className="mb-6">
         <Button variant="ghost" onClick={() => setLocation('/pianos')} className="mb-4">
           <ArrowLeft className="mr-2 h-4 w-4" />
-          Volver a Pianos
+          {t('pianos.backToPianos')}
         </Button>
-        <h1 className="text-3xl font-bold">Editar Piano</h1>
+        <h1 className="text-3xl font-bold">{t('pianos.editPiano')}</h1>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle>Información del Piano</CardTitle>
+          <CardTitle>{t('pianos.pianoInformation')}</CardTitle>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="clientId">Cliente *</Label>
+                <Label htmlFor="clientId">{t('pianos.client')} *</Label>
                 <Select value={formData.clientId} onValueChange={(value) => handleChange('clientId', value)} required>
                   <SelectTrigger>
-                    <SelectValue placeholder="Seleccionar cliente..." />
+                    <SelectValue placeholder={t('pianos.selectClient')} />
                   </SelectTrigger>
                   <SelectContent>
                     {clients?.clients.map((client: any) => (
@@ -113,94 +115,94 @@ export default function PianoEditar() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="brand">Marca *</Label>
+                <Label htmlFor="brand">{t('pianos.brand')} *</Label>
                 <Input
                   id="brand"
                   value={formData.brand}
                   onChange={(e) => handleChange('brand', e.target.value)}
                   required
-                  placeholder="Yamaha, Steinway..."
+                  placeholder={t('pianos.brandPlaceholder')}
                 />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="model">Modelo *</Label>
+                <Label htmlFor="model">{t('pianos.model')} *</Label>
                 <Input
                   id="model"
                   value={formData.model}
                   onChange={(e) => handleChange('model', e.target.value)}
                   required
-                  placeholder="U1, C3X..."
+                  placeholder={t('pianos.modelPlaceholder')}
                 />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="serialNumber">Número de Serie</Label>
+                <Label htmlFor="serialNumber">{t('pianos.serialNumber')}</Label>
                 <Input
                   id="serialNumber"
                   value={formData.serialNumber}
                   onChange={(e) => handleChange('serialNumber', e.target.value)}
-                  placeholder="12345678"
+                  placeholder={t('pianos.serialNumberPlaceholder')}
                 />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="category">Tipo *</Label>
+                <Label htmlFor="category">{t('pianos.category')} *</Label>
                 <Select value={formData.category} onValueChange={(value) => handleChange('category', value)}>
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="vertical">Vertical</SelectItem>
-                    <SelectItem value="grand">De Cola</SelectItem>
+                    <SelectItem value="vertical">{t('pianos.categories.vertical')}</SelectItem>
+                    <SelectItem value="grand">{t('pianos.categories.grand')}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="condition">Condición *</Label>
+                <Label htmlFor="condition">{t('pianos.condition')} *</Label>
                 <Select value={formData.condition} onValueChange={(value) => handleChange('condition', value)}>
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="excellent">Excelente</SelectItem>
-                    <SelectItem value="good">Buena</SelectItem>
-                    <SelectItem value="fair">Regular</SelectItem>
-                    <SelectItem value="poor">Mala</SelectItem>
+                    <SelectItem value="excellent">{t('pianos.conditions.excellent')}</SelectItem>
+                    <SelectItem value="good">{t('pianos.conditions.good')}</SelectItem>
+                    <SelectItem value="fair">{t('pianos.conditions.fair')}</SelectItem>
+                    <SelectItem value="poor">{t('pianos.conditions.poor')}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
 
               <div className="space-y-2 md:col-span-2">
-                <Label htmlFor="location">Ubicación</Label>
+                <Label htmlFor="location">{t('pianos.location')}</Label>
                 <Input
                   id="location"
                   value={formData.location}
                   onChange={(e) => handleChange('location', e.target.value)}
-                  placeholder="Salón, Conservatorio..."
+                  placeholder={t('pianos.locationPlaceholder')}
                 />
               </div>
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="notes">Notas</Label>
+              <Label htmlFor="notes">{t('pianos.notes')}</Label>
               <Textarea
                 id="notes"
                 value={formData.notes}
                 onChange={(e) => handleChange('notes', e.target.value)}
-                placeholder="Notas adicionales sobre el piano..."
+                placeholder={t('pianos.notesPlaceholder')}
                 rows={4}
               />
             </div>
 
             <div className="flex gap-4 justify-end">
               <Button type="button" variant="outline" onClick={() => setLocation('/pianos')}>
-                Cancelar
+                {t('common.cancel')}
               </Button>
               <Button type="submit" disabled={updateMutation.isPending}>
                 <Save className="mr-2 h-4 w-4" />
-                {updateMutation.isPending ? 'Guardando...' : 'Actualizar Piano'}
+                {updateMutation.isPending ? t('common.saving') : t('pianos.updatePiano')}
               </Button>
             </div>
           </form>
