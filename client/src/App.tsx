@@ -42,6 +42,9 @@ import PaymentStats from "./pages/PaymentStats";
 import Presupuestos from "./pages/Presupuestos";
 import PresupuestoNuevo from "./pages/PresupuestoNuevo";
 import TiposServicio from "./pages/TiposServicio";
+import { PartnersAdmin } from "./pages/PartnersAdmin";
+import { ActivationCodesAdmin } from "./pages/ActivationCodesAdmin";
+import { LicensesAdmin } from "./pages/LicensesAdmin";
 
 function Router() {
   return (
@@ -228,6 +231,31 @@ function Router() {
         <ProtectedRoute>
           <Layout>
             <TiposServicio />
+          </Layout>
+        </ProtectedRoute>
+      </Route>
+
+      {/* MULTI-TENANT ADMIN */}
+      <Route path="/admin/partners">
+        <ProtectedRoute>
+          <Layout>
+            <PartnersAdmin />
+          </Layout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/admin/activation-codes">
+        <ProtectedRoute>
+          <Layout>
+            <ActivationCodesAdmin />
+          </Layout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/admin/licenses">
+        <ProtectedRoute>
+          <Layout>
+            <LicensesAdmin />
           </Layout>
         </ProtectedRoute>
       </Route>

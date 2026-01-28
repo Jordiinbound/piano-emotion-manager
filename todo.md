@@ -608,17 +608,17 @@
   - [x] Transacciones de licencias (userLicenseTransactions table)
 - [x] Comentar tabla licenses antigua para evitar conflictos
 - [x] Actualizar schema.ts con nuevas tablas
-- [ ] Aplicar migraciones a la base de datos
-- [ ] Crear migraciones de base de datos
-- [ ] Rediseñar partners.router.ts para gestión de fabricantes/distribuidores
-- [ ] Crear licenses.router.ts para gestión de licencias
-- [ ] Crear activationCodes.router.ts para códigos de partners
-- [ ] Actualizar organizations.router.ts con permisos configurables
-- [ ] Eliminar technicianMetrics.router.ts
+- [x] Aplicar migraciones a la base de datos
+- [x] Crear tablas en base de datos con SQL directo
+- [x] Crear partnersV2.router.ts para gestión de fabricantes/distribuidores
+- [x] Crear licenses.router.ts para gestión de licencias
+- [x] Crear activationCodes.router.ts para códigos de partners
+- [x] Actualizar organizations.router.ts con permisos configurables
+- [x] Registrar nuevos routers en server/routers.ts- [ ] Eliminar technicianMetrics.router.ts
 - [ ] Crear tests para todos los nuevos routers
-- [ ] Crear interfaz de gestión de partners (fabricantes/distribuidores)
-- [ ] Crear interfaz de gestión de licencias
-- [ ] Crear interfaz de códigos de activación
-- [ ] Crear interfaz de configuración de permisos de organización
-- [ ] Implementar flujo de activación con código de partner
+- [x] Crear interfaz de gestión de partners (fabricantes/distribuidores)
+- [x] Crear interfaz de gestión de licencias
+- [x] Crear interfaz de gestión de códigos de activación
+- [x] Registrar rutas en App.tsx
+- [ ] Crear interfaz de configuración de permisos de organizacionesmentar flujo de activación con código de partner
 - [ ] Probar sistema completo end-to-end

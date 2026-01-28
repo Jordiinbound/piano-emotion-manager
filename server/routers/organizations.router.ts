@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { publicProcedure, protectedProcedure, router } from "../_core/trpc.js";
 import { getDb } from "../db.js";
-import { organizations, organizationMembers, organizationInvitations, organizationActivityLog } from "../../drizzle/schema.js";
+import { organizations, organizationMembers, organizationInvitations, organizationActivityLog, organizationSettings } from "../../drizzle/schema.js";
 import { eq, and, or, desc, asc, like, count } from "drizzle-orm";
 import { TRPCError } from "@trpc/server";
 
@@ -421,5 +421,126 @@ export const organizationsRouter = router({
         limit: input.limit,
         totalPages: Math.ceil((totalResult?.count || 0) / input.limit),
       };
+    }),
+
+  // Obtener configuración de permisos de una organización
+  getSettings: protectedProcedure
+    .input(z.object({ organizationId: z.number() }))
+    .query(async ({ input, ctx }) => {      const db = await getDb();
+      if (!db) throw new Error('Database not available');
+
+      // Verificar que el usuario pertenece a la organización
+      const [member] = await db
+        .select()
+        .from(organizationMembers)
+        .where(
+          and(
+            eq(organizationMembers.organizationId, input.organizationId),
+            eq(organizationMembers.userId, ctx.user.id)
+          )
+        )
+        .limit(1);
+
+      if (!member) {
+        throw new TRPCError({ code: "FORBIDDEN", message: "No tienes acceso a esta organización" });
+      }
+
+      const [settings] = await db
+        .select()
+        .from(organizationSettings)
+        .where(eq(organizationSettings.organizationId, input.organizationId))
+        .limit(1);
+
+      // Si no existen settings, crear con valores por defecto
+      if (!settings) {
+        const [result] = await db.insert(organizationSettings).values({
+          organizationId: input.organizationId,
+        });
+
+        return {
+          id: result.insertId,
+          organizationId: input.organizationId,
+          shareClients: 1,
+          sharePianos: 1,
+          shareInventory: 1,
+          shareAgenda: 0,
+          shareInvoices: 1,
+          shareQuotes: 1,
+          membersCanViewOthersClients: 1,
+          membersCanEditOthersClients: 0,
+          membersCanViewOthersServices: 1,
+          membersCanViewOthersInvoices: 1,
+          autoAssignServices: 0,
+          requireApprovalForInvoices: 0,
+        };
+      }
+
+      return settings;
+    }),
+
+  // Actualizar configuración de permisos
+  updateSettings: protectedProcedure
+    .input(
+      z.object({
+        organizationId: z.number(),
+        shareClients: z.number().optional(),
+        sharePianos: z.number().optional(),
+        shareInventory: z.number().optional(),
+        shareAgenda: z.number().optional(),
+        shareInvoices: z.number().optional(),
+        shareQuotes: z.number().optional(),
+        membersCanViewOthersClients: z.number().optional(),
+        membersCanEditOthersClients: z.number().optional(),
+        membersCanViewOthersServices: z.number().optional(),
+        membersCanViewOthersInvoices: z.number().optional(),
+        autoAssignServices: z.number().optional(),
+        requireApprovalForInvoices: z.number().optional(),
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
+      const db = await getDb();
+      if (!db) throw new Error('Database not available');
+
+      // Verificar que el usuario es admin de la organización
+      const [member] = await db
+        .select()
+        .from(organizationMembers)
+        .where(
+          and(
+            eq(organizationMembers.organizationId, input.organizationId),
+            eq(organizationMembers.userId, ctx.user.id),
+            eq(organizationMembers.role, 'admin')
+          )
+        )
+        .limit(1);
+
+      if (!member) {
+        throw new TRPCError({ code: "FORBIDDEN", message: "Solo administradores pueden actualizar configuración" });
+      }
+
+      const { organizationId, ...updates } = input;
+
+      // Verificar si existen settings
+      const [existing] = await db
+        .select()
+        .from(organizationSettings)
+        .where(eq(organizationSettings.organizationId, organizationId))
+        .limit(1);
+
+      if (!existing) {
+        // Crear settings
+        await db.insert(organizationSettings).values({
+          organizationId,
+          ...updates,
+        });
+      } else {
+        // Actualizar settings
+        await db
+          .update(organizationSettings)
+          .set(updates)
+          .where(eq(organizationSettings.organizationId, organizationId));
+      }
+
+      return { success: true };
     }),
 });

@@ -20,6 +20,9 @@ import { organizationsRouter } from "./routers/organizations.router";
 // TEMPORARILY COMMENTED - Will be rewritten for new multi-tenant model
 // import { partnersRouter } from "./routers/partners.router";
 // import { technicianMetricsRouter } from "./routers/technicianMetrics.router";
+import { partnersV2Router } from "./routers/partnersV2.router";
+import { licensesRouter } from "./routers/licenses.router";
+import { activationCodesRouter } from "./routers/activationCodes.router";
 
 export const appRouter = router({
     // if you need to use socket.io, read and register route in server/_core/index.ts, all api should start with '/api/' so that the gateway can route correctly
@@ -54,6 +57,11 @@ export const appRouter = router({
   // TEMPORARILY COMMENTED - Will be rewritten for new multi-tenant model
   // partners: partnersRouter,
   // technicianMetrics: technicianMetricsRouter,
+  
+  // New multi-tenant system
+  partnersV2: partnersV2Router,
+  licenses: licensesRouter,
+  activationCodes: activationCodesRouter,
 
   // TODO: add more feature routers here
 });
