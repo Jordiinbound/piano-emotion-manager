@@ -15,25 +15,27 @@ import {
   CreditCard,
   LayoutGrid,
 } from 'lucide-react';
-
-const SETTINGS_SECTIONS = [
-  { key: 'ai', icon: Brain, label: 'Configuración IA', color: '#8B5CF6', href: null },
-  { key: 'calendar', icon: Calendar, label: 'Calendario', color: '#A855F7', href: null },
-  { key: 'inventory', icon: Package, label: 'Inventario', color: '#F59E0B', href: null },
-  { key: 'email', icon: Bell, label: 'Configuración Email', color: '#F97316', href: '/configuracion/email' },
-  { key: 'invoice', icon: FileText, label: 'Facturación', color: '#3B82F6', href: null },
-  { key: 'payment', icon: CreditCard, label: 'Pagos', color: '#635BFF', href: null },
-  { key: 'modules', icon: LayoutGrid, label: 'Módulos y Plan', color: '#8B5CF6', href: null },
-];
+import { useTranslation } from '@/hooks/use-translation';
 
 export default function Configuracion() {
+  const { t } = useTranslation();
   const [, setLocation] = useLocation();
+
+  const SETTINGS_SECTIONS = [
+    { key: 'ai', icon: Brain, label: t('settings.aiConfiguration'), color: '#8B5CF6', href: null },
+    { key: 'calendar', icon: Calendar, label: t('settings.calendar'), color: '#A855F7', href: null },
+    { key: 'inventory', icon: Package, label: t('settings.inventory'), color: '#F59E0B', href: null },
+    { key: 'email', icon: Bell, label: t('settings.emailConfiguration'), color: '#F97316', href: '/configuracion/email' },
+    { key: 'invoice', icon: FileText, label: t('settings.invoicing'), color: '#3B82F6', href: null },
+    { key: 'payment', icon: CreditCard, label: t('settings.payments'), color: '#635BFF', href: null },
+    { key: 'modules', icon: LayoutGrid, label: t('settings.modulesAndPlan'), color: '#8B5CF6', href: null },
+  ];
 
   const handleAction = (section: typeof SETTINGS_SECTIONS[0]) => {
     if (section.href) {
       setLocation(section.href);
     } else {
-      alert('Funcionalidad próximamente');
+      alert(t('common.comingSoon'));
     }
   };
 
@@ -42,8 +44,8 @@ export default function Configuracion() {
       {/* Header */}
       <div className="bg-white border-b border-gray-200 mb-6">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <h1 className="text-3xl font-bold text-gray-900">Configuración</h1>
-          <p className="text-sm text-gray-600 mt-1">Ajustes del sistema</p>
+          <h1 className="text-3xl font-bold text-gray-900">{t('settings.title')}</h1>
+          <p className="text-sm text-gray-600 mt-1">{t('settings.description')}</p>
         </div>
       </div>
 

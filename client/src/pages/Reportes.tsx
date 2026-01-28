@@ -7,8 +7,10 @@
 
 import { trpc } from '@/lib/trpc';
 import { Wrench, DollarSign, Users, Music, TrendingUp, TrendingDown } from 'lucide-react';
+import { useTranslation } from '@/hooks/use-translation';
 
 export default function Reportes() {
+  const { t } = useTranslation();
   const { data: servicesStats } = trpc.services.getStats.useQuery();
   const { data: clientsStats } = trpc.clients.getStats.useQuery();
   const { data: pianosStats } = trpc.pianos.getStats.useQuery();
@@ -16,28 +18,28 @@ export default function Reportes() {
 
   const metrics = [
     {
-      title: 'Servicios',
+      title: t('reports.services'),
       value: servicesStats?.total || 0,
       change: 0, // Placeholder para cambio porcentual
       icon: Wrench,
       color: '#003a8c',
     },
     {
-      title: 'Ingresos',
+      title: t('reports.revenue'),
       value: `€0.00`,
       change: 0,
       icon: DollarSign,
       color: '#047857',
     },
     {
-      title: 'Clientes',
+      title: t('reports.clients'),
       value: clientsStats?.total || 0,
       change: 0,
       icon: Users,
       color: '#e07a5f',
     },
     {
-      title: 'Pianos',
+      title: t('reports.pianos'),
       value: pianosStats?.total || 0,
       change: 0,
       icon: Music,
@@ -47,29 +49,41 @@ export default function Reportes() {
 
   const predictions = [
     {
-      label: 'Ingresos prev.',
+      label: t('reports.predictedRevenue'),
       value: 'N/A',
       color: '#047857',
     },
     {
-      label: 'Clientes riesgo',
+      label: t('reports.clientsAtRisk'),
       value: '0',
       color: '#c2410c',
     },
     {
-      label: 'Mant. próximo',
+      label: t('reports.nextMaintenance'),
       value: '0',
       color: '#1e40af',
     },
   ];
+
+  const labels: Record<string, string> = {
+    tuning: t('reports.serviceTypes.tuning'),
+    repair: t('reports.serviceTypes.repair'),
+    regulation: t('reports.serviceTypes.regulation'),
+    maintenance_basic: t('reports.serviceTypes.maintenance_basic'),
+    maintenance_complete: t('reports.serviceTypes.maintenance_complete'),
+    maintenance_premium: t('reports.serviceTypes.maintenance_premium'),
+    inspection: t('reports.serviceTypes.inspection'),
+    restoration: t('reports.serviceTypes.restoration'),
+    other: t('reports.serviceTypes.other'),
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <div className="bg-white border-b border-gray-200 mb-6">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <h1 className="text-3xl font-bold text-gray-900">Reportes</h1>
-          <p className="text-sm text-gray-600 mt-1">Análisis y estadísticas del negocio</p>
+          <h1 className="text-3xl font-bold text-gray-900">{t('reports.title')}</h1>
+          <p className="text-sm text-gray-600 mt-1">{t('reports.description')}</p>
         </div>
       </div>
 
@@ -119,9 +133,9 @@ export default function Reportes() {
         {/* Predicciones IA */}
         <div className="bg-white rounded-lg border border-gray-200 p-6 mb-8">
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl font-semibold text-gray-900">Predicciones IA</h2>
+            <h2 className="text-xl font-semibold text-gray-900">{t('reports.aiPredictions')}</h2>
             <button className="text-sm text-[#003a8c] hover:underline font-medium">
-              Ver todo →
+              {t('reports.viewAll')} →
             </button>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
@@ -148,28 +162,28 @@ export default function Reportes() {
 
         {/* Tendencias Mensuales */}
         <div className="bg-white rounded-lg border border-gray-200 p-6 mb-8">
-          <h2 className="text-xl font-semibold text-gray-900 mb-6">Tendencias Mensuales</h2>
+          <h2 className="text-xl font-semibold text-gray-900 mb-6">{t('reports.monthlyTrends')}</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <div className="p-4 bg-gray-50 rounded-lg">
-              <div className="text-sm text-gray-600 mb-1">Servicios Totales</div>
+              <div className="text-sm text-gray-600 mb-1">{t('reports.totalServices')}</div>
               <div className="text-2xl font-bold text-gray-900">
                 {servicesStats?.total || 0}
               </div>
             </div>
             <div className="p-4 bg-gray-50 rounded-lg">
-              <div className="text-sm text-gray-600 mb-1">Facturas Pagadas</div>
+              <div className="text-sm text-gray-600 mb-1">{t('reports.paidInvoices')}</div>
               <div className="text-2xl font-bold text-gray-900">
                 {invoicesStats?.paid || 0}
               </div>
             </div>
             <div className="p-4 bg-gray-50 rounded-lg">
-              <div className="text-sm text-gray-600 mb-1">Clientes Activos</div>
+              <div className="text-sm text-gray-600 mb-1">{t('reports.activeClients')}</div>
               <div className="text-2xl font-bold text-gray-900">
                 {clientsStats?.active || 0}
               </div>
             </div>
             <div className="p-4 bg-gray-50 rounded-lg">
-              <div className="text-sm text-gray-600 mb-1">Pianos Registrados</div>
+              <div className="text-sm text-gray-600 mb-1">{t('reports.registeredPianos')}</div>
               <div className="text-2xl font-bold text-gray-900">
                 {pianosStats?.vertical || 0} + {pianosStats?.grand || 0}
               </div>
@@ -179,7 +193,7 @@ export default function Reportes() {
 
         {/* Distribución de Servicios */}
         <div className="bg-white rounded-lg border border-gray-200 p-6 mb-8">
-          <h2 className="text-xl font-semibold text-gray-900 mb-6">Distribución de Servicios</h2>
+          <h2 className="text-xl font-semibold text-gray-900 mb-6">{t('reports.serviceDistribution')}</h2>
           <div className="space-y-4">
             {servicesStats?.byType && servicesStats.byType.length > 0 ? (
               servicesStats.byType.map((item) => {
@@ -194,17 +208,6 @@ export default function Reportes() {
                   inspection: '#c2410c',
                   restoration: '#1A1A2E',
                   other: '#6b7280',
-                };
-                const labels: Record<string, string> = {
-                  tuning: 'Afinación',
-                  repair: 'Reparación',
-                  regulation: 'Regulación',
-                  maintenance_basic: 'Mantenimiento Básico',
-                  maintenance_complete: 'Mantenimiento Completo',
-                  maintenance_premium: 'Mantenimiento Premium',
-                  inspection: 'Inspección',
-                  restoration: 'Restauración',
-                  other: 'Otros',
                 };
                 return (
                   <div key={item.serviceType}>
@@ -225,7 +228,7 @@ export default function Reportes() {
                 );
               })
             ) : (
-              <p className="text-sm text-gray-500 text-center py-4">No hay datos de servicios disponibles</p>
+              <p className="text-sm text-gray-500 text-center py-4">{t('reports.noServiceData')}</p>
             )}
           </div>
         </div>
