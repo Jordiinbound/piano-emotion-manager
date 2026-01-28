@@ -14,8 +14,10 @@ import { Switch } from '@/components/ui/switch';
 import { Loader2, Mail, CheckCircle, XCircle, AlertCircle } from 'lucide-react';
 import { trpc } from '@/lib/trpc';
 import { toast } from 'sonner';
+import { useTranslation } from '@/hooks/use-translation';
 
 export default function EmailConfig() {
+  const { t } = useTranslation();
   const [smtpConfig, setSmtpConfig] = useState({
     host: '',
     port: 587,
@@ -31,8 +33,8 @@ export default function EmailConfig() {
   // Mutaciones
   const configureSMTP = trpc.emailConfig.configureSMTP.useMutation({
     onSuccess: () => {
-      toast.success('Configuración guardada', {
-        description: 'La configuración SMTP se ha guardado correctamente',
+      toast.success(t('emailConfig.configurationSaved'), {
+        description: t('emailConfig.smtpConfigurationSavedSuccessfully'),
       });
       refetch();
     },
@@ -43,8 +45,8 @@ export default function EmailConfig() {
 
   const disconnect = trpc.emailConfig.disconnect.useMutation({
     onSuccess: () => {
-      toast.success('Desconectado', {
-        description: 'La configuración de email se ha eliminado',
+      toast.success(t('emailConfig.disconnected'), {
+        description: t('emailConfig.emailConfigurationRemoved'),
       });
       refetch();
     },
@@ -75,7 +77,7 @@ export default function EmailConfig() {
   };
 
   const handleDisconnect = () => {
-    if (confirm('¿Estás seguro de que quieres eliminar la configuración de email?')) {
+    if (confirm(t('emailConfig.confirmRemoveConfiguration'))) {
       disconnect.mutate();
     }
   };
@@ -94,9 +96,9 @@ export default function EmailConfig() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold text-gray-900">Configuración de Email</h1>
+        <h1 className="text-3xl font-bold text-gray-900">{t('emailConfig.title')}</h1>
         <p className="text-gray-600 mt-2">
-          Configura tu cuenta de email para enviar facturas a tus clientes
+          {t('emailConfig.description')}
         </p>
       </div>
 
@@ -108,7 +110,7 @@ export default function EmailConfig() {
               <div className="flex items-center gap-3">
                 <CheckCircle className="h-6 w-6 text-green-600" />
                 <div>
-                  <p className="font-semibold text-green-900">Email configurado</p>
+                  <p className="font-semibold text-green-900">{t('emailConfig.emailConfigured')}</p>
                   <p className="text-sm text-green-700">
                     {config.emailProvider === 'gmail_oauth' && `Gmail: ${config.oauth2Email}`}
                     {config.emailProvider === 'outlook_oauth' && `Outlook: ${config.oauth2Email}`}
@@ -124,10 +126,10 @@ export default function EmailConfig() {
                 {disconnect.isPending ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Desconectando...
+                    {t('emailConfig.disconnecting')}
                   </>
                 ) : (
-                  'Desconectar'
+                  t('emailConfig.disconnect')
                 )}
               </Button>
             </div>
@@ -138,9 +140,9 @@ export default function EmailConfig() {
       {/* OAuth2 Options */}
       <Card>
         <CardHeader>
-          <CardTitle>Autenticación OAuth2 (Recomendado)</CardTitle>
+          <CardTitle>{t('emailConfig.oauth2AuthenticationRecommended')}</CardTitle>
           <CardDescription>
-            Conecta tu cuenta de Gmail o Outlook de forma segura sin necesidad de contraseñas de aplicación
+            {t('emailConfig.oauth2Description')}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -161,7 +163,7 @@ export default function EmailConfig() {
                 onClick={handleGmailConnect}
                 disabled={!gmailAuthData?.authUrl}
               >
-                {config?.emailProvider === 'gmail_oauth' ? 'Reconectar Gmail' : 'Conectar con Gmail'}
+                {config?.emailProvider === 'gmail_oauth' ? t('emailConfig.reconnectGmail') : t('emailConfig.connectWithGmail')}
               </Button>
             </div>
 
@@ -181,7 +183,7 @@ export default function EmailConfig() {
                 onClick={handleOutlookConnect}
                 disabled={!outlookAuthData?.authUrl}
               >
-                {config?.emailProvider === 'outlook_oauth' ? 'Reconectar Outlook' : 'Conectar con Outlook'}
+                {config?.emailProvider === 'outlook_oauth' ? t('emailConfig.reconnectOutlook') : t('emailConfig.connectWithOutlook')}
               </Button>
             </div>
           </div>
@@ -191,10 +193,9 @@ export default function EmailConfig() {
             <div className="flex items-start gap-3 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
               <AlertCircle className="h-5 w-5 text-yellow-600 mt-0.5" />
               <div className="text-sm text-yellow-800">
-                <p className="font-semibold mb-1">Configuración OAuth2 pendiente</p>
+                <p className="font-semibold mb-1">{t('emailConfig.oauth2ConfigurationPending')}</p>
                 <p>
-                  Para usar OAuth2, el administrador debe configurar las credenciales de Google Cloud Console
-                  y Azure AD en las variables de entorno del proyecto.
+                  {t('emailConfig.oauth2ConfigurationInstructions')}
                 </p>
               </div>
             </div>
@@ -205,16 +206,16 @@ export default function EmailConfig() {
       {/* SMTP Manual */}
       <Card>
         <CardHeader>
-          <CardTitle>Configuración SMTP Manual</CardTitle>
+          <CardTitle>{t('emailConfig.manualSmtpConfiguration')}</CardTitle>
           <CardDescription>
-            Configura manualmente tu servidor SMTP si prefieres no usar OAuth2
+            {t('emailConfig.manualSmtpDescription')}
           </CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSMTPSubmit} className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="host">Servidor SMTP</Label>
+                <Label htmlFor="host">{t('emailConfig.smtpServer')}</Label>
                 <Input
                   id="host"
                   placeholder="smtp.gmail.com"
@@ -225,7 +226,7 @@ export default function EmailConfig() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="port">Puerto</Label>
+                <Label htmlFor="port">{t('emailConfig.port')}</Label>
                 <Input
                   id="port"
                   type="number"
@@ -237,11 +238,11 @@ export default function EmailConfig() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="user">Usuario (Email)</Label>
+                <Label htmlFor="user">{t('emailConfig.userEmail')}</Label>
                 <Input
                   id="user"
                   type="email"
-                  placeholder="tu@email.com"
+                  placeholder={t('emailConfig.userEmailPlaceholder')}
                   value={smtpConfig.user}
                   onChange={(e) => setSmtpConfig({ ...smtpConfig, user: e.target.value })}
                   required
@@ -249,7 +250,7 @@ export default function EmailConfig() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="password">Contraseña</Label>
+                <Label htmlFor="password">{t('emailConfig.password')}</Label>
                 <Input
                   id="password"
                   type="password"
@@ -261,7 +262,7 @@ export default function EmailConfig() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="fromName">Nombre del remitente</Label>
+                <Label htmlFor="fromName">{t('emailConfig.senderName')}</Label>
                 <Input
                   id="fromName"
                   placeholder="Piano Emotion"
@@ -276,7 +277,7 @@ export default function EmailConfig() {
                   checked={smtpConfig.secure}
                   onCheckedChange={(checked) => setSmtpConfig({ ...smtpConfig, secure: checked })}
                 />
-                <Label htmlFor="secure">Usar SSL/TLS</Label>
+                <Label htmlFor="secure">{t('emailConfig.useSslTls')}</Label>
               </div>
             </div>
 
@@ -288,10 +289,10 @@ export default function EmailConfig() {
               {configureSMTP.isPending ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Guardando...
+                  {t('common.saving')}
                 </>
               ) : (
-                'Guardar configuración SMTP'
+                t('emailConfig.saveSmtpConfiguration')
               )}
             </Button>
           </form>
@@ -301,28 +302,25 @@ export default function EmailConfig() {
       {/* Información adicional */}
       <Card>
         <CardHeader>
-          <CardTitle>Información</CardTitle>
+          <CardTitle>{t('emailConfig.information')}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-3 text-sm text-gray-600">
           <div className="flex items-start gap-2">
             <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
             <p>
-              <strong>OAuth2 (Recomendado):</strong> Más seguro, no requiere contraseñas de aplicación,
-              y los tokens se renuevan automáticamente.
+              <strong>{t('emailConfig.oauth2RecommendedTitle')}</strong> {t('emailConfig.oauth2RecommendedDescription')}
             </p>
           </div>
           <div className="flex items-start gap-2">
             <AlertCircle className="h-5 w-5 text-yellow-600 mt-0.5 flex-shrink-0" />
             <p>
-              <strong>SMTP Manual:</strong> Requiere contraseña de aplicación para Gmail.
-              Para Outlook, puede requerir configuración adicional.
+              <strong>{t('emailConfig.manualSmtpTitle')}</strong> {t('emailConfig.manualSmtpWarning')}
             </p>
           </div>
           <div className="flex items-start gap-2">
             <XCircle className="h-5 w-5 text-red-600 mt-0.5 flex-shrink-0" />
             <p>
-              <strong>Seguridad:</strong> Nunca compartas tus contraseñas. Usa contraseñas de aplicación
-              específicas cuando sea posible.
+              <strong>{t('emailConfig.securityTitle')}</strong> {t('emailConfig.securityWarning')}
             </p>
           </div>
         </CardContent>

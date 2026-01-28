@@ -9,8 +9,10 @@ import { trpc } from '@/lib/trpc';
 import { toast } from 'sonner';
 import { Mail, Server, Lock, User, ArrowLeft, Save, Eye, EyeOff } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
+import { useTranslation } from '@/hooks/use-translation';
 
 export default function ConfiguracionSMTP() {
+  const { t } = useTranslation();
   const [, setLocation] = useLocation();
   const { user } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
@@ -42,12 +44,12 @@ export default function ConfiguracionSMTP() {
   // Mutación para actualizar configuración SMTP
   const updateSmtpMutation = trpc.users.updateSmtpConfig.useMutation({
     onSuccess: () => {
-      toast.success('Configuración SMTP guardada', {
-        description: 'Ahora puedes enviar facturas por email',
+      toast.success(t('smtpConfig.smtpConfigurationSaved'), {
+        description: t('smtpConfig.nowYouCanSendInvoices'),
       });
     },
     onError: (error: any) => {
-      toast.error('Error al guardar configuración', {
+      toast.error(t('smtpConfig.errorSavingConfiguration'), {
         description: error.message,
       });
     },
@@ -58,7 +60,7 @@ export default function ConfiguracionSMTP() {
 
     // Validaciones
     if (!formData.smtpHost || !formData.smtpUser) {
-      toast.error('Por favor completa los campos obligatorios');
+      toast.error(t('smtpConfig.pleaseCompleteRequiredFields'));
       return;
     }
 
@@ -88,7 +90,7 @@ export default function ConfiguracionSMTP() {
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#e07a5f] mx-auto"></div>
-          <p className="mt-4 text-gray-600">Cargando...</p>
+          <p className="mt-4 text-gray-600">{t('common.loading')}</p>
         </div>
       </div>
     );
@@ -103,7 +105,7 @@ export default function ConfiguracionSMTP() {
             <Link href="/configuracion">
               <button className="inline-flex items-center gap-2 text-gray-600 hover:text-gray-900">
                 <ArrowLeft className="w-5 h-5" />
-                Volver
+                {t('common.back')}
               </button>
             </Link>
           </div>
@@ -112,9 +114,9 @@ export default function ConfiguracionSMTP() {
               <Mail className="w-6 h-6 text-blue-600" />
             </div>
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">Configuración SMTP</h1>
+              <h1 className="text-3xl font-bold text-gray-900">{t('smtpConfig.title')}</h1>
               <p className="text-sm text-gray-600 mt-1">
-                Configura tu servidor de correo para enviar facturas
+                {t('smtpConfig.description')}
               </p>
             </div>
           </div>
@@ -127,8 +129,7 @@ export default function ConfiguracionSMTP() {
           {/* Info Banner */}
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
             <p className="text-sm text-blue-800">
-              <strong>Nota:</strong> Necesitas configurar tu servidor SMTP para poder enviar facturas por
-              email. Puedes usar Gmail, Outlook, o cualquier otro proveedor de correo.
+              <strong>{t('smtpConfig.noteTitle')}</strong> {t('smtpConfig.noteDescription')}
             </p>
           </div>
 
@@ -136,7 +137,7 @@ export default function ConfiguracionSMTP() {
             {/* Servidor SMTP */}
             <div>
               <label htmlFor="smtpHost" className="block text-sm font-medium text-gray-700 mb-2">
-                Servidor SMTP <span className="text-red-500">*</span>
+                {t('smtpConfig.smtpServer')} <span className="text-red-500">*</span>
               </label>
               <div className="relative">
                 <Server className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
@@ -151,14 +152,14 @@ export default function ConfiguracionSMTP() {
                 />
               </div>
               <p className="mt-1 text-xs text-gray-500">
-                Ejemplos: smtp.gmail.com, smtp-mail.outlook.com, smtp.office365.com
+                {t('smtpConfig.smtpServerExamples')}
               </p>
             </div>
 
             {/* Puerto */}
             <div>
               <label htmlFor="smtpPort" className="block text-sm font-medium text-gray-700 mb-2">
-                Puerto <span className="text-red-500">*</span>
+                {t('smtpConfig.port')} <span className="text-red-500">*</span>
               </label>
               <input
                 id="smtpPort"
@@ -170,14 +171,14 @@ export default function ConfiguracionSMTP() {
                 required
               />
               <p className="mt-1 text-xs text-gray-500">
-                Puerto común: 587 (TLS) o 465 (SSL)
+                {t('smtpConfig.commonPort')}
               </p>
             </div>
 
             {/* Usuario/Email */}
             <div>
               <label htmlFor="smtpUser" className="block text-sm font-medium text-gray-700 mb-2">
-                Usuario (Email) <span className="text-red-500">*</span>
+                {t('smtpConfig.userEmail')} <span className="text-red-500">*</span>
               </label>
               <div className="relative">
                 <User className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
@@ -187,7 +188,7 @@ export default function ConfiguracionSMTP() {
                   value={formData.smtpUser}
                   onChange={(e) => handleChange('smtpUser', e.target.value)}
                   className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#e07a5f] focus:border-transparent"
-                  placeholder="tu@email.com"
+                  placeholder={t('smtpConfig.userEmailPlaceholder')}
                   required
                 />
               </div>
@@ -196,7 +197,7 @@ export default function ConfiguracionSMTP() {
             {/* Contraseña */}
             <div>
               <label htmlFor="smtpPassword" className="block text-sm font-medium text-gray-700 mb-2">
-                Contraseña {userData?.smtpPassword ? '(opcional - dejar vacío para mantener la actual)' : <span className="text-red-500">*</span>}
+                {t('smtpConfig.password')} {userData?.smtpPassword ? t('smtpConfig.passwordOptional') : <span className="text-red-500">*</span>}
               </label>
               <div className="relative">
                 <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
@@ -206,7 +207,7 @@ export default function ConfiguracionSMTP() {
                   value={formData.smtpPassword}
                   onChange={(e) => handleChange('smtpPassword', e.target.value)}
                   className="w-full pl-10 pr-12 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#e07a5f] focus:border-transparent"
-                  placeholder={userData?.smtpPassword ? '••••••••' : 'Contraseña de aplicación'}
+                  placeholder={userData?.smtpPassword ? '••••••••' : t('smtpConfig.passwordPlaceholder')}
                   required={!userData?.smtpPassword}
                 />
                 <button
@@ -218,14 +219,14 @@ export default function ConfiguracionSMTP() {
                 </button>
               </div>
               <p className="mt-1 text-xs text-gray-500">
-                Para Gmail, usa una <a href="https://support.google.com/accounts/answer/185833" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">contraseña de aplicación</a>
+                {t('smtpConfig.passwordHint')} <a href="https://support.google.com/accounts/answer/185833" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">{t('smtpConfig.appPassword')}</a>
               </p>
             </div>
 
             {/* Nombre del remitente */}
             <div>
               <label htmlFor="smtpFromName" className="block text-sm font-medium text-gray-700 mb-2">
-                Nombre del remitente (opcional)
+                {t('smtpConfig.senderName')}
               </label>
               <input
                 id="smtpFromName"
@@ -236,7 +237,7 @@ export default function ConfiguracionSMTP() {
                 placeholder={user?.name || 'Piano Emotion'}
               />
               <p className="mt-1 text-xs text-gray-500">
-                Nombre que aparecerá como remitente en los emails
+                {t('smtpConfig.senderNameHint')}
               </p>
             </div>
 
@@ -250,7 +251,7 @@ export default function ConfiguracionSMTP() {
                 className="w-5 h-5 text-[#e07a5f] border-gray-300 rounded focus:ring-[#e07a5f]"
               />
               <label htmlFor="smtpSecure" className="text-sm font-medium text-gray-700">
-                Usar conexión segura (SSL/TLS)
+                {t('smtpConfig.useSecureConnection')}
               </label>
             </div>
 
@@ -261,7 +262,7 @@ export default function ConfiguracionSMTP() {
                   type="button"
                   className="px-6 py-3 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
                 >
-                  Cancelar
+                  {t('common.cancel')}
                 </button>
               </Link>
               <button
@@ -270,7 +271,7 @@ export default function ConfiguracionSMTP() {
                 className="inline-flex items-center gap-2 px-6 py-3 bg-[#e07a5f] text-white rounded-lg font-semibold hover:bg-[#d06a4f] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <Save className="w-5 h-5" />
-                {updateSmtpMutation.isPending ? 'Guardando...' : 'Guardar Configuración'}
+                {updateSmtpMutation.isPending ? t('common.saving') : t('smtpConfig.saveConfiguration')}
               </button>
             </div>
           </form>
