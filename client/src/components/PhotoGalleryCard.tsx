@@ -16,6 +16,7 @@ export default function PhotoGalleryCard({ pianoId, photos: initialPhotos }: Pho
   const [photos, setPhotos] = useState<string[]>(initialPhotos || []);
   const [isUploading, setIsUploading] = useState(false);
 
+  const uploadMutation = trpc.pianos.uploadPianoPhoto.useMutation();
   const updateMutation = trpc.pianos.updatePiano.useMutation();
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -46,19 +47,21 @@ export default function PhotoGalleryCard({ pianoId, photos: initialPhotos }: Pho
           reader.readAsDataURL(file);
         });
 
-        // Aquí deberías llamar a un endpoint que suba la foto a S3
-        // Por ahora, simplemente agregamos la URL base64 (temporal)
-        newPhotoUrls.push(base64);
+        // Subir foto a R2 usando el endpoint tRPC
+        const result = await uploadMutation.mutateAsync({
+          pianoId,
+          photoBase64: base64,
+          filename: file.name,
+        });
+
+        if (result.success && result.url) {
+          newPhotoUrls.push(result.url);
+        }
       }
 
+      // Actualizar estado local con las nuevas URLs de R2
       const updatedPhotos = [...photos, ...newPhotoUrls];
       setPhotos(updatedPhotos);
-
-      // Actualizar el piano con las nuevas fotos
-      await updateMutation.mutateAsync({
-        id: pianoId,
-        photos: updatedPhotos,
-      });
 
       toast.success(t('pianos.photosUploaded'));
     } catch (error) {

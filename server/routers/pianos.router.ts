@@ -173,4 +173,59 @@ export const pianosRouter = router({
 
       return { success: true };
     }),
+
+  // Upload de foto de piano a R2
+  uploadPianoPhoto: publicProcedure
+    .input(
+      z.object({
+        pianoId: z.number(),
+        photoBase64: z.string(), // base64 string con formato "data:image/jpeg;base64,..."
+        filename: z.string(),
+      })
+    )
+    .mutation(async ({ input }) => {
+      const { storagePut } = await import('../storage');
+      const db = await getDb();
+      if (!db) throw new Error('Database not available');
+
+      // Extraer el contenido base64 (remover el prefijo "data:image/...;base64,")
+      const base64Data = input.photoBase64.split(',')[1];
+      if (!base64Data) {
+        throw new Error('Invalid base64 format');
+      }
+
+      // Convertir base64 a Buffer
+      const buffer = Buffer.from(base64Data, 'base64');
+
+      // Generar nombre único de archivo
+      const timestamp = Date.now();
+      const randomSuffix = Math.random().toString(36).substring(2, 8);
+      const extension = input.filename.split('.').pop() || 'jpg';
+      const uniqueFilename = `piano-${input.pianoId}-${timestamp}-${randomSuffix}.${extension}`;
+      const fileKey = `pianos/${input.pianoId}/${uniqueFilename}`;
+
+      // Detectar content type
+      const contentType = input.photoBase64.match(/data:(.*?);base64/)?.[1] || 'image/jpeg';
+
+      // Subir a R2
+      const { url } = await storagePut(fileKey, buffer, contentType);
+
+      // Obtener fotos actuales del piano
+      const [piano] = await db.select().from(pianos).where(eq(pianos.id, input.pianoId));
+      if (!piano) {
+        throw new Error('Piano not found');
+      }
+
+      // Agregar nueva foto al array
+      const currentPhotos = piano.photos ? (Array.isArray(piano.photos) ? piano.photos : [piano.photos]) : [];
+      const updatedPhotos = [...currentPhotos, url];
+
+      // Actualizar piano con nueva foto
+      await db
+        .update(pianos)
+        .set({ photos: updatedPhotos })
+        .where(eq(pianos.id, input.pianoId));
+
+      return { success: true, url };
+    }),
 });

@@ -1129,3 +1129,14 @@
 - [x] Implementar formulario de crear informe de inspección
 - [x] Agregar botón de "Generar PDF" en cada informe (placeholder)
 - [x] Agregar ruta /pianos/:id al App.tsx
+
+## Upload de Fotos a R2/Cloudflare
+- [x] Crear endpoint tRPC uploadPianoPhoto en router de pianos
+- [x] Implementar conversión de base64 a Buffer en el backend
+- [x] Usar storagePut() para subir fotos a R2
+- [x] Generar nombres únicos de archivo con timestamp y sufijo aleatorio
+- [x] Actualizar componente PhotoGalleryCard para usar el nuevo endpoint
+- [x] Reemplazar lógica de base64 por llamada tRPC (uploadPianoPhoto)
+- [x] Mantener validación de tamaño y tipo de archivo
+- [ ] Probar upload de múltiples fotos
+- [ ] Verificar URLs permanentes en R2
