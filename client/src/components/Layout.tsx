@@ -19,6 +19,7 @@ import {
   LogOut,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { LicenseNotificationBadge } from '@/components/LicenseNotificationBadge';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -257,6 +258,9 @@ export default function Layout({ children }: LayoutProps) {
             <div className="flex flex-1 items-center gap-3">
               <Music className="h-6 w-6 text-primary" />
               <h1 className="text-base font-semibold text-foreground">Piano Emotion</h1>
+            </div>
+            <div className="flex items-center gap-2">
+              <LicenseNotificationBadge />
             </div>
           </div>
         </div>

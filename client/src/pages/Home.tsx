@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Loader2, TrendingUp, Users, Wrench, Music, DollarSign, Calendar, ChevronLeft, ChevronRight, AlertCircle, CheckCircle, Lightbulb, UserPlus, FileText, Receipt, CalendarPlus, HelpCircle, Settings as SettingsIcon } from "lucide-react";
 import { trpc } from "@/lib/trpc";
 import { useLocation } from 'wouter';
+import { LicenseExpirationAlert } from '@/components/LicenseExpirationAlert';
 
 /**
  * Dashboard Screen - Elegant Professional Design
@@ -19,6 +20,8 @@ import { useLocation } from 'wouter';
 export default function Home() {
   const [, navigate] = useLocation();
   const [selectedMonth, setSelectedMonth] = useState(new Date());
+
+  // Mostrar alerta de licencias al inicio del dashboard
 
   // Obtener métricas del dashboard
   const { data: metrics, isLoading: metricsLoading } = trpc.dashboard.getMetrics.useQuery();
@@ -98,6 +101,9 @@ export default function Home() {
 
   return (
     <div className="space-y-6">
+      {/* Alerta de Licencias Próximas a Expirar */}
+      <LicenseExpirationAlert />
+
       {/* 1. BARRA DE ALERTAS - Compacta y elegante */}
       <button
         onClick={() => navigate('/alertas')}

@@ -635,3 +635,11 @@
 - [x] Registrar rutas en App.tsx
 - [ ] Implementar envío de notificaciones por email (TODO)
 - [ ] Crear interfaz de renovación de licencias (futuro)
+
+## Sistema de Notificaciones In-App
+- [x] Crear componente de badge de notificaciones para la barra de navegación
+- [x] Crear componente de dropdown con lista de notificaciones
+- [x] Integrar notificaciones en el Layout principal
+- [x] Agregar alertas de licencias próximas a expirar en el dashboard
+- [x] Implementar contador de notificaciones no leídas
+- [x] Sistema de refetch automático cada minuto
