@@ -758,3 +758,11 @@
 - [x] Verificar sistema de alertas en dashboard
 - [x] Conectar alertas con datos reales de BD (citas próximas, facturas vencidas)
 - [x] Actualizar modelo a llama-3.3-70b-versatile (Groq)
+
+## Revisar y restaurar sistema completo de alertas
+- [x] Revisar alerts.router.ts actual
+- [x] Identificar todas las alertas que debería mostrar el sistema
+- [x] Verificar si faltan alertas de servicios/citas próximas
+- [x] Verificar si faltan otros tipos de alertas
+- [x] Restaurar funcionalidades faltantes
+- [x] Sistema completo de alertas implementado
