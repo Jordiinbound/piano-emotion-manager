@@ -821,7 +821,7 @@
 #### Formularios (Nuevo/Editar)
 - [x] ClienteNuevo.tsx
 - [x] ClienteEditar.tsx
-- [ ] PianoNuevo.tsx
+- [x] PianoNuevo.tsx
 - [ ] PianoEditar.tsx
 - [ ] ServicioNuevo.tsx
 - [ ] ServicioEditar.tsx
