@@ -121,3 +121,31 @@ export async function storageDelete(relKey: string): Promise<{ success: boolean 
   
   return { success: true };
 }
+
+/**
+ * Sube una firma (base64) a R2 y devuelve la URL pública
+ * @param base64Signature - Firma en formato base64 (data:image/png;base64,...)
+ * @param entityType - Tipo de entidad (service, invoice, inspection)
+ * @param entityId - ID de la entidad
+ * @returns URL pública de la firma en R2
+ */
+export async function uploadSignatureToR2(
+  base64Signature: string,
+  entityType: 'service' | 'invoice' | 'inspection',
+  entityId: number
+): Promise<string> {
+  // Extraer el contenido base64 (sin el prefijo data:image/png;base64,)
+  const base64Data = base64Signature.replace(/^data:image\/\w+;base64,/, '');
+  const buffer = Buffer.from(base64Data, 'base64');
+
+  // Generar nombre único para el archivo
+  const timestamp = Date.now();
+  const randomSuffix = Math.random().toString(36).substring(2, 8);
+  const fileKey = `signatures/${entityType}/${entityId}-${timestamp}-${randomSuffix}.png`;
+
+  // Subir a R2
+  const { url } = await storagePut(fileKey, buffer, 'image/png');
+  
+  console.log(`[Storage] Signature uploaded to R2: ${fileKey}`);
+  return url;
+}

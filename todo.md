@@ -1476,3 +1476,33 @@
 - [ ] Agregar filtro por grupo de ruta (futuro)
 - [ ] Escribir tests para componente de mapa
 
+
+## FASE 5: Verificación y Completitud de Funcionalidades
+
+### Verificar Importación de Contabilidad, CRM y Workflows
+- [ ] Revisar GITHUB_FEATURES_REVIEW.md para identificar funcionalidades de contabilidad
+- [ ] Verificar si existe módulo de contabilidad en el proyecto actual
+- [ ] Revisar funcionalidades de CRM (gestión de relaciones con clientes)
+- [ ] Verificar si existe sistema de workflows/automatizaciones
+- [ ] Documentar funcionalidades faltantes de contabilidad
+- [ ] Documentar funcionalidades faltantes de CRM
+- [ ] Documentar funcionalidades faltantes de workflows
+
+### Incluir Firmas en PDFs Generados
+- [ ] Actualizar pdfInspectionService.ts para incluir firma del cliente
+- [ ] Agregar sección de firma en template HTML del PDF
+- [ ] Convertir firma base64 a imagen en el PDF
+- [ ] Posicionar firma en sección final del documento
+- [ ] Agregar línea de "Firma del cliente" con fecha
+- [ ] Probar generación de PDF con firma incluida
+
+### Optimizar Almacenamiento de Firmas (Base64 → R2)
+- [ ] Crear función helper para subir firma a R2 en server/storage.ts
+- [ ] Actualizar endpoint createService para subir firma a R2
+- [ ] Actualizar endpoint updateService para subir firma a R2
+- [ ] Actualizar endpoint createInvoice para subir firma a R2
+- [ ] Actualizar endpoint updateInvoice para subir firma a R2
+- [ ] Migrar firmas existentes de base64 a R2 (script de migración)
+- [ ] Actualizar componentes frontend para usar URLs de R2
+- [ ] Verificar que firmas se cargan correctamente desde R2
+- [ ] Escribir tests para almacenamiento de firmas en R2

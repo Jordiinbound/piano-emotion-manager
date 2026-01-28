@@ -405,6 +405,29 @@ function generateInspectionHTML(
     </div>
     ` : ''}
 
+    ${report.clientSignature ? `
+    <!-- Firma del Cliente -->
+    <div class="section" style="page-break-inside: avoid;">
+      <h2 class="section-title">Firma del Cliente</h2>
+      <div style="background: #f9fafb; padding: 20px; border-radius: 8px; border: 1px solid #e5e7eb;">
+        <p style="margin-bottom: 15px; color: #6b7280; font-size: 14px;">Confirmo que he revisado este informe de inspección y estoy conforme con los hallazgos y recomendaciones presentados.</p>
+        <div style="text-align: center; margin: 20px 0;">
+          <img src="${report.clientSignature}" alt="Firma del cliente" style="max-width: 300px; max-height: 150px; border: 1px solid #d1d5db; border-radius: 4px; background: white; padding: 10px;" />
+        </div>
+        <div style="display: flex; justify-content: space-between; margin-top: 20px; padding-top: 15px; border-top: 1px solid #e5e7eb;">
+          <div>
+            <div style="font-size: 12px; color: #6b7280; margin-bottom: 5px;">FECHA DE FIRMA</div>
+            <div style="font-size: 14px; font-weight: 600; color: #1f2937;">${new Date().toLocaleDateString('es-ES')}</div>
+          </div>
+          <div style="text-align: right;">
+            <div style="font-size: 12px; color: #6b7280; margin-bottom: 5px;">HORA</div>
+            <div style="font-size: 14px; font-weight: 600; color: #1f2937;">${new Date().toLocaleTimeString('es-ES')}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    ` : ''}
+
     <div class="footer">
       <p><strong>Piano Emotion Manager</strong></p>
       <p>Sistema profesional de gestión de pianos acústicos</p>
