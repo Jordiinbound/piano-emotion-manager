@@ -7,8 +7,10 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Bell, AlertTriangle, Mail, RefreshCw } from "lucide-react";
 import { toast } from "sonner";
+import { useTranslation } from "@/hooks/use-translation";
 
 export function LicenseNotifications() {
+  const { t } = useTranslation();
   const [daysThreshold, setDaysThreshold] = useState(30);
 
   const { data: myExpiringLicenses, refetch: refetchMy } = trpc.licenseNotifications.getExpiringLicenses.useQuery({
@@ -23,7 +25,7 @@ export function LicenseNotifications() {
 
   const sendNotificationMutation = trpc.licenseNotifications.sendExpirationNotification.useMutation({
     onSuccess: () => {
-      toast.success("Notificación enviada");
+      toast.success(t('licenseNotifications.notificationSent'));
     },
     onError: (error) => {
       toast.error(error.message);
@@ -36,9 +38,9 @@ export function LicenseNotifications() {
   return (
     <div className="container py-8 space-y-6">
       <div>
-        <h1 className="text-3xl font-bold">Notificaciones de Licencias</h1>
+        <h1 className="text-3xl font-bold">{t('licenseNotifications.title')}</h1>
         <p className="text-muted-foreground">
-          Gestiona las licencias próximas a expirar
+          {t('licenseNotifications.description')}
         </p>
       </div>
 
@@ -46,10 +48,9 @@ export function LicenseNotifications() {
       {urgentCount > 0 && (
         <Alert variant="destructive">
           <AlertTriangle className="h-4 w-4" />
-          <AlertTitle>¡Atención Urgente!</AlertTitle>
+          <AlertTitle>{t('licenseNotifications.urgentAttention')}</AlertTitle>
           <AlertDescription>
-            Tienes {urgentCount} licencia{urgentCount > 1 ? 's' : ''} que expira{urgentCount > 1 ? 'n' : ''} en menos de 7 días.
-            Renueva ahora para evitar interrupciones en el servicio.
+            {t('licenseNotifications.urgentMessage', { count: urgentCount })}
           </AlertDescription>
         </Alert>
       )}
@@ -57,9 +58,9 @@ export function LicenseNotifications() {
       {totalExpiring > 0 && urgentCount === 0 && (
         <Alert>
           <Bell className="h-4 w-4" />
-          <AlertTitle>Renovación Próxima</AlertTitle>
+          <AlertTitle>{t('licenseNotifications.upcomingRenewal')}</AlertTitle>
           <AlertDescription>
-            Tienes {totalExpiring} licencia{totalExpiring > 1 ? 's' : ''} que expira{totalExpiring > 1 ? 'n' : ''} en los próximos {daysThreshold} días.
+            {t('licenseNotifications.upcomingMessage', { count: totalExpiring, days: daysThreshold })}
           </AlertDescription>
         </Alert>
       )}
@@ -69,32 +70,32 @@ export function LicenseNotifications() {
         <CardHeader>
           <div className="flex items-center justify-between">
             <div>
-              <CardTitle>Mis Licencias</CardTitle>
+              <CardTitle>{t('licenseNotifications.myLicenses')}</CardTitle>
               <CardDescription>
-                Licencias que expiran en los próximos {daysThreshold} días
+                {t('licenseNotifications.licensesExpiringIn', { days: daysThreshold })}
               </CardDescription>
             </div>
             <Button variant="outline" size="sm" onClick={() => refetchMy()}>
               <RefreshCw className="h-4 w-4 mr-2" />
-              Actualizar
+              {t('licenseNotifications.refresh')}
             </Button>
           </div>
         </CardHeader>
         <CardContent>
           {!myExpiringLicenses || myExpiringLicenses.length === 0 ? (
             <div className="text-center py-8 text-muted-foreground">
-              No tienes licencias próximas a expirar
+              {t('licenseNotifications.noExpiringLicenses')}
             </div>
           ) : (
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Licencia</TableHead>
-                  <TableHead>Tipo</TableHead>
-                  <TableHead>Estado</TableHead>
-                  <TableHead>Expira en</TableHead>
-                  <TableHead>Fecha de Expiración</TableHead>
-                  <TableHead>Acciones</TableHead>
+                  <TableHead>{t('licenseNotifications.license')}</TableHead>
+                  <TableHead>{t('licenseNotifications.type')}</TableHead>
+                  <TableHead>{t('licenseNotifications.status')}</TableHead>
+                  <TableHead>{t('licenseNotifications.expiresIn')}</TableHead>
+                  <TableHead>{t('licenseNotifications.expirationDate')}</TableHead>
+                  <TableHead>{t('licenseNotifications.actions')}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -103,7 +104,7 @@ export function LicenseNotifications() {
                     <TableCell className="font-mono">#{license.id}</TableCell>
                     <TableCell>
                       <Badge variant={license.licenseType === 'direct' ? 'default' : 'secondary'}>
-                        {license.licenseType === 'direct' ? 'Directa' : 'Partner'}
+                        {license.licenseType === 'direct' ? t('licenseNotifications.direct') : t('licenseNotifications.partner')}
                       </Badge>
                     </TableCell>
                     <TableCell>
@@ -113,7 +114,7 @@ export function LicenseNotifications() {
                     </TableCell>
                     <TableCell>
                       <span className={license.isUrgent ? 'text-red-600 font-semibold' : ''}>
-                        {license.daysUntilExpiration} día{license.daysUntilExpiration !== 1 ? 's' : ''}
+                        {license.daysUntilExpiration} {t('licenseNotifications.days', { count: license.daysUntilExpiration })}
                       </span>
                     </TableCell>
                     <TableCell>
@@ -127,13 +128,13 @@ export function LicenseNotifications() {
                           onClick={() => sendNotificationMutation.mutate({ licenseId: license.id })}
                         >
                           <Mail className="h-4 w-4 mr-1" />
-                          Notificar
+                          {t('licenseNotifications.notify')}
                         </Button>
                         <Button
                           size="sm"
                           onClick={() => window.location.href = '/licenses/renew?id=' + license.id}
                         >
-                          Renovar
+                          {t('licenseNotifications.renew')}
                         </Button>
                       </div>
                     </TableCell>
@@ -150,32 +151,32 @@ export function LicenseNotifications() {
         <CardHeader>
           <div className="flex items-center justify-between">
             <div>
-              <CardTitle>Todas las Licencias del Sistema</CardTitle>
+              <CardTitle>{t('licenseNotifications.allSystemLicenses')}</CardTitle>
               <CardDescription>
-                Vista administrativa de todas las licencias próximas a expirar
+                {t('licenseNotifications.adminViewDescription')}
               </CardDescription>
             </div>
             <Button variant="outline" size="sm" onClick={() => refetchAll()}>
               <RefreshCw className="h-4 w-4 mr-2" />
-              Actualizar
+              {t('licenseNotifications.refresh')}
             </Button>
           </div>
         </CardHeader>
         <CardContent>
           {!allExpiringData || allExpiringData.licenses.length === 0 ? (
             <div className="text-center py-8 text-muted-foreground">
-              No hay licencias próximas a expirar en el sistema
+              {t('licenseNotifications.noSystemLicensesExpiring')}
             </div>
           ) : (
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Licencia</TableHead>
-                  <TableHead>Usuario</TableHead>
-                  <TableHead>Email</TableHead>
-                  <TableHead>Tipo</TableHead>
-                  <TableHead>Expira en</TableHead>
-                  <TableHead>Fecha</TableHead>
+                  <TableHead>{t('licenseNotifications.license')}</TableHead>
+                  <TableHead>{t('licenseNotifications.user')}</TableHead>
+                  <TableHead>{t('licenseNotifications.email')}</TableHead>
+                  <TableHead>{t('licenseNotifications.type')}</TableHead>
+                  <TableHead>{t('licenseNotifications.expiresIn')}</TableHead>
+                  <TableHead>{t('licenseNotifications.date')}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -186,12 +187,12 @@ export function LicenseNotifications() {
                     <TableCell className="text-sm text-muted-foreground">{license.userEmail}</TableCell>
                     <TableCell>
                       <Badge variant={license.licenseType === 'direct' ? 'default' : 'secondary'}>
-                        {license.licenseType === 'direct' ? 'Directa' : 'Partner'}
+                        {license.licenseType === 'direct' ? t('licenseNotifications.direct') : t('licenseNotifications.partner')}
                       </Badge>
                     </TableCell>
                     <TableCell>
                       <span className={license.isUrgent ? 'text-red-600 font-semibold' : ''}>
-                        {license.daysUntilExpiration} día{license.daysUntilExpiration !== 1 ? 's' : ''}
+                        {license.daysUntilExpiration} {t('licenseNotifications.days', { count: license.daysUntilExpiration })}
                       </span>
                     </TableCell>
                     <TableCell>
@@ -209,20 +210,20 @@ export function LicenseNotifications() {
       <div className="grid gap-4 md:grid-cols-3">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Expirando</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('licenseNotifications.totalExpiring')}</CardTitle>
             <Bell className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{allExpiringData?.total || 0}</div>
             <p className="text-xs text-muted-foreground">
-              En los próximos {daysThreshold} días
+              {t('licenseNotifications.inNextDays', { days: daysThreshold })}
             </p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Urgentes</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('licenseNotifications.urgent')}</CardTitle>
             <AlertTriangle className="h-4 w-4 text-red-500" />
           </CardHeader>
           <CardContent>
@@ -230,20 +231,20 @@ export function LicenseNotifications() {
               {allExpiringData?.licenses.filter(l => l.isUrgent).length || 0}
             </div>
             <p className="text-xs text-muted-foreground">
-              Menos de 7 días
+              {t('licenseNotifications.lessThan7Days')}
             </p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Mis Licencias</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('licenseNotifications.myLicenses')}</CardTitle>
             <Bell className="h-4 w-4 text-blue-500" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-blue-500">{totalExpiring}</div>
             <p className="text-xs text-muted-foreground">
-              Requieren atención
+              {t('licenseNotifications.requireAttention')}
             </p>
           </CardContent>
         </Card>

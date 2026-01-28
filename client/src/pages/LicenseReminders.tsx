@@ -14,8 +14,10 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { useTranslation } from "@/hooks/use-translation";
 
 export function LicenseReminders() {
+  const { t } = useTranslation();
   const [sending, setSending] = useState(false);
   
   const { data: summary, isLoading, refetch } = trpc.licenseReminders.getRemindersSummary.useQuery();
@@ -25,10 +27,10 @@ export function LicenseReminders() {
     setSending(true);
     try {
       const result = await sendRemindersMutation.mutateAsync();
-      toast.success(`Se enviaron ${result.remindersSent} recordatorios al owner`);
+      toast.success(t('licenseReminders.remindersSentSuccess', { count: result.remindersSent }));
       refetch();
     } catch (error: any) {
-      toast.error("Error al enviar recordatorios: " + error.message);
+      toast.error(t('licenseReminders.errorSendingReminders') + ': ' + error.message);
     } finally {
       setSending(false);
     }
@@ -41,9 +43,9 @@ export function LicenseReminders() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold">Recordatorios de Licencias</h1>
+          <h1 className="text-3xl font-bold">{t('licenseReminders.title')}</h1>
           <p className="text-muted-foreground mt-2">
-            Sistema automático de notificaciones para licencias próximas a expirar
+            {t('licenseReminders.description')}
           </p>
         </div>
         <Button 
@@ -52,18 +54,16 @@ export function LicenseReminders() {
           size="lg"
         >
           <Send className="mr-2 h-4 w-4" />
-          {sending ? "Enviando..." : "Enviar Recordatorios"}
+          {sending ? t('licenseReminders.sending') : t('licenseReminders.sendReminders')}
         </Button>
       </div>
 
       {/* Alert Info */}
       <Alert>
         <Bell className="h-4 w-4" />
-        <AlertTitle>Sistema de Recordatorios Automáticos</AlertTitle>
+        <AlertTitle>{t('licenseReminders.automaticRemindersSystem')}</AlertTitle>
         <AlertDescription>
-          Este sistema envía notificaciones al owner cuando las licencias están próximas a expirar.
-          Los recordatorios se envían a 30, 15 y 7 días antes de la expiración.
-          Las notificaciones se entregan directamente en la app del owner.
+          {t('licenseReminders.systemDescription')}
         </AlertDescription>
       </Alert>
 
@@ -80,7 +80,7 @@ export function LicenseReminders() {
             <CardContent>
               <div className="text-2xl font-bold">{item.count}</div>
               <p className="text-xs text-muted-foreground">
-                Licencias expirando en {item.days} días
+                {t('licenseReminders.licensesExpiringInDays', { days: item.days })}
               </p>
             </CardContent>
           </Card>
@@ -92,7 +92,7 @@ export function LicenseReminders() {
         {isLoading ? (
           <Card>
             <CardContent className="py-8">
-              <p className="text-center text-muted-foreground">Cargando recordatorios...</p>
+              <p className="text-center text-muted-foreground">{t('licenseReminders.loadingReminders')}</p>
             </CardContent>
           </Card>
         ) : summary && summary.length > 0 ? (
@@ -103,10 +103,10 @@ export function LicenseReminders() {
                   <Badge variant={item.days === 7 ? "destructive" : item.days === 15 ? "default" : "secondary"}>
                     {item.count}
                   </Badge>
-                  Licencias expirando en {item.label}
+                  {t('licenseReminders.licensesExpiringIn', { label: item.label })}
                 </CardTitle>
                 <CardDescription>
-                  Estas licencias necesitan recordatorio de renovación
+                  {t('licenseReminders.needRenewalReminder')}
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -114,18 +114,18 @@ export function LicenseReminders() {
                   <Table>
                     <TableHeader>
                       <TableRow>
-                        <TableHead>ID Licencia</TableHead>
-                        <TableHead>ID Usuario</TableHead>
-                        <TableHead>Precio</TableHead>
-                        <TableHead>Fecha Expiración</TableHead>
-                        <TableHead>Estado</TableHead>
+                        <TableHead>{t('licenseReminders.licenseId')}</TableHead>
+                        <TableHead>{t('licenseReminders.userId')}</TableHead>
+                        <TableHead>{t('licenseReminders.price')}</TableHead>
+                        <TableHead>{t('licenseReminders.expirationDate')}</TableHead>
+                        <TableHead>{t('licenseReminders.status')}</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
                       {item.licenses.map((license) => (
                         <TableRow key={license.id}>
                           <TableCell className="font-medium">#{license.id}</TableCell>
-                          <TableCell>Usuario #{license.userId}</TableCell>
+                          <TableCell>{t('licenseReminders.userNumber', { id: license.userId })}</TableCell>
                           <TableCell>
                             {license.price} {license.currency}
                           </TableCell>
@@ -138,7 +138,7 @@ export function LicenseReminders() {
                           </TableCell>
                           <TableCell>
                             <Badge variant={item.days === 7 ? "destructive" : "default"}>
-                              {item.days === 7 ? "Urgente" : "Pendiente"}
+                              {item.days === 7 ? t('licenseReminders.urgent') : t('licenseReminders.pending')}
                             </Badge>
                           </TableCell>
                         </TableRow>
@@ -147,7 +147,7 @@ export function LicenseReminders() {
                   </Table>
                 ) : (
                   <p className="text-center text-muted-foreground py-4">
-                    No hay licencias expirando en {item.days} días
+                    {t('licenseReminders.noLicensesExpiringInDays', { days: item.days })}
                   </p>
                 )}
               </CardContent>
@@ -158,9 +158,9 @@ export function LicenseReminders() {
             <CardContent className="py-8">
               <div className="text-center space-y-2">
                 <CheckCircle2 className="h-12 w-12 text-green-600 mx-auto" />
-                <p className="text-lg font-medium">No hay recordatorios pendientes</p>
+                <p className="text-lg font-medium">{t('licenseReminders.noPendingReminders')}</p>
                 <p className="text-sm text-muted-foreground">
-                  Todas las licencias están al día o no hay licencias próximas a expirar
+                  {t('licenseReminders.allLicensesUpToDate')}
                 </p>
               </div>
             </CardContent>
@@ -171,7 +171,7 @@ export function LicenseReminders() {
       {/* Info Footer */}
       <Card>
         <CardHeader>
-          <CardTitle>Cómo funciona el sistema</CardTitle>
+          <CardTitle>{t('licenseReminders.howSystemWorks')}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="flex items-start gap-3">
@@ -179,9 +179,9 @@ export function LicenseReminders() {
               <Bell className="h-4 w-4 text-primary" />
             </div>
             <div>
-              <p className="font-medium">Notificaciones Automáticas</p>
+              <p className="font-medium">{t('licenseReminders.automaticNotifications')}</p>
               <p className="text-sm text-muted-foreground">
-                El sistema verifica diariamente las licencias y envía recordatorios automáticos al owner
+                {t('licenseReminders.automaticNotificationsDescription')}
               </p>
             </div>
           </div>
@@ -190,9 +190,9 @@ export function LicenseReminders() {
               <Calendar className="h-4 w-4 text-primary" />
             </div>
             <div>
-              <p className="font-medium">Múltiples Recordatorios</p>
+              <p className="font-medium">{t('licenseReminders.multipleReminders')}</p>
               <p className="text-sm text-muted-foreground">
-                Se envían 3 recordatorios: a 30, 15 y 7 días antes de la expiración
+                {t('licenseReminders.multipleRemindersDescription')}
               </p>
             </div>
           </div>
@@ -201,9 +201,9 @@ export function LicenseReminders() {
               <AlertCircle className="h-4 w-4 text-primary" />
             </div>
             <div>
-              <p className="font-medium">Información Detallada</p>
+              <p className="font-medium">{t('licenseReminders.detailedInformation')}</p>
               <p className="text-sm text-muted-foreground">
-                Cada notificación incluye datos del usuario, tipo de licencia, precio y fecha de expiración
+                {t('licenseReminders.detailedInformationDescription')}
               </p>
             </div>
           </div>
