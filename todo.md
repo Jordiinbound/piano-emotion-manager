@@ -1191,3 +1191,36 @@
 - [ ] Implementar timeline de fotos por fecha
 - [ ] Agregar etiquetas y categorías a las fotos
 - [ ] Verificar que todas las funcionalidades del proyecto original estén migradas
+
+## FASE 3.4: Funcionalidades Avanzadas de Galería de Fotos
+
+### Compresión de Imágenes con Sharp
+- [x] Instalar sharp como dependencia
+- [x] Crear servicio imageCompression.ts con funciones de compresión
+- [x] Implementar compresión automática antes de subir a R2
+- [x] Configurar calidad de compresión (80% JPEG, optimización PNG)
+- [x] Mantener aspect ratio original
+- [x] Generar thumbnails opcionales
+- [x] Actualizar endpoint uploadPianoPhoto para usar compresión
+- [ ] Escribir tests para servicio de compresión
+
+### Lightbox Profesional con Zoom
+- [x] Instalar yet-another-react-lightbox
+- [x] Crear componente PhotoLightbox.tsx
+- [x] Implementar navegación entre fotos (anterior/siguiente)
+- [x] Agregar controles de zoom (in/out) con plugin Zoom
+- [x] Implementar gestos táctiles para móvil (pinch, swipe, pull-down)
+- [x] Agregar contador de fotos (integrado en lightbox)
+- [x] Integrar lightbox en PhotoGalleryCard con click en fotos
+- [x] Agregar animaciones suaves de transición (fade, swipe)
+
+### Timeline Fotográfico
+- [x] Crear componente PhotoTimeline.tsx
+- [x] Agrupar fotos por fecha de captura
+- [x] Implementar visualización cronológica (más reciente primero)
+- [x] Agregar indicadores de fecha en el timeline con iconos
+- [x] Integrar timeline en página PianoDetalle como cuarta tab
+- [x] Integrar lightbox en timeline para visualización ampliada
+- [ ] Agregar campo photoDate a tabla pianos o crear tabla photo_metadata (futuro)
+- [ ] Implementar scroll infinito o paginación (futuro)
+- [ ] Agregar filtros por rango de fechas (futuro)

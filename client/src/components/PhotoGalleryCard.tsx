@@ -1,10 +1,11 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { trpc } from '../lib/trpc';
 import { Button } from './ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Image as ImageIcon, Plus, Trash2, Upload } from 'lucide-react';
 import { toast } from 'sonner';
 import { useTranslation } from '@/hooks/use-translation';
+import { PhotoLightbox } from './PhotoLightbox';
 
 interface PhotoGalleryCardProps {
   pianoId: number;
@@ -15,6 +16,8 @@ export default function PhotoGalleryCard({ pianoId, photos: initialPhotos }: Pho
   const { t } = useTranslation();
   const [photos, setPhotos] = useState<string[]>(initialPhotos || []);
   const [isUploading, setIsUploading] = useState(false);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [lightboxIndex, setLightboxIndex] = useState(0);
 
   const uploadMutation = trpc.pianos.uploadPianoPhoto.useMutation();
   const deleteMutation = trpc.pianos.deletePianoPhoto.useMutation();
@@ -147,13 +150,20 @@ export default function PhotoGalleryCard({ pianoId, photos: initialPhotos }: Pho
                 <img
                   src={photo}
                   alt={`Piano photo ${index + 1}`}
-                  className="w-full h-48 object-cover rounded-lg border"
+                  className="w-full h-48 object-cover rounded-lg border cursor-pointer"
+                  onClick={() => {
+                    setLightboxIndex(index);
+                    setLightboxOpen(true);
+                  }}
                 />
                 <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg flex items-center justify-center">
                   <Button
                     size="sm"
                     variant="destructive"
-                    onClick={() => handleDeletePhoto(index)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDeletePhoto(index);
+                    }}
                   >
                     <Trash2 className="h-4 w-4" />
                   </Button>
@@ -166,6 +176,14 @@ export default function PhotoGalleryCard({ pianoId, photos: initialPhotos }: Pho
           {t('pianos.photoUploadHint')}
         </p>
       </CardContent>
+      
+      {/* Lightbox para visualización ampliada con zoom */}
+      <PhotoLightbox
+        photos={photos}
+        isOpen={lightboxOpen}
+        onClose={() => setLightboxOpen(false)}
+        initialIndex={lightboxIndex}
+      />
     </Card>
   );
 }

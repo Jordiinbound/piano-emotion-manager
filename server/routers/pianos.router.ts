@@ -185,30 +185,45 @@ export const pianosRouter = router({
     )
     .mutation(async ({ input }) => {
       const { storagePut } = await import('../storage');
+      const { compressImage, base64ToBuffer, detectImageFormat, validateImage } = await import('../services/imageCompression');
       const db = await getDb();
       if (!db) throw new Error('Database not available');
 
-      // Extraer el contenido base64 (remover el prefijo "data:image/...;base64,")
-      const base64Data = input.photoBase64.split(',')[1];
-      if (!base64Data) {
-        throw new Error('Invalid base64 format');
+      // Convertir base64 a Buffer
+      const originalBuffer = base64ToBuffer(input.photoBase64);
+
+      // Validar que sea una imagen válida
+      const isValid = await validateImage(originalBuffer);
+      if (!isValid) {
+        throw new Error('Invalid image format');
       }
 
-      // Convertir base64 a Buffer
-      const buffer = Buffer.from(base64Data, 'base64');
+      // Detectar formato de imagen
+      const imageFormat = detectImageFormat(input.photoBase64);
+
+      // Comprimir imagen (reduce 60-80% del tamaño)
+      const { compressed, metadata } = await compressImage(originalBuffer, {
+        quality: 80,
+        maxWidth: 1920,
+        maxHeight: 1920,
+        format: imageFormat,
+      });
+
+      // Log de compresión para debugging
+      console.log(`[Image Compression] Original: ${metadata.originalSize} bytes, Compressed: ${metadata.compressedSize} bytes, Ratio: ${metadata.compressionRatio}%`);
 
       // Generar nombre único de archivo
       const timestamp = Date.now();
       const randomSuffix = Math.random().toString(36).substring(2, 8);
-      const extension = input.filename.split('.').pop() || 'jpg';
+      const extension = metadata.format === 'jpeg' ? 'jpg' : metadata.format;
       const uniqueFilename = `piano-${input.pianoId}-${timestamp}-${randomSuffix}.${extension}`;
       const fileKey = `pianos/${input.pianoId}/${uniqueFilename}`;
 
       // Detectar content type
-      const contentType = input.photoBase64.match(/data:(.*?);base64/)?.[1] || 'image/jpeg';
+      const contentType = `image/${metadata.format}`;
 
-      // Subir a R2
-      const { url } = await storagePut(fileKey, buffer, contentType);
+      // Subir imagen comprimida a R2
+      const { url } = await storagePut(fileKey, compressed, contentType);
 
       // Obtener fotos actuales del piano
       const [piano] = await db.select().from(pianos).where(eq(pianos.id, input.pianoId));
