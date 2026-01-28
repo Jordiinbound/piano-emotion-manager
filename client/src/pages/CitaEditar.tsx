@@ -9,8 +9,10 @@ import { Textarea } from '../components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { ArrowLeft, Save } from 'lucide-react';
 import { toast } from 'sonner';
+import { useTranslation } from '@/hooks/use-translation';
 
 export default function CitaEditar() {
+  const { t } = useTranslation();
   const [, setLocation] = useLocation();
   const params = useParams();
   const appointmentId = Number(params.id);
@@ -73,10 +75,10 @@ export default function CitaEditar() {
         notes: formData.notes || undefined,
         address: formData.address || undefined,
       });
-      toast.success('Cita actualizada correctamente');
+      toast.success(t('appointments.appointmentUpdated'));
       setLocation('/agenda');
     } catch (error) {
-      toast.error('No se pudo actualizar la cita');
+      toast.error(t('appointments.couldNotUpdateAppointment'));
     }
   };
 
@@ -85,11 +87,11 @@ export default function CitaEditar() {
   };
 
   if (isLoading) {
-    return <div className="container mx-auto py-6">Cargando...</div>;
+    return <div className="container mx-auto py-6">{t('common.loading')}</div>;
   }
 
   if (!appointment) {
-    return <div className="container mx-auto py-6">Cita no encontrada</div>;
+    return <div className="container mx-auto py-6">{t('appointments.appointmentNotFound')}</div>;
   }
 
   return (
@@ -97,23 +99,23 @@ export default function CitaEditar() {
       <div className="mb-6">
         <Button variant="ghost" onClick={() => setLocation('/agenda')} className="mb-4">
           <ArrowLeft className="mr-2 h-4 w-4" />
-          Volver a Agenda
+          {t('appointments.backToCalendar')}
         </Button>
-        <h1 className="text-3xl font-bold">Editar Cita</h1>
+        <h1 className="text-3xl font-bold">{t('appointments.editAppointment')}</h1>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle>Información de la Cita</CardTitle>
+          <CardTitle>{t('appointments.appointmentInformation')}</CardTitle>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="clientId">Cliente *</Label>
+                <Label htmlFor="clientId">{t('appointments.client')} *</Label>
                 <Select value={formData.clientId} onValueChange={(value) => handleChange('clientId', value)} required>
                   <SelectTrigger>
-                    <SelectValue placeholder="Seleccionar cliente..." />
+                    <SelectValue placeholder={t('appointments.selectClient')} />
                   </SelectTrigger>
                   <SelectContent>
                     {clients?.clients.map((client: any) => (
@@ -126,13 +128,13 @@ export default function CitaEditar() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="pianoId">Piano (opcional)</Label>
+                <Label htmlFor="pianoId">{t('appointments.pianoOptional')}</Label>
                 <Select value={formData.pianoId} onValueChange={(value) => handleChange('pianoId', value)}>
                   <SelectTrigger>
-                    <SelectValue placeholder="Seleccionar piano..." />
+                    <SelectValue placeholder={t('appointments.selectPiano')} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">Sin piano</SelectItem>
+                    <SelectItem value="">{t('appointments.noPiano')}</SelectItem>
                     {pianos?.pianos.map((piano: any) => (
                       <SelectItem key={piano.id} value={String(piano.id)}>
                         {piano.brand} {piano.model} - {piano.clientName}
@@ -143,18 +145,18 @@ export default function CitaEditar() {
               </div>
 
               <div className="space-y-2 md:col-span-2">
-                <Label htmlFor="title">Título *</Label>
+                <Label htmlFor="title">{t('appointments.title')} *</Label>
                 <Input
                   id="title"
                   value={formData.title}
                   onChange={(e) => handleChange('title', e.target.value)}
                   required
-                  placeholder="Afinación piano Yamaha U1..."
+                  placeholder={t('appointments.titlePlaceholder')}
                 />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="date">Fecha *</Label>
+                <Label htmlFor="date">{t('appointments.date')} *</Label>
                 <Input
                   id="date"
                   type="date"
@@ -165,7 +167,7 @@ export default function CitaEditar() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="time">Hora *</Label>
+                <Label htmlFor="time">{t('appointments.time')} *</Label>
                 <Input
                   id="time"
                   type="time"
@@ -176,7 +178,7 @@ export default function CitaEditar() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="duration">Duración (minutos) *</Label>
+                <Label htmlFor="duration">{t('appointments.duration')} *</Label>
                 <Input
                   id="duration"
                   type="number"
@@ -189,59 +191,59 @@ export default function CitaEditar() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="serviceType">Tipo de Servicio</Label>
+                <Label htmlFor="serviceType">{t('appointments.serviceType')}</Label>
                 <Input
                   id="serviceType"
                   value={formData.serviceType}
                   onChange={(e) => handleChange('serviceType', e.target.value)}
-                  placeholder="Afinación, Reparación..."
+                  placeholder={t('appointments.serviceTypePlaceholder')}
                 />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="status">Estado *</Label>
+                <Label htmlFor="status">{t('appointments.status')} *</Label>
                 <Select value={formData.status} onValueChange={(value) => handleChange('status', value)}>
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="scheduled">Programada</SelectItem>
-                    <SelectItem value="confirmed">Confirmada</SelectItem>
-                    <SelectItem value="completed">Completada</SelectItem>
-                    <SelectItem value="cancelled">Cancelada</SelectItem>
+                    <SelectItem value="scheduled">{t('appointments.statuses.scheduled')}</SelectItem>
+                    <SelectItem value="confirmed">{t('appointments.statuses.confirmed')}</SelectItem>
+                    <SelectItem value="completed">{t('appointments.statuses.completed')}</SelectItem>
+                    <SelectItem value="cancelled">{t('appointments.statuses.cancelled')}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
 
               <div className="space-y-2 md:col-span-2">
-                <Label htmlFor="address">Dirección</Label>
+                <Label htmlFor="address">{t('appointments.address')}</Label>
                 <Input
                   id="address"
                   value={formData.address}
                   onChange={(e) => handleChange('address', e.target.value)}
-                  placeholder="Calle, número, ciudad..."
+                  placeholder={t('appointments.addressPlaceholder')}
                 />
               </div>
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="notes">Notas</Label>
+              <Label htmlFor="notes">{t('appointments.notes')}</Label>
               <Textarea
                 id="notes"
                 value={formData.notes}
                 onChange={(e) => handleChange('notes', e.target.value)}
-                placeholder="Notas adicionales sobre la cita..."
+                placeholder={t('appointments.notesPlaceholder')}
                 rows={4}
               />
             </div>
 
             <div className="flex gap-4 justify-end">
               <Button type="button" variant="outline" onClick={() => setLocation('/agenda')}>
-                Cancelar
+                {t('common.cancel')}
               </Button>
               <Button type="submit" disabled={updateMutation.isPending}>
                 <Save className="mr-2 h-4 w-4" />
-                {updateMutation.isPending ? 'Guardando...' : 'Actualizar Cita'}
+                {updateMutation.isPending ? t('common.saving') : t('appointments.updateAppointment')}
               </Button>
             </div>
           </form>

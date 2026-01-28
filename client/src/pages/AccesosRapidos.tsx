@@ -18,22 +18,24 @@ import {
   Settings,
   Store,
 } from 'lucide-react';
-
-const QUICK_ACTIONS = [
-  { key: 'clients', icon: Users, label: 'Clientes', color: '#3B82F6', route: '/clientes' },
-  { key: 'pianos', icon: Music, label: 'Pianos', color: '#8B5CF6', route: '/pianos' },
-  { key: 'services', icon: Wrench, label: 'Servicios', color: '#10B981', route: '/servicios' },
-  { key: 'inventory', icon: Package, label: 'Inventario', color: '#F59E0B', route: '/inventario' },
-  { key: 'stats', icon: BarChart3, label: 'Reportes', color: '#10B981', route: '/reportes' },
-  { key: 'invoices', icon: FileText, label: 'Facturas', color: '#3B82F6', route: '/facturacion' },
-  { key: 'dashboard', icon: DollarSign, label: 'Dashboard', color: '#2D5A27', route: '/' },
-  { key: 'agenda', icon: Calendar, label: 'Agenda', color: '#A855F7', route: '/agenda' },
-  { key: 'store', icon: Store, label: 'Tienda', color: '#84CC16', route: '/store' },
-  { key: 'settings', icon: Settings, label: 'Configuración', color: '#64748B', route: '/configuracion' },
-];
+import { useTranslation } from '@/hooks/use-translation';
 
 export default function AccesosRapidos() {
+  const { t } = useTranslation();
   const [, setLocation] = useLocation();
+
+  const QUICK_ACTIONS = [
+    { key: 'clients', icon: Users, label: t('quickAccess.clients'), color: '#3B82F6', route: '/clientes' },
+    { key: 'pianos', icon: Music, label: t('quickAccess.pianos'), color: '#8B5CF6', route: '/pianos' },
+    { key: 'services', icon: Wrench, label: t('quickAccess.services'), color: '#10B981', route: '/servicios' },
+    { key: 'inventory', icon: Package, label: t('quickAccess.inventory'), color: '#F59E0B', route: '/inventario' },
+    { key: 'stats', icon: BarChart3, label: t('quickAccess.reports'), color: '#10B981', route: '/reportes' },
+    { key: 'invoices', icon: FileText, label: t('quickAccess.invoices'), color: '#3B82F6', route: '/facturacion' },
+    { key: 'dashboard', icon: DollarSign, label: t('quickAccess.dashboard'), color: '#2D5A27', route: '/' },
+    { key: 'agenda', icon: Calendar, label: t('quickAccess.calendar'), color: '#A855F7', route: '/agenda' },
+    { key: 'store', icon: Store, label: t('quickAccess.store'), color: '#84CC16', route: '/store' },
+    { key: 'settings', icon: Settings, label: t('quickAccess.settings'), color: '#64748B', route: '/configuracion' },
+  ];
 
   const handleAction = (route: string) => {
     setLocation(route);
@@ -44,8 +46,8 @@ export default function AccesosRapidos() {
       {/* Header */}
       <div className="bg-white border-b border-gray-200 mb-6">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <h1 className="text-3xl font-bold text-gray-900">Accesos Rápidos</h1>
-          <p className="text-sm text-gray-600 mt-1">Accede rápidamente a las funciones principales</p>
+          <h1 className="text-3xl font-bold text-gray-900">{t('quickAccess.title')}</h1>
+          <p className="text-sm text-gray-600 mt-1">{t('quickAccess.description')}</p>
         </div>
       </div>
 
