@@ -137,6 +137,11 @@ export default function Layout({ children }: LayoutProps) {
               {menuSections.map((section) => renderMenuSection(section))}
             </div>
 
+            {/* Notifications section */}
+            <div className="px-3 pb-3">
+              <LicenseNotificationBadge />
+            </div>
+
             {/* User section */}
             <div className="mt-auto pt-4 border-t border-border">
               {user ? (

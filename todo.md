@@ -643,3 +643,17 @@
 - [x] Agregar alertas de licencias próximas a expirar en el dashboard
 - [x] Implementar contador de notificaciones no leídas
 - [x] Sistema de refetch automático cada minuto
+
+## Mejoras al Sistema de Notificaciones
+- [x] Agregar badge de notificaciones en sidebar de desktop
+- [x] Implementar sistema de marcar como leída
+- [x] Agregar campo lastNotifiedAt en tabla userLicenses
+- [x] Crear procedimiento markAsNotified en licenseNotifications router
+- [x] Actualizar componentes para usar sistema de leídas
+- [x] Filtrar notificaciones ya vistas en últimas 24 horas
+- [x] Crear flujo de renovación rápida con Stripe
+- [x] Crear router licenseRenewal con Stripe
+- [x] Crear página de renovación exitosa (RenewalSuccess)
+- [x] Integrar pago con Stripe desde notificaciones
+- [x] Agregar botón de renovación rápida en dropdown
+- [x] Registrar rutas en App.tsx

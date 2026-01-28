@@ -1159,6 +1159,7 @@ export const userLicenses = mysqlTable("user_licenses", {
 	activatedAt: timestamp().defaultNow().notNull(),
 	expiresAt: timestamp(),
 	renewsAt: timestamp(),
+	lastNotifiedAt: timestamp(),
 	
 	// Facturación
 	billingCycle: mysqlEnum(['monthly','yearly']).default('monthly').notNull(),

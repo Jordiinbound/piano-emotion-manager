@@ -280,6 +280,14 @@ function Router() {
         </ProtectedRoute>
       </Route>
 
+      <Route path="/licenses/renewal-success">
+        <ProtectedRoute>
+          <Layout>
+            <RenewalSuccess />
+          </Layout>
+        </ProtectedRoute>
+      </Route>
+
       {/* COMERCIAL */}
       <Route path="/store">
         <ProtectedRoute>

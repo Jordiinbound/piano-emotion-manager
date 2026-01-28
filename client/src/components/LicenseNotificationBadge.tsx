@@ -10,17 +10,42 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Bell, AlertTriangle, X } from "lucide-react";
+import { Bell, AlertTriangle, X, CreditCard } from "lucide-react";
+import { toast } from "sonner";
 import { useLocation } from "wouter";
 
 export function LicenseNotificationBadge() {
   const [, setLocation] = useLocation();
   const [isOpen, setIsOpen] = useState(false);
+  const utils = trpc.useUtils();
 
   const { data: expiringLicenses, refetch } = trpc.licenseNotifications.getExpiringLicenses.useQuery(
     { daysThreshold: 30 },
     { refetchInterval: 60000 } // Refetch cada minuto
   );
+
+  const markAsNotified = trpc.licenseNotifications.markAsNotified.useMutation({
+    onSuccess: () => {
+      utils.licenseNotifications.getExpiringLicenses.invalidate();
+    },
+  });
+
+  const createRenewalSession = trpc.licenseRenewal.createRenewalSession.useMutation({
+    onSuccess: (data) => {
+      if (data.url) {
+        window.open(data.url, '_blank');
+        toast.success('Redirigiendo a la página de pago...');
+      }
+    },
+    onError: (error) => {
+      toast.error(`Error: ${error.message}`);
+    },
+  });
+
+  const handleRenew = (licenseId: number, e: React.MouseEvent) => {
+    e.stopPropagation();
+    createRenewalSession.mutate({ licenseId });
+  };
 
   const urgentCount = expiringLicenses?.filter(l => l.isUrgent).length || 0;
   const totalCount = expiringLicenses?.length || 0;
@@ -80,6 +105,7 @@ export function LicenseNotificationBadge() {
               key={license.id}
               className="flex flex-col items-start gap-1 p-3 cursor-pointer"
               onClick={() => {
+                markAsNotified.mutate({ licenseId: license.id });
                 setLocation('/licenses/notifications');
                 setIsOpen(false);
               }}
@@ -96,11 +122,23 @@ export function LicenseNotificationBadge() {
                 {license.isUrgent ? '⚠️ ' : ''}
                 Expira el {new Date(license.expiresAt!).toLocaleDateString()}
               </p>
-              {license.licenseType === 'partner' && (
-                <Badge variant="outline" className="text-xs">
-                  Partner
-                </Badge>
-              )}
+              <div className="flex items-center gap-2 mt-2">
+                {license.licenseType === 'partner' && (
+                  <Badge variant="outline" className="text-xs">
+                    Partner
+                  </Badge>
+                )}
+                <Button
+                  size="sm"
+                  variant={license.isUrgent ? "default" : "outline"}
+                  className="h-7 text-xs"
+                  onClick={(e) => handleRenew(license.id, e)}
+                  disabled={createRenewalSession.isPending}
+                >
+                  <CreditCard className="h-3 w-3 mr-1" />
+                  Renovar Ahora
+                </Button>
+              </div>
             </DropdownMenuItem>
           ))}
         </div>

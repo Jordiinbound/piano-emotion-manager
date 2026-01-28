@@ -33,7 +33,17 @@ export const licenseNotificationsRouter = router({
           )
         );
 
-      return licenses.map(license => {
+      // Filtrar licencias que no han sido notificadas recientemente (últimas 24 horas)
+      const oneDayAgo = new Date();
+      oneDayAgo.setDate(oneDayAgo.getDate() - 1);
+      
+      const filteredLicenses = licenses.filter(license => {
+        if (!license.lastNotifiedAt) return true;
+        const lastNotified = new Date(license.lastNotifiedAt);
+        return lastNotified < oneDayAgo;
+      });
+
+      return filteredLicenses.map(license => {
         const expiresAt = new Date(license.expiresAt!);
         const daysUntilExpiration = Math.ceil((expiresAt.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
         
