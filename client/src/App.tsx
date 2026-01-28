@@ -29,6 +29,7 @@ import Store from "./pages/Store";
 import Reportes from "./pages/Reportes";
 import AccesosRapidos from "./pages/AccesosRapidos";
 import Alertas from "./pages/Alertas";
+import ConfiguracionAlertas from "./pages/ConfiguracionAlertas";
 import HerramientasAvanzadas from "./pages/HerramientasAvanzadas";
 import Configuracion from "./pages/Configuracion";
 import SignIn from "./pages/SignIn";
@@ -373,6 +374,13 @@ function Router() {
         <ProtectedRoute>
           <Layout>
             <Alertas />
+          </Layout>
+        </ProtectedRoute>
+      </Route>
+      <Route path="/alertas/configuracion">
+        <ProtectedRoute>
+          <Layout>
+            <ConfiguracionAlertas />
           </Layout>
         </ProtectedRoute>
       </Route>

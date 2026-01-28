@@ -30,6 +30,7 @@ import { rolesRouter } from "./routers/roles.router";
 import { analyticsRouter } from "./routers/analytics.router";
 import { onboardingRouter } from "./routers/onboarding.router";
 import { aiAssistantRouter } from "./routers/aiAssistant.router";
+import { alertSettingsRouter } from "./routers/alertSettings.router";
 
 export const appRouter = router({
     // if you need to use socket.io, read and register route in server/_core/index.ts, all api should start with '/api/' so that the gateway can route correctly
@@ -76,6 +77,7 @@ export const appRouter = router({
   analytics: analyticsRouter,
   onboarding: onboardingRouter,
   aiAssistant: aiAssistantRouter,
+  alertSettings: alertSettingsRouter,
 
   // TODO: add more feature routers here
 });

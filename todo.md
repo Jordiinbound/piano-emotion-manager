@@ -773,3 +773,14 @@
 - [x] Agregar funcionalidad de marcar como leído
 - [x] Agregar funcionalidad de resolver alertas
 - [x] Registrar ruta /alertas en App.tsx
+
+## Badge de alertas urgentes en sidebar
+- [x] Modificar Layout.tsx para agregar badge con contador de alertas urgentes
+- [x] Conectar con trpc.alerts.getSummary para obtener contador en tiempo real
+- [x] Estilizar badge con color rojo para urgentes
+
+## Página de configuración de umbrales de alertas
+- [x] Crear ConfiguracionAlertas.tsx
+- [x] Crear router tRPC para gestionar alertSettings
+- [x] Implementar formulario de configuración de umbrales
+- [x] Registrar ruta en App.tsx

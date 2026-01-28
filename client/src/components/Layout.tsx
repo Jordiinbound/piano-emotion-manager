@@ -30,6 +30,8 @@ import { LicenseNotificationBadge } from '@/components/LicenseNotificationBadge'
 import { OnboardingWizard } from '@/components/OnboardingWizard';
 import { GlobalSearch } from '@/components/GlobalSearch';
 import AIAssistantButton from '@/components/AIAssistantButton';
+import { trpc } from '@/lib/trpc';
+import { Badge } from '@/components/ui/badge';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -70,6 +72,7 @@ const menuSections: MenuSection[] = [
     title: 'HERRAMIENTAS',
     items: [
       { name: 'Accesos Rápidos', href: '/accesos-rapidos', icon: Zap },
+      { name: 'Alertas', href: '/alertas', icon: Bell },
       { name: 'Herramientas Avanzadas', href: '/herramientas-avanzadas', icon: Hammer },
       { name: 'Configuración', href: '/configuracion', icon: Settings },
     ],
@@ -92,6 +95,11 @@ export default function Layout({ children }: LayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [location] = useLocation();
   const { user, logout } = useAuth();
+  
+  // Obtener resumen de alertas para el badge
+  const { data: alertsSummary } = trpc.alerts.getSummary.useQuery(undefined, {
+    refetchInterval: 60000, // Refetch cada minuto
+  });
 
   const handleLogout = async () => {
     await logout();
@@ -131,6 +139,14 @@ export default function Layout({ children }: LayoutProps) {
                 )}
                 <item.icon className="h-5 w-5 shrink-0" aria-hidden="true" />
                 {item.name}
+                {item.name === 'Alertas' && alertsSummary && alertsSummary.total > 0 && (
+                  <Badge 
+                    variant={alertsSummary.overdueInvoices > 0 || alertsSummary.pianoAlerts > 0 ? "destructive" : "default"}
+                    className="ml-auto"
+                  >
+                    {alertsSummary.total}
+                  </Badge>
+                )}
               </Link>
             </li>
           );
