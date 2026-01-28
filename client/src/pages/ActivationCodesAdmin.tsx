@@ -10,8 +10,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Plus, Copy, Check, X } from "lucide-react";
 import { toast } from "sonner";
+import { useTranslation } from "@/hooks/use-translation";
 
 export function ActivationCodesAdmin() {
+  const { t } = useTranslation();
   const [selectedPartnerId, setSelectedPartnerId] = useState<number | null>(null);
   const [page, setPage] = useState(1);
   const [isGenerateDialogOpen, setIsGenerateDialogOpen] = useState(false);
@@ -25,7 +27,7 @@ export function ActivationCodesAdmin() {
 
   const generateMutation = trpc.activationCodes.generate.useMutation({
     onSuccess: (data) => {
-      toast.success(`${data.codes.length} códigos generados exitosamente`);
+      toast.success(t('activationCodesAdmin.codesGeneratedSuccess', { count: data.codes.length }));
       setIsGenerateDialogOpen(false);
       refetch();
     },
@@ -36,7 +38,7 @@ export function ActivationCodesAdmin() {
 
   const revokeMutation = trpc.activationCodes.revoke.useMutation({
     onSuccess: () => {
-      toast.success("Código revocado");
+      toast.success(t('activationCodesAdmin.codeRevoked'));
       refetch();
     },
     onError: (error) => {
@@ -65,7 +67,7 @@ export function ActivationCodesAdmin() {
   const copyToClipboard = (code: string) => {
     navigator.clipboard.writeText(code);
     setCopiedCode(code);
-    toast.success("Código copiado");
+    toast.success(t('activationCodesAdmin.codeCopied'));
     setTimeout(() => setCopiedCode(null), 2000);
   };
 
@@ -73,9 +75,9 @@ export function ActivationCodesAdmin() {
     <div className="container py-8 space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold">Códigos de Activación</h1>
+          <h1 className="text-3xl font-bold">{t('activationCodesAdmin.title')}</h1>
           <p className="text-muted-foreground">
-            Genera y gestiona códigos para activar licencias de partners
+            {t('activationCodesAdmin.description')}
           </p>
         </div>
 
@@ -84,21 +86,21 @@ export function ActivationCodesAdmin() {
             <DialogTrigger asChild>
               <Button>
                 <Plus className="mr-2 h-4 w-4" />
-                Generar Códigos
+                {t('activationCodesAdmin.generateCodes')}
               </Button>
             </DialogTrigger>
             <DialogContent>
               <form onSubmit={handleGenerate}>
                 <DialogHeader>
-                  <DialogTitle>Generar Códigos de Activación</DialogTitle>
+                  <DialogTitle>{t('activationCodesAdmin.generateActivationCodes')}</DialogTitle>
                   <DialogDescription>
-                    Los códigos se generarán para el partner seleccionado
+                    {t('activationCodesAdmin.codesWillBeGenerated')}
                   </DialogDescription>
                 </DialogHeader>
 
                 <div className="grid gap-4 py-4">
                   <div className="grid gap-2">
-                    <Label htmlFor="quantity">Cantidad *</Label>
+                    <Label htmlFor="quantity">{t('activationCodesAdmin.quantity')} *</Label>
                     <Input
                       id="quantity"
                       name="quantity"
@@ -111,44 +113,44 @@ export function ActivationCodesAdmin() {
                   </div>
 
                   <div className="grid gap-2">
-                    <Label htmlFor="codeType">Tipo de Código *</Label>
+                    <Label htmlFor="codeType">{t('activationCodesAdmin.codeType')} *</Label>
                     <Select name="codeType" required defaultValue="single_use">
                       <SelectTrigger>
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="single_use">Uso Único</SelectItem>
-                        <SelectItem value="multi_use">Uso Múltiple</SelectItem>
+                        <SelectItem value="single_use">{t('activationCodesAdmin.singleUse')}</SelectItem>
+                        <SelectItem value="multi_use">{t('activationCodesAdmin.multiUse')}</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
 
                   <div className="grid gap-2">
-                    <Label htmlFor="maxUses">Máximo de Usos (solo multi-uso)</Label>
+                    <Label htmlFor="maxUses">{t('activationCodesAdmin.maxUses')}</Label>
                     <Input
                       id="maxUses"
                       name="maxUses"
                       type="number"
                       min="1"
-                      placeholder="Ilimitado si se deja vacío"
+                      placeholder={t('activationCodesAdmin.unlimitedIfEmpty')}
                     />
                   </div>
 
                   <div className="grid gap-2">
-                    <Label htmlFor="billingCycle">Ciclo de Facturación *</Label>
+                    <Label htmlFor="billingCycle">{t('activationCodesAdmin.billingCycle')} *</Label>
                     <Select name="billingCycle" required defaultValue="yearly">
                       <SelectTrigger>
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="monthly">Mensual</SelectItem>
-                        <SelectItem value="yearly">Anual</SelectItem>
+                        <SelectItem value="monthly">{t('activationCodesAdmin.monthly')}</SelectItem>
+                        <SelectItem value="yearly">{t('activationCodesAdmin.annual')}</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
 
                   <div className="grid gap-2">
-                    <Label htmlFor="durationMonths">Duración (meses) *</Label>
+                    <Label htmlFor="durationMonths">{t('activationCodesAdmin.durationMonths')} *</Label>
                     <Input
                       id="durationMonths"
                       name="durationMonths"
@@ -160,7 +162,7 @@ export function ActivationCodesAdmin() {
                   </div>
 
                   <div className="grid gap-2">
-                    <Label htmlFor="expiresAt">Fecha de Expiración del Código (opcional)</Label>
+                    <Label htmlFor="expiresAt">{t('activationCodesAdmin.codeExpirationDate')}</Label>
                     <Input
                       id="expiresAt"
                       name="expiresAt"
@@ -171,10 +173,10 @@ export function ActivationCodesAdmin() {
 
                 <DialogFooter>
                   <Button type="button" variant="outline" onClick={() => setIsGenerateDialogOpen(false)}>
-                    Cancelar
+                    {t('activationCodesAdmin.cancel')}
                   </Button>
                   <Button type="submit" disabled={generateMutation.isPending}>
-                    {generateMutation.isPending ? "Generando..." : "Generar Códigos"}
+                    {generateMutation.isPending ? t('activationCodesAdmin.generating') : t('activationCodesAdmin.generateCodes')}
                   </Button>
                 </DialogFooter>
               </form>
@@ -186,9 +188,9 @@ export function ActivationCodesAdmin() {
       {/* Selector de Partner */}
       <Card>
         <CardHeader>
-          <CardTitle>Seleccionar Partner</CardTitle>
+          <CardTitle>{t('activationCodesAdmin.selectPartner')}</CardTitle>
           <CardDescription>
-            Elige un partner para ver y generar sus códigos de activación
+            {t('activationCodesAdmin.selectPartnerDescription')}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -197,7 +199,7 @@ export function ActivationCodesAdmin() {
             onValueChange={(value) => setSelectedPartnerId(parseInt(value))}
           >
             <SelectTrigger>
-              <SelectValue placeholder="Selecciona un partner..." />
+              <SelectValue placeholder={t('activationCodesAdmin.selectPartnerPlaceholder')} />
             </SelectTrigger>
             <SelectContent>
               {partnersData?.partners.map((partner) => (
@@ -214,27 +216,27 @@ export function ActivationCodesAdmin() {
       {selectedPartnerId && codesData && (
         <Card>
           <CardHeader>
-            <CardTitle>Códigos de Activación</CardTitle>
+            <CardTitle>{t('activationCodesAdmin.activationCodes')}</CardTitle>
             <CardDescription>
-              {codesData.total} códigos generados
+              {t('activationCodesAdmin.codesGenerated', { count: codesData.total })}
             </CardDescription>
           </CardHeader>
           <CardContent>
             {codesData.codes.length === 0 ? (
               <div className="text-center py-8 text-muted-foreground">
-                No hay códigos generados para este partner
+                {t('activationCodesAdmin.noCodesForPartner')}
               </div>
             ) : (
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Código</TableHead>
-                    <TableHead>Tipo</TableHead>
-                    <TableHead>Usos</TableHead>
-                    <TableHead>Duración</TableHead>
-                    <TableHead>Estado</TableHead>
-                    <TableHead>Expira</TableHead>
-                    <TableHead>Acciones</TableHead>
+                    <TableHead>{t('activationCodesAdmin.code')}</TableHead>
+                    <TableHead>{t('activationCodesAdmin.type')}</TableHead>
+                    <TableHead>{t('activationCodesAdmin.uses')}</TableHead>
+                    <TableHead>{t('activationCodesAdmin.duration')}</TableHead>
+                    <TableHead>{t('activationCodesAdmin.status')}</TableHead>
+                    <TableHead>{t('activationCodesAdmin.expires')}</TableHead>
+                    <TableHead>{t('activationCodesAdmin.actions')}</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -258,14 +260,14 @@ export function ActivationCodesAdmin() {
                       </TableCell>
                       <TableCell>
                         <Badge variant="outline">
-                          {code.codeType === 'single_use' ? 'Único' : 'Múltiple'}
+                          {code.codeType === 'single_use' ? t('activationCodesAdmin.single') : t('activationCodesAdmin.multiple')}
                         </Badge>
                       </TableCell>
                       <TableCell>
                         {code.usesCount} / {code.maxUses || '∞'}
                       </TableCell>
                       <TableCell>
-                        {code.durationMonths} meses
+                        {t('activationCodesAdmin.months', { count: code.durationMonths })}
                       </TableCell>
                       <TableCell>
                         <Badge
@@ -306,17 +308,17 @@ export function ActivationCodesAdmin() {
                   onClick={() => setPage(p => Math.max(1, p - 1))}
                   disabled={page === 1}
                 >
-                  Anterior
+                  {t('activationCodesAdmin.previous')}
                 </Button>
                 <span className="text-sm text-muted-foreground">
-                  Página {page} de {Math.ceil(codesData.total / codesData.limit)}
+                  {t('activationCodesAdmin.pageOf', { current: page, total: Math.ceil(codesData.total / codesData.limit) })}
                 </span>
                 <Button
                   variant="outline"
                   onClick={() => setPage(p => p + 1)}
                   disabled={page >= Math.ceil(codesData.total / codesData.limit)}
                 >
-                  Siguiente
+                  {t('activationCodesAdmin.next')}
                 </Button>
               </div>
             )}

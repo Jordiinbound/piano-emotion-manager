@@ -6,8 +6,10 @@ import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { CreditCard, Calendar, DollarSign } from "lucide-react";
+import { useTranslation } from "@/hooks/use-translation";
 
 export function LicensesAdmin() {
+  const { t } = useTranslation();
   const [page, setPage] = useState(1);
   const [statusFilter, setStatusFilter] = useState<"active" | "expired" | "suspended" | "cancelled" | undefined>(undefined);
   const [typeFilter, setTypeFilter] = useState<"direct" | "partner" | undefined>(undefined);
@@ -23,7 +25,7 @@ export function LicensesAdmin() {
     return (
       <div className="container py-8">
         <div className="flex items-center justify-center h-64">
-          <div className="text-muted-foreground">Cargando licencias...</div>
+          <div className="text-muted-foreground">{t('licensesAdmin.loadingLicenses')}</div>
         </div>
       </div>
     );
@@ -32,16 +34,16 @@ export function LicensesAdmin() {
   return (
     <div className="container py-8 space-y-6">
       <div>
-        <h1 className="text-3xl font-bold">Gestión de Licencias</h1>
+        <h1 className="text-3xl font-bold">{t('licensesAdmin.title')}</h1>
         <p className="text-muted-foreground">
-          Todas las licencias activas, expiradas y canceladas del sistema
+          {t('licensesAdmin.description')}
         </p>
       </div>
 
       {/* Filtros */}
       <Card>
         <CardHeader>
-          <CardTitle>Filtros</CardTitle>
+          <CardTitle>{t('licensesAdmin.filters')}</CardTitle>
         </CardHeader>
         <CardContent className="flex gap-4">
           <div className="flex-1">
@@ -50,14 +52,14 @@ export function LicensesAdmin() {
               onValueChange={(value) => setStatusFilter(value === "all" ? undefined : value as any)}
             >
               <SelectTrigger>
-                <SelectValue placeholder="Estado..." />
+                <SelectValue placeholder={t('licensesAdmin.statusPlaceholder')} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">Todos los estados</SelectItem>
-                <SelectItem value="active">Activas</SelectItem>
-                <SelectItem value="expired">Expiradas</SelectItem>
-                <SelectItem value="suspended">Suspendidas</SelectItem>
-                <SelectItem value="cancelled">Canceladas</SelectItem>
+                <SelectItem value="all">{t('licensesAdmin.allStatuses')}</SelectItem>
+                <SelectItem value="active">{t('licensesAdmin.active')}</SelectItem>
+                <SelectItem value="expired">{t('licensesAdmin.expired')}</SelectItem>
+                <SelectItem value="suspended">{t('licensesAdmin.suspended')}</SelectItem>
+                <SelectItem value="cancelled">{t('licensesAdmin.cancelled')}</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -68,12 +70,12 @@ export function LicensesAdmin() {
               onValueChange={(value) => setTypeFilter(value === "all" ? undefined : value as any)}
             >
               <SelectTrigger>
-                <SelectValue placeholder="Tipo..." />
+                <SelectValue placeholder={t('licensesAdmin.typePlaceholder')} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">Todos los tipos</SelectItem>
-                <SelectItem value="direct">Directas</SelectItem>
-                <SelectItem value="partner">De Partner</SelectItem>
+                <SelectItem value="all">{t('licensesAdmin.allTypes')}</SelectItem>
+                <SelectItem value="direct">{t('licensesAdmin.direct')}</SelectItem>
+                <SelectItem value="partner">{t('licensesAdmin.partner')}</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -84,7 +86,7 @@ export function LicensesAdmin() {
       <div className="grid gap-4 md:grid-cols-3">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Licencias</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('licensesAdmin.totalLicenses')}</CardTitle>
             <CreditCard className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -94,7 +96,7 @@ export function LicensesAdmin() {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Activas</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('licensesAdmin.active')}</CardTitle>
             <Calendar className="h-4 w-4 text-green-500" />
           </CardHeader>
           <CardContent>
@@ -106,7 +108,7 @@ export function LicensesAdmin() {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Ingresos Mensuales</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('licensesAdmin.monthlyRevenue')}</CardTitle>
             <DollarSign className="h-4 w-4 text-blue-500" />
           </CardHeader>
           <CardContent>
@@ -123,28 +125,28 @@ export function LicensesAdmin() {
       {/* Tabla de Licencias */}
       <Card>
         <CardHeader>
-          <CardTitle>Licencias</CardTitle>
+          <CardTitle>{t('licensesAdmin.licenses')}</CardTitle>
           <CardDescription>
-            {data?.total} licencias en total
+            {t('licensesAdmin.totalLicensesCount', { count: data?.total || 0 })}
           </CardDescription>
         </CardHeader>
         <CardContent>
           {data && data.licenses.length === 0 ? (
             <div className="text-center py-8 text-muted-foreground">
-              No se encontraron licencias con los filtros seleccionados
+              {t('licensesAdmin.noLicensesFound')}
             </div>
           ) : (
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>ID</TableHead>
-                  <TableHead>Usuario/Org</TableHead>
-                  <TableHead>Tipo</TableHead>
-                  <TableHead>Estado</TableHead>
-                  <TableHead>Ciclo</TableHead>
-                  <TableHead>Precio</TableHead>
-                  <TableHead>Activada</TableHead>
-                  <TableHead>Expira</TableHead>
+                  <TableHead>{t('licensesAdmin.id')}</TableHead>
+                  <TableHead>{t('licensesAdmin.userOrg')}</TableHead>
+                  <TableHead>{t('licensesAdmin.type')}</TableHead>
+                  <TableHead>{t('licensesAdmin.status')}</TableHead>
+                  <TableHead>{t('licensesAdmin.cycle')}</TableHead>
+                  <TableHead>{t('licensesAdmin.price')}</TableHead>
+                  <TableHead>{t('licensesAdmin.activated')}</TableHead>
+                  <TableHead>{t('licensesAdmin.expires')}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -152,11 +154,11 @@ export function LicensesAdmin() {
                   <TableRow key={license.id}>
                     <TableCell className="font-mono text-sm">#{license.id}</TableCell>
                     <TableCell>
-                      {license.userId ? `Usuario #${license.userId}` : `Org #${license.organizationId}`}
+                      {license.userId ? t('licensesAdmin.userNumber', { id: license.userId }) : t('licensesAdmin.orgNumber', { id: license.organizationId })}
                     </TableCell>
                     <TableCell>
                       <Badge variant={license.licenseType === 'direct' ? 'default' : 'secondary'}>
-                        {license.licenseType === 'direct' ? 'Directa' : 'Partner'}
+                        {license.licenseType === 'direct' ? t('licensesAdmin.direct') : t('licensesAdmin.partner')}
                       </Badge>
                     </TableCell>
                     <TableCell>
@@ -171,7 +173,7 @@ export function LicensesAdmin() {
                       </Badge>
                     </TableCell>
                     <TableCell>
-                      {license.billingCycle === 'monthly' ? 'Mensual' : 'Anual'}
+                      {license.billingCycle === 'monthly' ? t('licensesAdmin.monthly') : t('licensesAdmin.annual')}
                     </TableCell>
                     <TableCell>
                       {parseFloat(license.price).toFixed(2)} {license.currency}
@@ -196,17 +198,17 @@ export function LicensesAdmin() {
                 onClick={() => setPage(p => Math.max(1, p - 1))}
                 disabled={page === 1}
               >
-                Anterior
+                {t('licensesAdmin.previous')}
               </Button>
               <span className="text-sm text-muted-foreground">
-                Página {page} de {Math.ceil(data.total / data.limit)}
+                {t('licensesAdmin.pageOf', { current: page, total: Math.ceil(data.total / data.limit) })}
               </span>
               <Button
                 variant="outline"
                 onClick={() => setPage(p => p + 1)}
                 disabled={page >= Math.ceil(data.total / data.limit)}
               >
-                Siguiente
+                {t('licensesAdmin.next')}
               </Button>
             </div>
           )}
