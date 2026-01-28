@@ -1,6 +1,7 @@
 import { eq } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
 import { InsertUser, users } from "../drizzle/schema";
+import * as schema from "../drizzle/schema";
 import { ENV } from './_core/env';
 
 let _db: ReturnType<typeof drizzle> | null = null;
@@ -14,7 +15,7 @@ export async function getDb() {
       const connectionUrl = tidbUrl || process.env.DATABASE_URL;
       
       if (connectionUrl) {
-        _db = drizzle(connectionUrl);
+        _db = drizzle(connectionUrl, { schema, mode: 'default' });
         console.log('[Database] Connected to TiDB production database');
       }
     } catch (error) {

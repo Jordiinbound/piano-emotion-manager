@@ -957,10 +957,12 @@
 ## FASE 2: Servicios Backend Críticos - Migración desde GitHub
 - [x] Migrar servicio de Email con Nodemailer (soporte Gmail OAuth2, Outlook OAuth2, SMTP)
 - [x] Crear emailSMTP.ts y emailUnified.ts con funciones sendEmail, sendBulkEmail
-- [ ] Migrar servicio de generación PDF con PDFKit
-- [ ] Crear pdfService.ts con generación de facturas, presupuestos, informes
-- [ ] Migrar servicio de Excel con ExcelJS
-- [ ] Crear excelService.ts con exportación/importación de datos
+- [x] Migrar servicio de generación PDF con Puppeteer
+- [x] Crear pdfService.ts, invoicePDF.ts y pdfGenerator.ts con generación de facturas, presupuestos, informes
+- [x] Migrar servicio de Excel con ExcelJS
+- [x] Crear excelService.ts con exportación/importación de datos (clientes, servicios, facturas, inventario, pianos)
+- [x] Crear router de exportación (export.router.ts) con endpoints para todas las entidades
+- [ ] Crear interfaz de usuario para exportar datos a Excel desde cada página
 - [ ] Migrar integración WhatsApp (wa.me)
 - [ ] Crear whatsappService.ts con generación de enlaces y mensajes pre-rellenados
 - [ ] Migrar servicio de Backups a S3
