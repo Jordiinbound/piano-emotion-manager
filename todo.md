@@ -819,8 +819,8 @@
 - [x] TiposServicio.tsx
 
 #### Formularios (Nuevo/Editar)
-- [ ] ClienteNuevo.tsx
-- [ ] ClienteEditar.tsx
+- [x] ClienteNuevo.tsx
+- [x] ClienteEditar.tsx
 - [ ] PianoNuevo.tsx
 - [ ] PianoEditar.tsx
 - [ ] ServicioNuevo.tsx
