@@ -1,8 +1,8 @@
 /**
- * Herramientas Avanzadas Page
+ * Herramientas Avanzadas Page - Rediseño Completo
  * Piano Emotion Manager
  * 
- * Grid de herramientas premium y avanzadas
+ * Hub central de módulos avanzados y premium
  */
 
 import { useLocation } from 'wouter';
@@ -21,44 +21,178 @@ import {
   Calculator,
   GitBranch,
   Brain,
+  Sparkles,
+  TrendingUp,
 } from 'lucide-react';
+import { Card } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 
 type PlanTier = 'free' | 'pro' | 'premium';
 
-const ADVANCED_MODULES: Array<{
+interface Module {
   key: string;
   icon: any;
   label: string;
+  description: string;
   color: string;
   tier: PlanTier;
   route?: string;
-}> = [
+  implemented: boolean;
+}
+
+const ADVANCED_MODULES: Module[] = [
   // FREE - Disponibles para todos
-  { key: 'shop', icon: ShoppingCart, label: 'Tienda', color: '#84CC16', tier: 'free', route: '/store' },
-  { key: 'calendar_adv', icon: Calendar, label: 'Calendario+', color: '#A855F7', tier: 'free', route: '/agenda' },
-  { key: 'dashboard_editor', icon: LayoutGrid, label: 'Dashboard+', color: '#EC4899', tier: 'free', route: '/' },
-  { key: 'modules', icon: CreditCard, label: 'Gestionar Plan', color: '#8B5CF6', tier: 'free' },
+  { 
+    key: 'shop', 
+    icon: ShoppingCart, 
+    label: 'Tienda', 
+    description: 'Gestiona tu catálogo y ventas online',
+    color: '#84CC16', 
+    tier: 'free', 
+    route: '/store',
+    implemented: true
+  },
+  { 
+    key: 'calendar_adv', 
+    icon: Calendar, 
+    label: 'Calendario+', 
+    description: 'Agenda avanzada con recordatorios',
+    color: '#A855F7', 
+    tier: 'free', 
+    route: '/agenda',
+    implemented: true
+  },
+  { 
+    key: 'dashboard_editor', 
+    icon: LayoutGrid, 
+    label: 'Dashboard+', 
+    description: 'Panel personalizable con widgets',
+    color: '#EC4899', 
+    tier: 'free', 
+    route: '/',
+    implemented: true
+  },
+  { 
+    key: 'modules', 
+    icon: CreditCard, 
+    label: 'Gestionar Plan', 
+    description: 'Administra tu suscripción y pagos',
+    color: '#8B5CF6', 
+    tier: 'free',
+    route: '/admin/licenses',
+    implemented: true
+  },
   
   // PRO - Requieren suscripción Pro
-  { key: 'team', icon: Users, label: 'Equipos', color: '#10B981', tier: 'pro' },
-  { key: 'crm', icon: Heart, label: 'CRM', color: '#EF4444', tier: 'pro' },
-  { key: 'reports', icon: PieChart, label: 'Reportes', color: '#06B6D4', tier: 'pro', route: '/reportes' },
-  { key: 'client_portal', icon: Globe, label: 'Portal Clientes', color: '#0891B2', tier: 'pro' },
-  { key: 'distributor', icon: Building, label: 'Distribuidor', color: '#BE185D', tier: 'pro' },
-  { key: 'marketing', icon: Megaphone, label: 'Marketing', color: '#E91E63', tier: 'pro' },
-  { key: 'payments', icon: Wallet, label: 'Pasarelas Pago', color: '#635BFF', tier: 'pro' },
+  { 
+    key: 'team', 
+    icon: Users, 
+    label: 'Equipos', 
+    description: 'Gestión de miembros y permisos',
+    color: '#10B981', 
+    tier: 'pro',
+    route: '/organization/settings',
+    implemented: true
+  },
+  { 
+    key: 'crm', 
+    icon: Heart, 
+    label: 'CRM', 
+    description: 'Gestión avanzada de relaciones',
+    color: '#EF4444', 
+    tier: 'pro',
+    route: '/clientes',
+    implemented: true
+  },
+  { 
+    key: 'reports', 
+    icon: PieChart, 
+    label: 'Reportes', 
+    description: 'Análisis y estadísticas detalladas',
+    color: '#06B6D4', 
+    tier: 'pro', 
+    route: '/reportes',
+    implemented: true
+  },
+  { 
+    key: 'client_portal', 
+    icon: Globe, 
+    label: 'Portal Clientes', 
+    description: 'Acceso web para tus clientes',
+    color: '#0891B2', 
+    tier: 'pro',
+    route: '/client-portal/login',
+    implemented: true
+  },
+  { 
+    key: 'distributor', 
+    icon: Building, 
+    label: 'Distribuidores', 
+    description: 'Gestión de proveedores y partners',
+    color: '#BE185D', 
+    tier: 'pro',
+    route: '/admin/partners',
+    implemented: true
+  },
+  { 
+    key: 'marketing', 
+    icon: Megaphone, 
+    label: 'Marketing', 
+    description: 'Campañas y email marketing',
+    color: '#E91E63', 
+    tier: 'pro',
+    route: '/configuracion/email',
+    implemented: true
+  },
+  { 
+    key: 'payments', 
+    icon: Wallet, 
+    label: 'Pasarelas Pago', 
+    description: 'Configuración de métodos de pago',
+    color: '#635BFF', 
+    tier: 'pro',
+    route: '/facturacion',
+    implemented: true
+  },
   
   // PREMIUM - Solo para Premium
-  { key: 'accounting', icon: Calculator, label: 'Contabilidad', color: '#F97316', tier: 'premium' },
-  { key: 'workflows', icon: GitBranch, label: 'Workflows', color: '#6366F1', tier: 'premium' },
-  { key: 'predictions', icon: Brain, label: 'IA Avanzada', color: '#8B5CF6', tier: 'premium' },
+  { 
+    key: 'accounting', 
+    icon: Calculator, 
+    label: 'Contabilidad', 
+    description: 'Integración contable y fiscal',
+    color: '#F97316', 
+    tier: 'premium',
+    route: '/contabilidad',
+    implemented: true
+  },
+  { 
+    key: 'workflows', 
+    icon: GitBranch, 
+    label: 'Workflows', 
+    description: 'Automatizaciones personalizadas',
+    color: '#6366F1', 
+    tier: 'premium',
+    route: '/workflows',
+    implemented: true
+  },
+  { 
+    key: 'predictions', 
+    icon: Brain, 
+    label: 'IA Avanzada', 
+    description: 'Predicciones y análisis con IA',
+    color: '#8B5CF6', 
+    tier: 'premium',
+    route: '/ia-avanzada',
+    implemented: true
+  },
 ];
 
 export default function HerramientasAvanzadas() {
   const [, setLocation] = useLocation();
 
   // Por ahora, todos los módulos están disponibles (tier free)
-  const userTier = 'free' as PlanTier;
+  const userTier = 'premium' as PlanTier;
 
   const canAccess = (moduleTier: PlanTier): boolean => {
     if (userTier === 'premium') return true;
@@ -66,76 +200,216 @@ export default function HerramientasAvanzadas() {
     return moduleTier === 'free';
   };
 
-  const handleAction = (module: typeof ADVANCED_MODULES[0]) => {
+  const handleAction = (module: Module) => {
     if (!canAccess(module.tier)) {
       alert(`Esta funcionalidad requiere plan ${module.tier.toUpperCase()}`);
       return;
     }
     
+    if (!module.implemented) {
+      alert('Módulo en desarrollo - Próximamente disponible');
+      return;
+    }
+    
     if (module.route) {
       setLocation(module.route);
-    } else {
-      alert('Funcionalidad próximamente');
     }
   };
 
-  const getBadge = (tier: PlanTier): string | undefined => {
-    if (tier === 'pro' && !canAccess('pro')) return 'PRO';
-    if (tier === 'premium' && !canAccess('premium')) return 'PREMIUM';
-    return undefined;
+  const getTierBadge = (tier: PlanTier): { label: string; color: string } | null => {
+    if (tier === 'pro' && !canAccess('pro')) 
+      return { label: 'PRO', color: 'bg-amber-500' };
+    if (tier === 'premium' && !canAccess('premium')) 
+      return { label: 'PREMIUM', color: 'bg-purple-600' };
+    return null;
   };
 
+  const freeModules = ADVANCED_MODULES.filter(m => m.tier === 'free');
+  const proModules = ADVANCED_MODULES.filter(m => m.tier === 'pro');
+  const premiumModules = ADVANCED_MODULES.filter(m => m.tier === 'premium');
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-gray-100 to-gray-200">
-      {/* Header */}
-      <div className="bg-white border-b border-gray-200 mb-6">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <h1 className="text-3xl font-bold text-gray-900">Herramientas Avanzadas</h1>
-          <p className="text-sm text-gray-600 mt-1">Funciones premium y avanzadas</p>
+    <div className="space-y-8">
+      {/* Header con gradiente */}
+      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-purple-600 via-pink-600 to-orange-500 p-8 text-white shadow-2xl">
+        <div className="absolute inset-0 bg-black/10"></div>
+        <div className="relative z-10">
+          <div className="flex items-center gap-3 mb-3">
+            <Sparkles className="h-8 w-8" />
+            <h1 className="text-4xl font-bold">Herramientas Avanzadas</h1>
+          </div>
+          <p className="text-lg text-white/90 max-w-2xl">
+            Potencia tu negocio con módulos premium y funcionalidades avanzadas
+          </p>
+          <div className="mt-6 flex items-center gap-4">
+            <Badge className="bg-white/20 text-white border-white/30 hover:bg-white/30">
+              <TrendingUp className="h-3 w-3 mr-1" />
+              14 Módulos Disponibles
+            </Badge>
+            <Badge className="bg-white/20 text-white border-white/30 hover:bg-white/30">
+              Plan: {userTier.toUpperCase()}
+            </Badge>
+          </div>
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Grid de herramientas avanzadas */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 pb-8">
-          {ADVANCED_MODULES.map((module) => {
+      {/* Módulos FREE */}
+      <div>
+        <div className="flex items-center gap-2 mb-4">
+          <div className="h-8 w-1 bg-green-500 rounded-full"></div>
+          <h2 className="text-2xl font-bold text-foreground">Módulos Gratuitos</h2>
+          <Badge variant="outline" className="ml-2">
+            {freeModules.length} módulos
+          </Badge>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {freeModules.map((module) => {
             const Icon = module.icon;
             const hasAccess = canAccess(module.tier);
-            const badge = getBadge(module.tier);
+            const badge = getTierBadge(module.tier);
             
             return (
-              <button
+              <Card
                 key={module.key}
                 onClick={() => handleAction(module)}
-                className={`bg-white rounded-lg border border-gray-200 p-6 hover:shadow-lg hover:scale-105 transition-all duration-200 flex flex-col items-center gap-3 group relative ${
-                  !hasAccess ? 'opacity-60' : ''
-                }`}
+                className="group relative p-6 hover:shadow-xl hover:scale-105 transition-all duration-300 cursor-pointer border-2 hover:border-primary"
               >
                 {badge && (
-                  <div
-                    className="absolute top-2 right-2 px-2 py-1 rounded text-xs font-bold text-white"
-                    style={{
-                      backgroundColor: module.tier === 'premium' ? '#8B5CF6' : '#F59E0B',
-                    }}
-                  >
-                    {badge}
-                  </div>
+                  <Badge className={`absolute top-3 right-3 ${badge.color} text-white`}>
+                    {badge.label}
+                  </Badge>
+                )}
+                {!module.implemented && (
+                  <Badge className="absolute top-3 right-3 bg-gray-400 text-white">
+                    PRÓXIMAMENTE
+                  </Badge>
                 )}
                 <div
-                  className="w-16 h-16 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform"
+                  className="w-14 h-14 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform"
                   style={{
                     backgroundColor: hasAccess ? `${module.color}15` : '#9CA3AF15',
                   }}
                 >
                   <Icon
-                    className="w-8 h-8"
+                    className="w-7 h-7"
                     style={{ color: hasAccess ? module.color : '#9CA3AF' }}
                   />
                 </div>
-                <span className="text-sm font-medium text-gray-900 text-center">
+                <h3 className="text-lg font-semibold text-foreground mb-2">
                   {module.label}
-                </span>
-              </button>
+                </h3>
+                <p className="text-sm text-muted-foreground">
+                  {module.description}
+                </p>
+              </Card>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Módulos PRO */}
+      <div>
+        <div className="flex items-center gap-2 mb-4">
+          <div className="h-8 w-1 bg-amber-500 rounded-full"></div>
+          <h2 className="text-2xl font-bold text-foreground">Módulos Profesionales</h2>
+          <Badge variant="outline" className="ml-2">
+            {proModules.length} módulos
+          </Badge>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {proModules.map((module) => {
+            const Icon = module.icon;
+            const hasAccess = canAccess(module.tier);
+            const badge = getTierBadge(module.tier);
+            
+            return (
+              <Card
+                key={module.key}
+                onClick={() => handleAction(module)}
+                className="group relative p-6 hover:shadow-xl hover:scale-105 transition-all duration-300 cursor-pointer border-2 hover:border-primary"
+              >
+                {badge && (
+                  <Badge className={`absolute top-3 right-3 ${badge.color} text-white`}>
+                    {badge.label}
+                  </Badge>
+                )}
+                {!module.implemented && (
+                  <Badge className="absolute top-3 right-3 bg-gray-400 text-white">
+                    PRÓXIMAMENTE
+                  </Badge>
+                )}
+                <div
+                  className="w-14 h-14 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform"
+                  style={{
+                    backgroundColor: hasAccess ? `${module.color}15` : '#9CA3AF15',
+                  }}
+                >
+                  <Icon
+                    className="w-7 h-7"
+                    style={{ color: hasAccess ? module.color : '#9CA3AF' }}
+                  />
+                </div>
+                <h3 className="text-lg font-semibold text-foreground mb-2">
+                  {module.label}
+                </h3>
+                <p className="text-sm text-muted-foreground">
+                  {module.description}
+                </p>
+              </Card>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Módulos PREMIUM */}
+      <div>
+        <div className="flex items-center gap-2 mb-4">
+          <div className="h-8 w-1 bg-purple-600 rounded-full"></div>
+          <h2 className="text-2xl font-bold text-foreground">Módulos Premium</h2>
+          <Badge variant="outline" className="ml-2">
+            {premiumModules.length} módulos
+          </Badge>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {premiumModules.map((module) => {
+            const Icon = module.icon;
+            const hasAccess = canAccess(module.tier);
+            const badge = getTierBadge(module.tier);
+            
+            return (
+              <Card
+                key={module.key}
+                onClick={() => handleAction(module)}
+                className="group relative p-6 hover:shadow-xl hover:scale-105 transition-all duration-300 cursor-pointer border-2 hover:border-primary"
+              >
+                {badge && (
+                  <Badge className={`absolute top-3 right-3 ${badge.color} text-white`}>
+                    {badge.label}
+                  </Badge>
+                )}
+                {!module.implemented && (
+                  <Badge className="absolute top-3 right-3 bg-gray-400 text-white">
+                    PRÓXIMAMENTE
+                  </Badge>
+                )}
+                <div
+                  className="w-14 h-14 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform"
+                  style={{
+                    backgroundColor: hasAccess ? `${module.color}15` : '#9CA3AF15',
+                  }}
+                >
+                  <Icon
+                    className="w-7 h-7"
+                    style={{ color: hasAccess ? module.color : '#9CA3AF' }}
+                  />
+                </div>
+                <h3 className="text-lg font-semibold text-foreground mb-2">
+                  {module.label}
+                </h3>
+                <p className="text-sm text-muted-foreground">
+                  {module.description}
+                </p>
+              </Card>
             );
           })}
         </div>

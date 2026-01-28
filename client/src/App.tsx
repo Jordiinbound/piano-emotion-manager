@@ -53,6 +53,9 @@ import { PartnerDashboard } from "./pages/PartnerDashboard";
 import { LicenseReminders } from "./pages/LicenseReminders";
 import { RolesManagement } from "./pages/RolesManagement";
 import { GlobalAnalytics } from "./pages/GlobalAnalytics";
+import Contabilidad from "./pages/Contabilidad";
+import Workflows from "./pages/Workflows";
+import IAAvanzada from "./pages/IAAvanzada";
 
 function Router() {
   return (
@@ -321,6 +324,31 @@ function Router() {
         <ProtectedRoute>
           <Layout>
             <GlobalAnalytics />
+          </Layout>
+        </ProtectedRoute>
+      </Route>
+
+      {/* HERRAMIENTAS AVANZADAS - Nuevos Módulos */}
+      <Route path="/contabilidad">
+        <ProtectedRoute>
+          <Layout>
+            <Contabilidad />
+          </Layout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/workflows">
+        <ProtectedRoute>
+          <Layout>
+            <Workflows />
+          </Layout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/ia-avanzada">
+        <ProtectedRoute>
+          <Layout>
+            <IAAvanzada />
           </Layout>
         </ProtectedRoute>
       </Route>
