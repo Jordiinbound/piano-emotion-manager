@@ -1506,3 +1506,128 @@
 - [ ] Actualizar componentes frontend para usar URLs de R2
 - [ ] Verificar que firmas se cargan correctamente desde R2
 - [ ] Escribir tests para almacenamiento de firmas en R2
+
+## FASE 6: Sistema Completo de Workflows/Automatizaciones Visuales
+
+### FASE 6.1: Base de Datos para Workflows
+- [ ] Crear tabla `workflows` en schema.ts
+  - Campos: id, name, description, trigger_type, trigger_config, status (active/inactive), created_at, updated_at
+- [ ] Crear tabla `workflow_nodes` en schema.ts
+  - Campos: id, workflow_id, node_type (trigger/condition/action), node_config (JSON), position_x, position_y, created_at
+- [ ] Crear tabla `workflow_connections` en schema.ts
+  - Campos: id, workflow_id, source_node_id, target_node_id, created_at
+- [ ] Crear tabla `workflow_executions` en schema.ts
+  - Campos: id, workflow_id, status (pending/running/completed/failed), trigger_data (JSON), execution_log (JSON), started_at, completed_at
+- [ ] Ejecutar migraciones de base de datos
+
+### FASE 6.2: Editor Visual de Workflows (React Flow)
+- [ ] Instalar react-flow-renderer para editor drag-and-drop
+- [ ] Crear página /workflows con lista de workflows
+- [ ] Crear página /workflows/nuevo con editor visual
+- [ ] Crear página /workflows/:id/editar con editor visual
+- [ ] Implementar componentes de nodos personalizados:
+  - [ ] TriggerNode: Punto de inicio del workflow
+  - [ ] ConditionNode: Condiciones if/else
+  - [ ] ActionNode: Acciones a ejecutar
+  - [ ] DelayNode: Esperas temporales
+- [ ] Implementar panel lateral con nodos disponibles (drag from sidebar)
+- [ ] Implementar conexiones entre nodos con validación
+- [ ] Implementar guardado de posiciones de nodos
+- [ ] Agregar zoom y pan en el canvas
+- [ ] Agregar minimap para navegación
+
+### FASE 6.3: Tipos de Triggers (Eventos que Inician Workflows)
+- [ ] Trigger: Nuevo cliente creado
+- [ ] Trigger: Nuevo servicio creado
+- [ ] Trigger: Servicio completado
+- [ ] Trigger: Factura creada
+- [ ] Trigger: Factura vencida (X días)
+- [ ] Trigger: Recordatorio próximo (X días)
+- [ ] Trigger: Cliente sin actividad (X días)
+- [ ] Trigger: Stock bajo de producto
+- [ ] Trigger: Cita programada (X horas antes)
+- [ ] Trigger: Piano sin mantenimiento (X meses)
+- [ ] Trigger: Programado (cron: diario, semanal, mensual)
+
+### FASE 6.4: Tipos de Condiciones
+- [ ] Condición: Cliente es VIP
+- [ ] Condición: Cliente tiene email
+- [ ] Condición: Cliente tiene teléfono
+- [ ] Condición: Servicio tipo = X
+- [ ] Condición: Factura monto > X
+- [ ] Condición: Piano tipo = X
+- [ ] Condición: Fecha actual es día de semana
+- [ ] Condición: Hora actual entre X y Y
+- [ ] Condición: Cliente tiene pianos > X
+- [ ] Condición: Cliente en provincia = X
+
+### FASE 6.5: Tipos de Acciones
+- [ ] Acción: Enviar email
+- [ ] Acción: Enviar WhatsApp
+- [ ] Acción: Crear recordatorio
+- [ ] Acción: Crear tarea
+- [ ] Acción: Actualizar campo de cliente
+- [ ] Acción: Marcar cliente como VIP
+- [ ] Acción: Crear nota en cliente
+- [ ] Acción: Enviar notificación al propietario
+- [ ] Acción: Generar PDF de servicio
+- [ ] Acción: Generar PDF de factura
+- [ ] Acción: Esperar X días/horas
+
+### FASE 6.6: Motor de Ejecución de Workflows
+- [ ] Crear servicio workflowEngine.ts
+- [ ] Implementar función executeWorkflow(workflowId, triggerData)
+- [ ] Implementar evaluación de condiciones (if/else logic)
+- [ ] Implementar ejecución de acciones secuenciales
+- [ ] Implementar manejo de errores y reintentos
+- [ ] Implementar logging de ejecuciones
+- [ ] Crear worker/cron job para workflows programados
+- [ ] Integrar triggers en endpoints existentes (onCreate, onUpdate)
+
+### FASE 6.7: Endpoints tRPC para Workflows
+- [ ] Endpoint: workflows.list - Listar todos los workflows
+- [ ] Endpoint: workflows.get - Obtener workflow por ID
+- [ ] Endpoint: workflows.create - Crear nuevo workflow
+- [ ] Endpoint: workflows.update - Actualizar workflow
+- [ ] Endpoint: workflows.delete - Eliminar workflow
+- [ ] Endpoint: workflows.activate - Activar workflow
+- [ ] Endpoint: workflows.deactivate - Desactivar workflow
+- [ ] Endpoint: workflows.execute - Ejecutar workflow manualmente
+- [ ] Endpoint: workflows.getExecutions - Historial de ejecuciones
+- [ ] Endpoint: workflows.getExecutionLog - Log detallado de ejecución
+
+### FASE 6.8: UI de Gestión de Workflows
+- [ ] Crear componente WorkflowsList con tabla de workflows
+- [ ] Agregar filtros por estado (activo/inactivo)
+- [ ] Agregar búsqueda por nombre
+- [ ] Mostrar estadísticas de ejecuciones (total, exitosas, fallidas)
+- [ ] Agregar botones de activar/desactivar
+- [ ] Agregar botón de ejecutar manualmente
+- [ ] Crear modal de historial de ejecuciones
+- [ ] Mostrar logs detallados de cada ejecución
+- [ ] Agregar enlace en sidebar bajo AUTOMATIZACIÓN
+
+### FASE 6.9: Plantillas de Workflows Predefinidas
+- [ ] Plantilla: "Recordatorio de mantenimiento anual"
+- [ ] Plantilla: "Seguimiento de facturas vencidas"
+- [ ] Plantilla: "Bienvenida a nuevos clientes"
+- [ ] Plantilla: "Reactivación de clientes inactivos"
+- [ ] Plantilla: "Confirmación de citas 24h antes"
+- [ ] Plantilla: "Alerta de stock bajo"
+- [ ] Plantilla: "Agradecimiento post-servicio"
+- [ ] Plantilla: "Solicitud de feedback"
+
+### FASE 6.10: Traducciones de Workflows
+- [ ] Agregar traducciones de workflows a 10 idiomas
+- [ ] Traducir nombres de triggers
+- [ ] Traducir nombres de condiciones
+- [ ] Traducir nombres de acciones
+- [ ] Traducir mensajes de error
+- [ ] Traducir tooltips del editor
+
+### FASE 6.11: Tests de Workflows
+- [ ] Tests unitarios para workflowEngine.ts
+- [ ] Tests de evaluación de condiciones
+- [ ] Tests de ejecución de acciones
+- [ ] Tests de integración con triggers
+- [ ] Tests de endpoints tRPC

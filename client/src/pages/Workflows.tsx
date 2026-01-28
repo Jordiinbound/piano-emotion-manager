@@ -19,93 +19,206 @@ import {
   Clock,
   CheckCircle2,
   AlertCircle,
+  Trash2,
+  Edit,
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useTranslation } from '@/hooks/use-translation';
-
-interface Workflow {
-  id: string;
-  name: string;
-  description: string;
-  trigger: string;
-  actions: number;
-  status: 'active' | 'paused' | 'error';
-  executions: number;
-  lastRun?: string;
-}
+import { trpc } from '@/lib/trpc';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 
 export default function Workflows() {
   const { t } = useTranslation();
+  const utils = trpc.useUtils();
   
-  const SAMPLE_WORKFLOWS: Workflow[] = [
-    {
-      id: '1',
-      name: t('workflows.workflowsList.invoiceReminder'),
-      description: t('workflows.templatesList.invoiceReminder.description'),
-      trigger: 'Fecha de servicio',
-      actions: 2,
-      status: 'active',
-      executions: 45,
-      lastRun: '2026-01-27',
-    },
-    {
-      id: '2',
-      name: t('workflows.workflowsList.appointmentConfirmation'),
-      description: t('workflows.templatesList.appointmentConfirmation.description'),
-      trigger: 'Fecha de vencimiento',
-      actions: 3,
-      status: 'active',
-      executions: 12,
-      lastRun: '2026-01-26',
-    },
-    {
-      id: '3',
-      name: t('workflows.workflowsList.maintenanceAlert'),
-      description: t('workflows.templatesList.maintenanceAlert.description'),
-      trigger: 'Cliente creado',
-      actions: 2,
-      status: 'paused',
-      executions: 28,
-      lastRun: '2026-01-20',
-    },
-  ];
+  // Estado para diálogo de creación/edición
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [editingWorkflow, setEditingWorkflow] = useState<number | null>(null);
+  const [formData, setFormData] = useState({
+    name: '',
+    description: '',
+    triggerType: 'manual',
+  });
 
-  const [workflows, setWorkflows] = useState<Workflow[]>(SAMPLE_WORKFLOWS);
+  // Queries
+  const { data: workflows = [], isLoading } = trpc.workflows.list.useQuery();
+  const { data: workflowExecutions } = trpc.workflows.getExecutions.useQuery(
+    { workflowId: workflows[0]?.id || 0 },
+    { enabled: workflows.length > 0 }
+  );
 
-  const handleToggleStatus = (id: string) => {
-    setWorkflows(prev =>
-      prev.map(wf =>
-        wf.id === id
-          ? { ...wf, status: wf.status === 'active' ? 'paused' : 'active' }
-          : wf
-      )
-    );
-    toast.success('Estado del workflow actualizado');
+  // Mutations
+  const createMutation = trpc.workflows.create.useMutation({
+    onSuccess: () => {
+      toast.success(t('workflows.toast.created'));
+      utils.workflows.list.invalidate();
+      setIsDialogOpen(false);
+      resetForm();
+    },
+    onError: (error) => {
+      toast.error(`Error: ${error.message}`);
+    },
+  });
+
+  const updateMutation = trpc.workflows.update.useMutation({
+    onSuccess: () => {
+      toast.success(t('workflows.toast.updated'));
+      utils.workflows.list.invalidate();
+      setIsDialogOpen(false);
+      resetForm();
+    },
+    onError: (error) => {
+      toast.error(`Error: ${error.message}`);
+    },
+  });
+
+  const deleteMutation = trpc.workflows.delete.useMutation({
+    onSuccess: () => {
+      toast.success(t('workflows.toast.deleted'));
+      utils.workflows.list.invalidate();
+    },
+    onError: (error) => {
+      toast.error(`Error: ${error.message}`);
+    },
+  });
+
+  const activateMutation = trpc.workflows.activate.useMutation({
+    onSuccess: () => {
+      toast.success(t('workflows.toast.activated'));
+      utils.workflows.list.invalidate();
+    },
+    onError: (error) => {
+      toast.error(`Error: ${error.message}`);
+    },
+  });
+
+  const deactivateMutation = trpc.workflows.deactivate.useMutation({
+    onSuccess: () => {
+      toast.success(t('workflows.toast.deactivated'));
+      utils.workflows.list.invalidate();
+    },
+    onError: (error) => {
+      toast.error(`Error: ${error.message}`);
+    },
+  });
+
+  const executeMutation = trpc.workflows.execute.useMutation({
+    onSuccess: () => {
+      toast.success(t('workflows.toast.executed'));
+      utils.workflows.list.invalidate();
+    },
+    onError: (error) => {
+      toast.error(`Error: ${error.message}`);
+    },
+  });
+
+  const resetForm = () => {
+    setFormData({
+      name: '',
+      description: '',
+      triggerType: 'manual',
+    });
+    setEditingWorkflow(null);
   };
 
   const handleCreateWorkflow = () => {
-    toast.info(t('workflows.toast.createComingSoon'));
+    resetForm();
+    setIsDialogOpen(true);
   };
 
-  const getStatusIcon = (status: Workflow['status']) => {
-    switch (status) {
-      case 'active':
-        return <CheckCircle2 className="h-4 w-4 text-green-500" />;
-      case 'paused':
-        return <Pause className="h-4 w-4 text-yellow-500" />;
-      case 'error':
-        return <AlertCircle className="h-4 w-4 text-red-500" />;
+  const handleEditWorkflow = (workflow: any) => {
+    setEditingWorkflow(workflow.id);
+    setFormData({
+      name: workflow.name,
+      description: workflow.description || '',
+      triggerType: workflow.triggerType,
+    });
+    setIsDialogOpen(true);
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (editingWorkflow) {
+      updateMutation.mutate({
+        id: editingWorkflow,
+        ...formData,
+      });
+    } else {
+      createMutation.mutate(formData);
     }
   };
 
-  const getStatusBadge = (status: Workflow['status']) => {
-    const variants = {
+  const handleToggleStatus = (id: number, currentStatus: string) => {
+    if (currentStatus === 'active') {
+      deactivateMutation.mutate({ id });
+    } else {
+      activateMutation.mutate({ id });
+    }
+  };
+
+  const handleDeleteWorkflow = (id: number) => {
+    if (confirm(t('workflows.confirmDelete'))) {
+      deleteMutation.mutate({ id });
+    }
+  };
+
+  const handleExecuteWorkflow = (id: number) => {
+    executeMutation.mutate({ id });
+  };
+
+  const getStatusIcon = (status: string) => {
+    switch (status) {
+      case 'active':
+        return <CheckCircle2 className="h-4 w-4 text-green-500" />;
+      case 'inactive':
+        return <Pause className="h-4 w-4 text-yellow-500" />;
+      case 'error':
+        return <AlertCircle className="h-4 w-4 text-red-500" />;
+      default:
+        return <Pause className="h-4 w-4 text-gray-500" />;
+    }
+  };
+
+  const getStatusBadge = (status: string) => {
+    const variants: Record<string, string> = {
       active: 'bg-green-100 text-green-700',
-      paused: 'bg-yellow-100 text-yellow-700',
+      inactive: 'bg-yellow-100 text-yellow-700',
       error: 'bg-red-100 text-red-700',
     };
-    return variants[status];
+    return variants[status] || 'bg-gray-100 text-gray-700';
   };
+
+  const activeWorkflows = workflows.filter(w => w.status === 'active').length;
+  const totalExecutions = workflows.reduce((acc, w) => acc + (w.executionCount || 0), 0);
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-96">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-muted-foreground">{t('common.loading')}</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -145,7 +258,7 @@ export default function Workflows() {
             <div>
               <p className="text-sm text-muted-foreground">{t('workflows.activeWorkflows')}</p>
               <p className="text-3xl font-bold text-green-600 mt-1">
-                {workflows.filter(w => w.status === 'active').length}
+                {activeWorkflows}
               </p>
             </div>
             <CheckCircle2 className="h-8 w-8 text-green-500" />
@@ -157,7 +270,7 @@ export default function Workflows() {
             <div>
               <p className="text-sm text-muted-foreground">{t('workflows.totalExecutions')}</p>
               <p className="text-3xl font-bold text-foreground mt-1">
-                {workflows.reduce((acc, w) => acc + w.executions, 0)}
+                {totalExecutions}
               </p>
             </div>
             <Zap className="h-8 w-8 text-yellow-500" />
@@ -169,7 +282,7 @@ export default function Workflows() {
             <div>
               <p className="text-sm text-muted-foreground">{t('workflows.successRate')}</p>
               <p className="text-3xl font-bold text-foreground mt-1">
-                98%
+                {workflows.length > 0 ? '98%' : '0%'}
               </p>
             </div>
             <Clock className="h-8 w-8 text-blue-500" />
@@ -180,68 +293,102 @@ export default function Workflows() {
       {/* Lista de workflows */}
       <div className="space-y-4">
         <h2 className="text-2xl font-semibold">{t('workflows.list.title')}</h2>
-        {workflows.map((workflow) => (
-          <Card key={workflow.id} className="p-6">
-            <div className="flex items-start justify-between">
-              <div className="flex-1">
-                <div className="flex items-center gap-3 mb-2">
-                  <h3 className="text-xl font-semibold">{workflow.name}</h3>
-                  <Badge className={getStatusBadge(workflow.status)}>
-                    {getStatusIcon(workflow.status)}
-                    <span className="ml-1 capitalize">
-                      {workflow.status === 'active' && t('workflows.list.active')}
-                      {workflow.status === 'paused' && t('workflows.list.inactive')}
-                      {workflow.status === 'error' && 'Error'}
-                    </span>
-                  </Badge>
-                </div>
-                <p className="text-muted-foreground mb-4">{workflow.description}</p>
-                
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-4 text-sm">
-                  <div>
-                    <span className="text-muted-foreground">Trigger:</span>
-                    <p className="font-medium">{workflow.trigger}</p>
-                  </div>
-                  <div>
-                    <span className="text-muted-foreground">{t('workflows.list.actions')}:</span>
-                    <p className="font-medium">{workflow.actions} pasos</p>
-                  </div>
-                  <div>
-                    <span className="text-muted-foreground">{t('workflows.totalExecutions')}:</span>
-                    <p className="font-medium">{workflow.executions}</p>
-                  </div>
-                  <div>
-                    <span className="text-muted-foreground">{t('workflows.list.lastExecution')}:</span>
-                    <p className="font-medium">{workflow.lastRun || 'Nunca'}</p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="flex gap-2 ml-4">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => handleToggleStatus(workflow.id)}
-                >
-                  {workflow.status === 'active' ? (
-                    <>
-                      <Pause className="h-4 w-4 mr-1" />
-                      Pausar
-                    </>
-                  ) : (
-                    <>
-                      <Play className="h-4 w-4 mr-1" />
-                      Activar
-                    </>
-                  )}
-                </Button>
-                <Button variant="outline" size="sm">
-                  <Settings className="h-4 w-4" />
-                </Button>
-              </div>
-            </div>
+        {workflows.length === 0 ? (
+          <Card className="p-12 text-center">
+            <GitBranch className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
+            <h3 className="text-xl font-semibold mb-2">{t('workflows.noWorkflows')}</h3>
+            <p className="text-muted-foreground mb-4">{t('workflows.noWorkflowsDescription')}</p>
+            <Button onClick={handleCreateWorkflow}>
+              <Plus className="h-4 w-4 mr-2" />
+              {t('workflows.create')}
+            </Button>
           </Card>
-        ))}
+        ) : (
+          workflows.map((workflow) => (
+            <Card key={workflow.id} className="p-6">
+              <div className="flex items-start justify-between">
+                <div className="flex-1">
+                  <div className="flex items-center gap-3 mb-2">
+                    <h3 className="text-xl font-semibold">{workflow.name}</h3>
+                    <Badge className={getStatusBadge(workflow.status)}>
+                      {getStatusIcon(workflow.status)}
+                      <span className="ml-1 capitalize">
+                        {workflow.status === 'active' && t('workflows.list.active')}
+                        {workflow.status === 'inactive' && t('workflows.list.inactive')}
+                        {workflow.status === 'error' && 'Error'}
+                      </span>
+                    </Badge>
+                  </div>
+                  <p className="text-muted-foreground mb-4">{workflow.description || t('workflows.noDescription')}</p>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-4 gap-4 text-sm">
+                    <div>
+                      <span className="text-muted-foreground">Trigger:</span>
+                      <p className="font-medium capitalize">{workflow.triggerType}</p>
+                    </div>
+                    <div>
+                      <span className="text-muted-foreground">{t('workflows.list.actions')}:</span>
+                      <p className="font-medium">0 pasos</p>
+                    </div>
+                    <div>
+                      <span className="text-muted-foreground">{t('workflows.totalExecutions')}:</span>
+                      <p className="font-medium">{workflow.executionCount || 0}</p>
+                    </div>
+                    <div>
+                      <span className="text-muted-foreground">{t('workflows.list.lastExecution')}:</span>
+                      <p className="font-medium">
+                        {workflow.lastExecutedAt 
+                          ? new Date(workflow.lastExecutedAt).toLocaleDateString() 
+                          : t('workflows.neverExecuted')}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex gap-2 ml-4">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handleToggleStatus(workflow.id, workflow.status)}
+                  >
+                    {workflow.status === 'active' ? (
+                      <>
+                        <Pause className="h-4 w-4 mr-1" />
+                        {t('workflows.pause')}
+                      </>
+                    ) : (
+                      <>
+                        <Play className="h-4 w-4 mr-1" />
+                        {t('workflows.activate')}
+                      </>
+                    )}
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={() => handleExecuteWorkflow(workflow.id)}
+                  >
+                    <Play className="h-4 w-4" />
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={() => handleEditWorkflow(workflow)}
+                  >
+                    <Edit className="h-4 w-4" />
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={() => handleDeleteWorkflow(workflow.id)}
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </div>
+              </div>
+            </Card>
+          ))
+        )}
       </div>
 
       {/* Templates de workflows */}
@@ -252,20 +399,34 @@ export default function Workflows() {
             { 
               name: t('workflows.templatesList.invoiceReminder.name'), 
               icon: Clock,
-              description: t('workflows.templatesList.invoiceReminder.description')
+              description: t('workflows.templatesList.invoiceReminder.description'),
+              triggerType: 'invoice_due',
             },
             { 
               name: t('workflows.templatesList.appointmentConfirmation.name'), 
               icon: CheckCircle2,
-              description: t('workflows.templatesList.appointmentConfirmation.description')
+              description: t('workflows.templatesList.appointmentConfirmation.description'),
+              triggerType: 'appointment_created',
             },
             { 
               name: t('workflows.templatesList.maintenanceAlert.name'), 
               icon: AlertCircle,
-              description: t('workflows.templatesList.maintenanceAlert.description')
+              description: t('workflows.templatesList.maintenanceAlert.description'),
+              triggerType: 'service_completed',
             },
           ].map((template) => (
-            <Card key={template.name} className="p-4 hover:shadow-lg transition-shadow cursor-pointer">
+            <Card 
+              key={template.name} 
+              className="p-4 hover:shadow-lg transition-shadow cursor-pointer"
+              onClick={() => {
+                setFormData({
+                  name: template.name,
+                  description: template.description,
+                  triggerType: template.triggerType,
+                });
+                setIsDialogOpen(true);
+              }}
+            >
               <div className="flex items-start gap-3">
                 <template.icon className="h-6 w-6 text-primary flex-shrink-0 mt-1" />
                 <div>
@@ -280,6 +441,71 @@ export default function Workflows() {
           ))}
         </div>
       </Card>
+
+      {/* Diálogo de creación/edición */}
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>
+              {editingWorkflow ? t('workflows.edit') : t('workflows.create')}
+            </DialogTitle>
+            <DialogDescription>
+              {editingWorkflow 
+                ? t('workflows.editDescription') 
+                : t('workflows.createDescription')}
+            </DialogDescription>
+          </DialogHeader>
+          <form onSubmit={handleSubmit}>
+            <div className="space-y-4 py-4">
+              <div className="space-y-2">
+                <Label htmlFor="name">{t('workflows.form.name')}</Label>
+                <Input
+                  id="name"
+                  value={formData.name}
+                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="description">{t('workflows.form.description')}</Label>
+                <Textarea
+                  id="description"
+                  value={formData.description}
+                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                  rows={3}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="triggerType">{t('workflows.form.triggerType')}</Label>
+                <Select
+                  value={formData.triggerType}
+                  onValueChange={(value) => setFormData({ ...formData, triggerType: value })}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="manual">{t('workflows.triggers.manual')}</SelectItem>
+                    <SelectItem value="client_created">{t('workflows.triggers.clientCreated')}</SelectItem>
+                    <SelectItem value="service_completed">{t('workflows.triggers.serviceCompleted')}</SelectItem>
+                    <SelectItem value="invoice_due">{t('workflows.triggers.invoiceDue')}</SelectItem>
+                    <SelectItem value="appointment_created">{t('workflows.triggers.appointmentCreated')}</SelectItem>
+                    <SelectItem value="scheduled">{t('workflows.triggers.scheduled')}</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+            <DialogFooter>
+              <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)}>
+                {t('common.cancel')}
+              </Button>
+              <Button type="submit" disabled={createMutation.isPending || updateMutation.isPending}>
+                {editingWorkflow ? t('common.save') : t('common.create')}
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

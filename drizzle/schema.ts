@@ -1785,3 +1785,145 @@ export const pianoPriceHistoryRelations = relations(pianoPriceHistory, ({ one })
     references: [pianos.id],
   }),
 }));
+
+// ============================================
+// WORKFLOWS / AUTOMATIZACIONES
+// ============================================
+
+// Workflows: Automatizaciones configurables
+export const workflows = mysqlTable('workflows', {
+  id: int().autoincrement().notNull().primaryKey(),
+  
+  // Información básica
+  name: varchar({ length: 200 }).notNull(),
+  description: text(),
+  
+  // Configuración del trigger
+  triggerType: varchar('trigger_type', { length: 100 }).notNull(), // 'client_created', 'service_completed', 'invoice_overdue', etc.
+  triggerConfig: json('trigger_config'), // Configuración específica del trigger (ej: días de retraso)
+  
+  // Estado
+  status: mysqlEnum('status', ['active', 'inactive']).notNull().default('inactive'),
+  
+  // Metadata
+  createdAt: timestamp('created_at').defaultNow(),
+  updatedAt: timestamp('updated_at').defaultNow().onUpdateNow(),
+},
+(table) => [
+  index('idx_workflow_status').on(table.status),
+  index('idx_workflow_trigger').on(table.triggerType),
+]);
+
+// Nodos del workflow (triggers, conditions, actions)
+export const workflowNodes = mysqlTable('workflow_nodes', {
+  id: int().autoincrement().notNull().primaryKey(),
+  workflowId: int('workflow_id').notNull().references(() => workflows.id, { onDelete: 'cascade' }),
+  
+  // Tipo de nodo
+  nodeType: mysqlEnum('node_type', ['trigger', 'condition', 'action', 'delay']).notNull(),
+  
+  // Configuración del nodo (JSON)
+  nodeConfig: json('node_config').notNull(), // { type: 'send_email', to: '{{client.email}}', subject: '...', body: '...' }
+  
+  // Posición en el canvas
+  positionX: int('position_x').notNull().default(0),
+  positionY: int('position_y').notNull().default(0),
+  
+  // Metadata
+  createdAt: timestamp('created_at').defaultNow(),
+},
+(table) => [
+  index('idx_workflow_node').on(table.workflowId),
+  index('idx_node_type').on(table.nodeType),
+]);
+
+// Conexiones entre nodos del workflow
+export const workflowConnections = mysqlTable('workflow_connections', {
+  id: int().autoincrement().notNull().primaryKey(),
+  workflowId: int('workflow_id').notNull().references(() => workflows.id, { onDelete: 'cascade' }),
+  
+  // Nodos conectados
+  sourceNodeId: int('source_node_id').notNull().references(() => workflowNodes.id, { onDelete: 'cascade' }),
+  targetNodeId: int('target_node_id').notNull().references(() => workflowNodes.id, { onDelete: 'cascade' }),
+  
+  // Tipo de conexión (para condiciones: 'true' o 'false')
+  connectionType: varchar('connection_type', { length: 50 }).default('default'), // 'default', 'true', 'false'
+  
+  // Metadata
+  createdAt: timestamp('created_at').defaultNow(),
+},
+(table) => [
+  index('idx_workflow_connection').on(table.workflowId),
+  index('idx_source_node').on(table.sourceNodeId),
+  index('idx_target_node').on(table.targetNodeId),
+]);
+
+// Ejecuciones de workflows (historial)
+export const workflowExecutions = mysqlTable('workflow_executions', {
+  id: int().autoincrement().notNull().primaryKey(),
+  workflowId: int('workflow_id').notNull().references(() => workflows.id, { onDelete: 'cascade' }),
+  
+  // Estado de la ejecución
+  status: mysqlEnum('status', ['pending', 'running', 'completed', 'failed']).notNull().default('pending'),
+  
+  // Datos del trigger que inició la ejecución
+  triggerData: json('trigger_data'), // { clientId: 123, serviceName: 'Afinación' }
+  
+  // Log de ejecución (pasos realizados)
+  executionLog: json('execution_log'), // [ { step: 1, action: 'send_email', status: 'success', timestamp: '...' } ]
+  
+  // Mensaje de error (si falló)
+  errorMessage: text('error_message'),
+  
+  // Tiempos
+  startedAt: timestamp('started_at'),
+  completedAt: timestamp('completed_at'),
+  
+  // Metadata
+  createdAt: timestamp('created_at').defaultNow(),
+},
+(table) => [
+  index('idx_workflow_execution').on(table.workflowId),
+  index('idx_execution_status').on(table.status),
+  index('idx_execution_started').on(table.startedAt),
+]);
+
+// Relaciones de workflows
+export const workflowsRelations = relations(workflows, ({ many }) => ({
+  nodes: many(workflowNodes),
+  connections: many(workflowConnections),
+  executions: many(workflowExecutions),
+}));
+
+export const workflowNodesRelations = relations(workflowNodes, ({ one, many }) => ({
+  workflow: one(workflows, {
+    fields: [workflowNodes.workflowId],
+    references: [workflows.id],
+  }),
+  sourceConnections: many(workflowConnections, { relationName: 'sourceNode' }),
+  targetConnections: many(workflowConnections, { relationName: 'targetNode' }),
+}));
+
+export const workflowConnectionsRelations = relations(workflowConnections, ({ one }) => ({
+  workflow: one(workflows, {
+    fields: [workflowConnections.workflowId],
+    references: [workflows.id],
+  }),
+  sourceNode: one(workflowNodes, {
+    fields: [workflowConnections.sourceNodeId],
+    references: [workflowNodes.id],
+    relationName: 'sourceNode',
+  }),
+  targetNode: one(workflowNodes, {
+    fields: [workflowConnections.targetNodeId],
+    references: [workflowNodes.id],
+    relationName: 'targetNode',
+  }),
+}));
+
+export const workflowExecutionsRelations = relations(workflowExecutions, ({ one }) => ({
+  workflow: one(workflows, {
+    fields: [workflowExecutions.workflowId],
+    references: [workflows.id],
+  }),
+}));

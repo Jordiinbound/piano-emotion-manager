@@ -1015,16 +1015,80 @@
       "sendWhatsapp": "Enviar WhatsApp",
       "updateField": "Actualizar campo"
     },
+    "activate": "Activar",
+    "activeWorkflows": "Workflows Activos",
     "condition": "Condición",
+    "confirmDelete": "¿Estás seguro de que deseas eliminar este workflow?",
+    "create": "Crear Workflow",
+    "createDescription": "Completa los detalles para crear un nuevo workflow de automatización.",
+    "edit": "Editar Workflow",
+    "editDescription": "Modifica los detalles de este workflow.",
+    "form": {
+      "name": "Nombre",
+      "description": "Descripción",
+      "triggerType": "Tipo de Disparador"
+    },
+    "list": {
+      "title": "Mis Workflows",
+      "active": "Activo",
+      "inactive": "Inactivo",
+      "actions": "Acciones",
+      "lastExecution": "Última Ejecución"
+    },
+    "neverExecuted": "Nunca",
     "newWorkflow": "Nueva Automatización",
+    "noDescription": "Sin descripción",
+    "noWorkflows": "No tienes workflows todavía",
+    "noWorkflowsDescription": "Crea tu primer workflow para automatizar tareas repetitivas.",
+    "pause": "Pausar",
+    "subtitle": "Automatiza tareas y flujos de trabajo personalizados",
+    "successRate": "Tasa de Éxito",
+    "templates": {
+      "title": "Plantillas de Workflows",
+      "use": "Usar plantilla"
+    },
+    "templatesList": {
+      "invoiceReminder": {
+        "name": "Recordatorio de Factura",
+        "description": "Envía recordatorios automáticos de facturas vencidas"
+      },
+      "appointmentConfirmation": {
+        "name": "Confirmación de Cita",
+        "description": "Confirma automáticamente citas programadas"
+      },
+      "maintenanceAlert": {
+        "name": "Alerta de Mantenimiento",
+        "description": "Notifica cuando un piano requiere mantenimiento"
+      }
+    },
     "title": "Automatizaciones",
+    "toast": {
+      "activated": "Workflow activado correctamente",
+      "created": "Workflow creado correctamente",
+      "createComingSoon": "Creación de workflows próximamente",
+      "deactivated": "Workflow desactivado correctamente",
+      "deleted": "Workflow eliminado correctamente",
+      "executed": "Workflow ejecutado correctamente",
+      "updated": "Workflow actualizado correctamente"
+    },
+    "totalExecutions": "Ejecuciones Totales",
     "trigger": "Disparador",
     "triggers": {
-      "invoicePaid": "Factura pagada",
-      "lowStock": "Stock bajo",
-      "newAppointment": "Nueva cita",
-      "newClient": "Nuevo cliente",
-      "serviceCompleted": "Servicio completado"
+      "appointmentCreated": "Cita Creada",
+      "clientCreated": "Cliente Creado",
+      "invoiceDue": "Factura Vencida",
+      "invoicePaid": "Factura Pagada",
+      "lowStock": "Stock Bajo",
+      "manual": "Manual",
+      "newAppointment": "Nueva Cita",
+      "newClient": "Nuevo Cliente",
+      "scheduled": "Programado",
+      "serviceCompleted": "Servicio Completado"
+    },
+    "workflowsList": {
+      "appointmentConfirmation": "Confirmación de Cita",
+      "invoiceReminder": "Recordatorio de Factura",
+      "maintenanceAlert": "Alerta de Mantenimiento"
     }
   }
 }
