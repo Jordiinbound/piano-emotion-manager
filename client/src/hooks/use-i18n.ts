@@ -9,7 +9,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { trpc } from '@/lib/trpc';
 
-export type SupportedLanguage = 'es' | 'en' | 'fr' | 'de' | 'it' | 'pt' | 'ca' | 'eu' | 'gl';
+export type SupportedLanguage = 'es' | 'en' | 'fr' | 'de' | 'it' | 'pt' | 'da' | 'no' | 'sv';
 
 export const supportedLanguages = [
   { code: 'es' as SupportedLanguage, name: 'Spanish', nativeName: 'Español', flag: '🇪🇸' },
@@ -18,9 +18,9 @@ export const supportedLanguages = [
   { code: 'de' as SupportedLanguage, name: 'German', nativeName: 'Deutsch', flag: '🇩🇪' },
   { code: 'it' as SupportedLanguage, name: 'Italian', nativeName: 'Italiano', flag: '🇮🇹' },
   { code: 'pt' as SupportedLanguage, name: 'Portuguese', nativeName: 'Português', flag: '🇵🇹' },
-  { code: 'ca' as SupportedLanguage, name: 'Catalan', nativeName: 'Català', flag: '🏴' },
-  { code: 'eu' as SupportedLanguage, name: 'Basque', nativeName: 'Euskara', flag: '🏴' },
-  { code: 'gl' as SupportedLanguage, name: 'Galician', nativeName: 'Galego', flag: '🏴' },
+  { code: 'da' as SupportedLanguage, name: 'Danish', nativeName: 'Dansk', flag: '🇩🇰' },
+  { code: 'no' as SupportedLanguage, name: 'Norwegian', nativeName: 'Norsk', flag: '🇳🇴' },
+  { code: 'sv' as SupportedLanguage, name: 'Swedish', nativeName: 'Svenska', flag: '🇸🇪' },
 ];
 
 export const defaultLanguage: SupportedLanguage = 'es';
@@ -35,9 +35,9 @@ const translationsCache: Record<SupportedLanguage, Record<string, string> | null
   de: null,
   it: null,
   pt: null,
-  ca: null,
-  eu: null,
-  gl: null,
+  da: null,
+  no: null,
+  sv: null,
 };
 
 /**

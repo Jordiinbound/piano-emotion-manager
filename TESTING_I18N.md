@@ -9,7 +9,7 @@ Este documento describe las pruebas exhaustivas que se deben realizar para valid
 
 ### 1.1 Funcionalidad Básica
 - [ ] Verificar que el selector de idioma aparece en el header de todas las páginas
-- [ ] Verificar que muestra los 9 idiomas soportados: Español, English, Français, Deutsch, Italiano, Português, Català, Euskara, Galego
+- [ ] Verificar que muestra los 9 idiomas soportados: Español, English, Français, Deutsch, Italiano, Português, Dansk, Norsk, Svenska
 - [ ] Verificar que cada idioma muestra su nombre nativo y bandera correctamente
 - [ ] Verificar que el idioma actual está marcado/resaltado en el selector
 
@@ -168,6 +168,8 @@ Este documento describe las pruebas exhaustivas que se deben realizar para valid
 
 Repetir las siguientes pruebas para CADA uno de los 9 idiomas:
 
+**Idiomas implementados:** Español (es), English (en), Français (fr), Deutsch (de), Italiano (it), Português (pt), Dansk (da), Norsk (no), Svenska (sv)
+
 ### 6.1 Español (es)
 - [ ] Verificar Home, Clientes, Pianos, Servicios
 - [ ] Verificar formularios: ClienteNuevo, PianoNuevo
@@ -204,19 +206,19 @@ Repetir las siguientes pruebas para CADA uno de los 9 idiomas:
 - [ ] Verificar mensajes de error/éxito
 - [ ] Verificar TranslationManager
 
-### 6.7 Català (ca)
+### 6.7 Dansk (da)
 - [ ] Verificar Home, Clientes, Pianos, Servicios
 - [ ] Verificar formularios: ClienteNuevo, PianoNuevo
 - [ ] Verificar mensajes de error/éxito
 - [ ] Verificar TranslationManager
 
-### 6.8 Euskara (eu)
+### 6.8 Norsk (no)
 - [ ] Verificar Home, Clientes, Pianos, Servicios
 - [ ] Verificar formularios: ClienteNuevo, PianoNuevo
 - [ ] Verificar mensajes de error/éxito
 - [ ] Verificar TranslationManager
 
-### 6.9 Galego (gl)
+### 6.9 Svenska (sv)
 - [ ] Verificar Home, Clientes, Pianos, Servicios
 - [ ] Verificar formularios: ClienteNuevo, PianoNuevo
 - [ ] Verificar mensajes de error/éxito
@@ -294,7 +296,7 @@ Repetir las siguientes pruebas para CADA uno de los 9 idiomas:
 
 - **Total de páginas traducidas:** 52 páginas funcionales
 - **Total de claves de traducción:** 948 claves
-- **Idiomas soportados:** 9 idiomas (es, en, fr, de, it, pt, ca, eu, gl)
+- **Idiomas soportados:** 9 idiomas (es, en, fr, de, it, pt, da, no, sv)
 - **Líneas de código traducidas:** ~15,000 líneas en 52 archivos
 - **Optimizaciones implementadas:** Lazy loading, caché en memoria, exportación/importación CSV
 

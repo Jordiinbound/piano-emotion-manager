@@ -930,3 +930,10 @@
 - [x] Implementar importación de traducciones desde CSV
 - [x] Agregar validación de claves en importación
 - [x] Crear interfaz de usuario para exportar/importar con botones en TranslationManager
+
+## Corrección de documentación de idiomas
+- [x] Corregir TESTING_I18N.md con idiomas correctos (es, en, fr, de, it, pt, da, no, sv)
+- [x] Actualizar todos los mensajes y comentarios que mencionen catalán, euskera o gallego
+- [x] Actualizar use-i18n.ts con los 9 idiomas correctos (Dansk, Norsk, Svenska)
+- [x] Corregir SupportedLanguage type y supportedLanguages array
+- [x] Actualizar translationsCache con idiomas correctos
