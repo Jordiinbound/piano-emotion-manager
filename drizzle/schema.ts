@@ -895,11 +895,11 @@ export const reminders = mysqlTable("reminders", {
 	clientId: int().notNull(),
 	pianoId: int(),
 	reminderType: mysqlEnum(['call','visit','email','whatsapp','follow_up']).notNull(),
-	dueDate: timestamp().notNull(),
+	dueDate: timestamp({ mode: 'string' }).notNull(),
 	title: varchar({ length: 255 }).notNull(),
 	notes: text(),
 	isCompleted: tinyint().default(0).notNull(),
-	completedAt: timestamp(),
+	completedAt: timestamp({ mode: 'string' }),
 	createdAt: timestamp().defaultNow().notNull(),
 	updatedAt: timestamp().defaultNow().onUpdateNow().notNull(),
 	partnerId: int().default(1).notNull(),
@@ -1403,3 +1403,9 @@ export const alertHistoryRelations = relations(alertHistory, ({ one }) => ({
     references: [clients.id],
   }),
 }));
+
+
+/**
+ * Tabla de recordatorios
+ * Gestión de recordatorios de seguimiento y captación de clientes
+ */

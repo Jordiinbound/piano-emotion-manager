@@ -1008,3 +1008,89 @@
 - [x] Agregar ruta /notificaciones al App.tsx
 - [x] Agregar enlace "Notificaciones" en el menú HERRAMIENTAS del Layout
 - [x] Tests no requeridos (página de UI que consume endpoints ya testeados)
+
+## MIGRACIÓN COMPLETA DE FUNCIONALIDADES PENDIENTES
+
+### FASE 1: Sistema de Recordatorios
+- [x] Analizar implementación del sistema de recordatorios en proyecto GitHub
+- [x] Crear tabla de recordatorios en schema de Drizzle
+- [x] Migrar tipos de recordatorio (call, visit, email, whatsapp, follow_up)
+- [x] Migrar tipos de contacto integrados en reminderType
+- [x] Crear router de recordatorios con 14 endpoints tRPC
+- [x] Implementar lógica de negocio (markOverdueReminders, calculateReminderStats)
+- [ ] Crear página de Recordatorios con lista y filtros
+- [ ] Implementar formulario de crear/editar recordatorio
+- [ ] Agregar indicadores de recordatorios pendientes en dashboard
+- [x] Crear tests para el router de recordatorios (8/8 tests pasando - 100%)
+- [ ] Verificar funcionalidad completa con interfaz de usuario
+
+### FASE 2: Módulo de Marketing
+- [ ] Analizar implementación del módulo de marketing en proyecto GitHub
+- [ ] Crear tablas de campañas y mensajes en schema de Drizzle
+- [ ] Migrar plantillas de mensajes predefinidas
+- [ ] Crear router de marketing con endpoints tRPC
+- [ ] Crear servicio de campañas con segmentación de clientes
+- [ ] Implementar integración con WhatsApp Business API
+- [ ] Implementar integración con servicio de Email
+- [ ] Crear página de Campañas con lista y estadísticas
+- [ ] Implementar formulario de crear campaña (individual/masiva)
+- [ ] Implementar selector de plantillas de mensajes
+- [ ] Implementar programación de envíos
+- [ ] Crear página de Historial de mensajes enviados
+- [ ] Crear tests para el router de marketing
+- [ ] Verificar funcionalidad completa
+
+### FASE 3: Documentación Técnica de Pianos
+- [ ] Analizar implementación de fichas técnicas en proyecto GitHub
+- [ ] Extender tabla de pianos con campos técnicos adicionales
+- [ ] Crear tabla de mediciones técnicas en schema de Drizzle
+- [ ] Crear tabla de fotos de pianos en schema de Drizzle
+- [ ] Migrar campos de ficha técnica (medidas, características)
+- [ ] Crear router de documentación técnica con endpoints tRPC
+- [ ] Implementar upload de fotos a S3
+- [ ] Crear componente de Ficha Técnica del piano
+- [ ] Implementar formulario de mediciones técnicas
+- [ ] Implementar galería de fotos del piano
+- [ ] Agregar sección de documentación técnica en detalle de piano
+- [ ] Crear tests para el router de documentación
+- [ ] Verificar funcionalidad completa
+
+### FASE 4: Informes de Inspección
+- [ ] Analizar implementación de informes en proyecto GitHub
+- [ ] Crear tabla de informes de inspección en schema de Drizzle
+- [ ] Migrar plantillas de informes
+- [ ] Crear router de informes con endpoints tRPC
+- [ ] Crear servicio de generación de PDF con PDFKit o Puppeteer
+- [ ] Implementar plantilla de informe de inspección
+- [ ] Crear formulario de crear informe de inspección
+- [ ] Implementar preview del informe antes de generar PDF
+- [ ] Implementar descarga de informe en PDF
+- [ ] Implementar envío de informe por email al cliente
+- [ ] Agregar lista de informes en detalle de piano
+- [ ] Crear tests para el router de informes
+- [ ] Verificar funcionalidad completa
+
+### FASE 5: Historial Fotográfico
+- [ ] Analizar implementación de historial fotográfico en proyecto GitHub
+- [ ] Crear tabla de historial fotográfico en schema de Drizzle
+- [ ] Crear router de historial fotográfico con endpoints tRPC
+- [ ] Implementar upload múltiple de fotos a S3
+- [ ] Implementar organización de fotos por fecha/servicio
+- [ ] Crear componente de galería de historial fotográfico
+- [ ] Implementar vista de comparación de fotos (antes/después)
+- [ ] Implementar anotaciones en fotos
+- [ ] Agregar sección de historial fotográfico en detalle de piano
+- [ ] Implementar descarga de fotos en lote
+- [ ] Crear tests para el router de historial fotográfico
+- [ ] Verificar funcionalidad completa
+
+### FASE 6: Integración y Pruebas Finales
+- [ ] Verificar integración entre todos los módulos migrados
+- [ ] Probar flujo completo de recordatorios
+- [ ] Probar flujo completo de campañas de marketing
+- [ ] Probar flujo completo de documentación técnica
+- [ ] Probar flujo completo de informes de inspección
+- [ ] Probar flujo completo de historial fotográfico
+- [ ] Ejecutar todos los tests y verificar que pasen
+- [ ] Crear checkpoint final con todas las funcionalidades
+- [ ] Documentar funcionalidades migradas
