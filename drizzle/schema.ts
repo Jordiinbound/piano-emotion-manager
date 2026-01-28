@@ -410,6 +410,7 @@ export const invoices = mysqlTable("invoices", {
 	businessInfo: json(),
 	stripePaymentIntentId: varchar({ length: 255 }),
 	paymentToken: varchar({ length: 64 }).unique(),
+	clientSignature: text(),
 	createdAt: timestamp().defaultNow().notNull(),
 	updatedAt: timestamp().defaultNow().onUpdateNow().notNull(),
 	partnerId: int().default(1).notNull(),

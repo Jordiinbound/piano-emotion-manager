@@ -10,6 +10,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card'
 import { ArrowLeft, Save } from 'lucide-react';
 import { toast } from 'sonner';
 import { useTranslation } from '@/hooks/use-translation';
+import SignatureCanvas from '@/components/SignatureCanvas';
 
 export default function FacturaEditar() {
   const { t } = useTranslation();
@@ -33,6 +34,7 @@ export default function FacturaEditar() {
     taxAmount: '',
     total: '',
     notes: '',
+    clientSignature: '',
   });
 
   useEffect(() => {
@@ -49,6 +51,7 @@ export default function FacturaEditar() {
         taxAmount: String(invoice.taxAmount || ''),
         total: String(invoice.total || ''),
         notes: invoice.notes || '',
+        clientSignature: invoice.clientSignature || '',
       });
     }
   }, [invoice]);
@@ -70,6 +73,7 @@ export default function FacturaEditar() {
         taxAmount: Number(formData.taxAmount),
         total: Number(formData.total),
         notes: formData.notes || undefined,
+        clientSignature: formData.clientSignature || undefined,
       });
       toast.success(t('invoices.invoiceUpdated'));
       setLocation('/facturacion');
@@ -270,6 +274,14 @@ export default function FacturaEditar() {
                 onChange={(e) => handleChange('notes', e.target.value)}
                 placeholder={t('invoices.notesPlaceholder')}
                 rows={4}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label>{t('invoices.clientSignature')}</Label>
+              <SignatureCanvas
+                onSave={(signature) => handleChange('clientSignature', signature)}
+                existingSignature={formData.clientSignature}
               />
             </div>
 

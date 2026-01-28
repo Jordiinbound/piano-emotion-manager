@@ -1449,16 +1449,16 @@
 - [ ] Escribir tests para actualización de provincia
 
 ## FASE 4.8: Integrar Firma Digital en Servicios y Facturas
-- [ ] Agregar campo signature_url a tabla services en schema
-- [ ] Agregar campo signature_url a tabla invoices en schema
-- [ ] Ejecutar migración de base de datos para agregar campos
-- [ ] Integrar SignatureCanvas en página ServicioNuevo.tsx
-- [ ] Integrar SignatureCanvas en página ServicioEditar.tsx
-- [ ] Integrar SignatureCanvas en página FacturaNueva.tsx
-- [ ] Integrar SignatureCanvas en página FacturaEditar.tsx
-- [ ] Actualizar endpoints tRPC para guardar firma en R2
-- [ ] Incluir firma en PDFs generados de servicios
-- [ ] Incluir firma en PDFs generados de facturas
+- [x] Agregar campo clientSignature a tabla services en schema (ya existía)
+- [x] Agregar campo clientSignature a tabla invoices en schema
+- [x] Ejecutar migración de base de datos para agregar campos
+- [x] Integrar SignatureCanvas en página ServicioNuevo.tsx
+- [x] Integrar SignatureCanvas en página ServicioEditar.tsx
+- [x] Integrar SignatureCanvas en página FacturaNueva.tsx
+- [x] Integrar SignatureCanvas en página FacturaEditar.tsx
+- [ ] Actualizar endpoints tRPC para guardar firma en R2 (optimización futura)
+- [ ] Incluir firma en PDFs generados de servicios (futuro)
+- [ ] Incluir firma en PDFs generados de facturas (futuro)
 - [ ] Escribir tests para funcionalidad de firma
 
 ## FASE 4.9: Mapa de Clientes con Filtros por Región

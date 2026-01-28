@@ -10,6 +10,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card'
 import { ArrowLeft, Save } from 'lucide-react';
 import { toast } from 'sonner';
 import { useTranslation } from '@/hooks/use-translation';
+import SignatureCanvas from '@/components/SignatureCanvas';
 
 export default function ServicioEditar() {
   const { t } = useTranslation();
@@ -30,6 +31,7 @@ export default function ServicioEditar() {
     cost: '',
     duration: '',
     notes: '',
+    clientSignature: '',
   });
 
   useEffect(() => {
@@ -42,6 +44,7 @@ export default function ServicioEditar() {
         cost: String(service.cost || ''),
         duration: String(service.duration || ''),
         notes: service.notes || '',
+        clientSignature: service.clientSignature || '',
       });
     }
   }, [service]);
@@ -59,6 +62,7 @@ export default function ServicioEditar() {
         cost: Number(formData.cost),
         duration: Number(formData.duration),
         notes: formData.notes || undefined,
+        clientSignature: formData.clientSignature || undefined,
       });
       toast.success(t('services.serviceUpdated'));
       setLocation('/servicios');
@@ -195,6 +199,14 @@ export default function ServicioEditar() {
                 onChange={(e) => handleChange('notes', e.target.value)}
                 placeholder={t('services.notesPlaceholder')}
                 rows={4}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label>{t('services.clientSignature')}</Label>
+              <SignatureCanvas
+                onSave={(signature) => handleChange('clientSignature', signature)}
+                existingSignature={formData.clientSignature}
               />
             </div>
 

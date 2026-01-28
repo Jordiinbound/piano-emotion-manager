@@ -10,6 +10,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card'
 import { ArrowLeft, Save } from 'lucide-react';
 import { toast } from 'sonner';
 import { useTranslation } from '@/hooks/use-translation';
+import SignatureCanvas from '@/components/SignatureCanvas';
 
 export default function FacturaNueva() {
   const { t } = useTranslation();
@@ -29,6 +30,7 @@ export default function FacturaNueva() {
     taxAmount: '',
     total: '',
     notes: '',
+    clientSignature: '',
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -47,6 +49,7 @@ export default function FacturaNueva() {
         taxAmount: Number(formData.taxAmount),
         total: Number(formData.total),
         notes: formData.notes || undefined,
+        clientSignature: formData.clientSignature || undefined,
       });
       toast.success(t('invoices.invoiceCreated'));
       setLocation('/facturacion');
@@ -233,6 +236,14 @@ export default function FacturaNueva() {
                 onChange={(e) => handleChange('notes', e.target.value)}
                 placeholder={t('invoices.notesPlaceholder')}
                 rows={4}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label>{t('invoices.clientSignature')}</Label>
+              <SignatureCanvas
+                onSave={(signature) => handleChange('clientSignature', signature)}
+                existingSignature={formData.clientSignature}
               />
             </div>
 

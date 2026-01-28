@@ -10,6 +10,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card'
 import { ArrowLeft, Save } from 'lucide-react';
 import { toast } from 'sonner';
 import { useTranslation } from '@/hooks/use-translation';
+import SignatureCanvas from '@/components/SignatureCanvas';
 
 export default function ServicioNuevo() {
   const { t } = useTranslation();
@@ -26,6 +27,7 @@ export default function ServicioNuevo() {
     cost: '',
     duration: '',
     notes: '',
+    clientSignature: '',
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -40,6 +42,7 @@ export default function ServicioNuevo() {
         cost: Number(formData.cost),
         duration: formData.duration ? Number(formData.duration) : undefined,
         notes: formData.notes || undefined,
+        clientSignature: formData.clientSignature || undefined,
       });
       toast.success(t('services.serviceCreated'));
       setLocation('/servicios');
@@ -166,6 +169,14 @@ export default function ServicioNuevo() {
                 onChange={(e) => handleChange('notes', e.target.value)}
                 placeholder={t('services.notesPlaceholder')}
                 rows={4}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label>{t('services.clientSignature')}</Label>
+              <SignatureCanvas
+                onSave={(signature) => handleChange('clientSignature', signature)}
+                existingSignature={formData.clientSignature}
               />
             </div>
 
