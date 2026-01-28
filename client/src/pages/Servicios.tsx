@@ -5,10 +5,12 @@ import { Input } from "@/components/ui/input";
 import { Search, Plus, Loader2 } from "lucide-react";
 import ServiceFormModal from "@/components/ServiceFormModal";
 import DeleteConfirmModal from "@/components/DeleteConfirmModal";
+import { useTranslation } from "@/hooks/use-translation";
 
 type FilterType = 'all' | 'tuning' | 'maintenance' | 'repair' | 'regulation';
 
 export default function Servicios() {
+  const { t } = useTranslation();
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState<FilterType>("all");
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -59,11 +61,11 @@ export default function Servicios() {
   }, [services]);
 
   const filters: { key: FilterType; label: string }[] = [
-    { key: 'all', label: 'Todos' },
-    { key: 'tuning', label: 'Afinación' },
-    { key: 'maintenance', label: 'Mantenimiento' },
-    { key: 'repair', label: 'Reparación' },
-    { key: 'regulation', label: 'Regulación' },
+    { key: 'all', label: t('services.filters.all') },
+    { key: 'tuning', label: t('services.filters.tuning') },
+    { key: 'maintenance', label: t('services.filters.maintenance') },
+    { key: 'repair', label: t('services.filters.repair') },
+    { key: 'regulation', label: t('services.filters.regulation') },
   ];
 
   const handleServiceClick = (serviceId: number) => {
@@ -89,19 +91,19 @@ export default function Servicios() {
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-6">
         <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 text-center">
           <div className="text-3xl font-bold text-blue-900">{calculatedStats.tuning}</div>
-          <div className="text-sm text-gray-600 mt-1">Afinaciones</div>
+          <div className="text-sm text-gray-600 mt-1">{t('services.stats.tuning')}</div>
         </div>
         <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 text-center">
           <div className="text-3xl font-bold text-blue-900">{calculatedStats.maintenance}</div>
-          <div className="text-sm text-gray-600 mt-1">Mantenimiento</div>
+          <div className="text-sm text-gray-600 mt-1">{t('services.stats.maintenance')}</div>
         </div>
         <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 text-center">
           <div className="text-3xl font-bold text-blue-900">{calculatedStats.repair}</div>
-          <div className="text-sm text-gray-600 mt-1">Reparaciones</div>
+          <div className="text-sm text-gray-600 mt-1">{t('services.stats.repairs')}</div>
         </div>
         <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 text-center">
           <div className="text-3xl font-bold text-blue-900">{calculatedStats.regulation}</div>
-          <div className="text-sm text-gray-600 mt-1">Regulaciones</div>
+          <div className="text-sm text-gray-600 mt-1">{t('services.stats.regulations')}</div>
         </div>
       </div>
 
@@ -111,7 +113,7 @@ export default function Servicios() {
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
           <Input
             type="text"
-            placeholder="Buscar..."
+            placeholder={t('services.search.placeholder')}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="pl-10"
@@ -146,12 +148,12 @@ export default function Servicios() {
               <Search size={48} className="mx-auto" />
             </div>
             <h3 className="text-lg font-semibold text-gray-900 mb-1">
-              {search || filter !== 'all' ? 'Sin resultados' : 'No hay servicios'}
+              {search || filter !== 'all' ? t('services.empty.noResults') : t('services.empty.noServices')}
             </h3>
             <p className="text-gray-600">
               {search || filter !== 'all'
-                ? 'No se encontraron servicios'
-                : 'Añade tu primer servicio'}
+                ? t('services.empty.noResultsDesc')
+                : t('services.empty.noServicesDesc')}
             </p>
           </div>
         ) : (
@@ -173,7 +175,7 @@ export default function Servicios() {
       <button
         onClick={handleAddService}
         className="fixed bottom-6 right-6 w-14 h-14 bg-orange-500 hover:bg-orange-600 text-white rounded-full shadow-lg flex items-center justify-center transition-colors"
-        aria-label="Nuevo servicio"
+        aria-label={t('services.actions.add')}
       >
         <Plus size={24} />
       </button>
@@ -202,8 +204,8 @@ export default function Servicios() {
             deleteServiceMutation.mutate({ id: deletingServiceId });
           }}
           isDeleting={deleteServiceMutation.isPending}
-          title="Eliminar Servicio"
-          message="¿Estás seguro de que deseas eliminar este servicio? Esta acción no se puede deshacer."
+          title={t('services.delete.title')}
+          message={t('services.delete.message')}
           entityName={services.find(s => s.id === deletingServiceId)?.serviceType}
         />
       )}

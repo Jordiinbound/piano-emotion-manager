@@ -11,10 +11,12 @@ import { PianoCard } from '@/components/PianoCard';
 import { Plus } from 'lucide-react';
 import PianoFormModal from '@/components/PianoFormModal';
 import DeleteConfirmModal from '@/components/DeleteConfirmModal';
+import { useTranslation } from '@/hooks/use-translation';
 
 type FilterType = 'all' | 'vertical' | 'grand';
 
 export default function Pianos() {
+  const { t } = useTranslation();
   const [search, setSearch] = useState('');
   const [filter, setFilter] = useState<FilterType>('all');
   const [page, setPage] = useState(1);
@@ -49,9 +51,9 @@ export default function Pianos() {
   const totalPages = Math.ceil(totalPianos / pageSize);
 
   const filters: { key: FilterType; label: string }[] = [
-    { key: 'all', label: 'Todos' },
-    { key: 'vertical', label: 'Verticales' },
-    { key: 'grand', label: 'De Cola' },
+    { key: 'all', label: t('pianos.filters.all') },
+    { key: 'vertical', label: t('pianos.filters.vertical') },
+    { key: 'grand', label: t('pianos.filters.grand') },
   ];
 
   return (
@@ -69,7 +71,7 @@ export default function Pianos() {
             ) : (
               <>
                 <p className="text-3xl font-bold text-[#003a8c]">{stats?.vertical || 0}</p>
-                <p className="text-sm font-medium text-gray-600 mt-1">Verticales</p>
+                <p className="text-sm font-medium text-gray-600 mt-1">{t('pianos.stats.vertical')}</p>
               </>
             )}
           </div>
@@ -84,7 +86,7 @@ export default function Pianos() {
             ) : (
               <>
                 <p className="text-3xl font-bold text-[#003a8c]">{stats?.grand || 0}</p>
-                <p className="text-sm font-medium text-gray-600 mt-1">De Cola</p>
+                <p className="text-sm font-medium text-gray-600 mt-1">{t('pianos.stats.grand')}</p>
               </>
             )}
           </div>
@@ -100,7 +102,7 @@ export default function Pianos() {
             setSearch(e.target.value);
             setPage(1); // Reset a primera página al buscar
           }}
-          placeholder="Buscar por marca, modelo, número de serie..."
+          placeholder={t('pianos.search.placeholder')}
           className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#003a8c] focus:border-transparent"
         />
       </div>
@@ -160,12 +162,12 @@ export default function Pianos() {
               />
             </svg>
             <h3 className="mt-2 text-sm font-medium text-gray-900">
-              {search || filter !== 'all' ? 'No se encontraron pianos' : 'No hay pianos registrados'}
+              {search || filter !== 'all' ? t('pianos.empty.noResults') : t('pianos.empty.noPianos')}
             </h3>
             <p className="mt-1 text-sm text-gray-500">
               {search || filter !== 'all'
-                ? 'Intenta ajustar los filtros de búsqueda'
-                : 'Comienza agregando tu primer piano'}
+                ? t('pianos.empty.noResultsDesc')
+                : t('pianos.empty.noPianosDesc')}
             </p>
           </div>
         ) : (
@@ -189,17 +191,17 @@ export default function Pianos() {
                   disabled={page === 1}
                   className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  Anterior
+                  {t('pianos.pagination.previous')}
                 </button>
                 <span className="text-sm text-gray-700">
-                  Página {page} de {totalPages}
+                  {t('pianos.pagination.page')} {page} {t('pianos.pagination.of')} {totalPages}
                 </span>
                 <button
                   onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                   disabled={page === totalPages}
                   className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  Siguiente
+                  {t('pianos.pagination.next')}
                 </button>
               </div>
             )}
@@ -211,7 +213,7 @@ export default function Pianos() {
       <button
         onClick={() => setIsModalOpen(true)}
         className="fixed bottom-6 right-6 w-14 h-14 bg-[#e07a5f] text-white rounded-full shadow-lg hover:bg-[#d16a4f] transition-colors flex items-center justify-center"
-        aria-label="Agregar piano"
+        aria-label={t('pianos.actions.add')}
       >
         <Plus className="w-6 h-6" />
       </button>
@@ -240,8 +242,8 @@ export default function Pianos() {
             deletePianoMutation.mutate({ id: deletingPianoId });
           }}
           isDeleting={deletePianoMutation.isPending}
-          title="Eliminar Piano"
-          message="¿Estás seguro de que deseas eliminar este piano? Se eliminarán también todos los servicios asociados."
+          title={t('pianos.delete.title')}
+          message={t('pianos.delete.message')}
           entityName={pianos.find(p => p.id === deletingPianoId)?.brand + ' ' + (pianos.find(p => p.id === deletingPianoId)?.model || '')}
         />
       )}

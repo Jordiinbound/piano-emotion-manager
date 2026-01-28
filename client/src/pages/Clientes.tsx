@@ -4,6 +4,7 @@ import { trpc } from '../lib/trpc';
 import { ClientCard } from '../components/ClientCard';
 import ClientFormModal from '../components/ClientFormModal';
 import DeleteConfirmModal from '../components/DeleteConfirmModal';
+import { useTranslation } from '../hooks/use-translation';
 
 // Paleta profesional minimalista
 const COLORS = {
@@ -20,6 +21,7 @@ const COLORS = {
 const ITEMS_PER_PAGE = 50;
 
 export default function ClientesPage() {
+  const { t } = useTranslation();
   const [search, setSearch] = useState('');
   const [selectedRegion, setSelectedRegion] = useState('');
   const [selectedCity, setSelectedCity] = useState('');
@@ -87,9 +89,9 @@ export default function ClientesPage() {
       <div className="bg-gradient-to-r from-blue-900 to-blue-700 px-6 py-4">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-white">Clientes</h1>
+            <h1 className="text-2xl font-bold text-white">{t('clients.title')}</h1>
             <p className="text-blue-100 text-sm mt-1">
-              {stats?.total || 0} {(stats?.total || 0) === 1 ? 'cliente' : 'clientes'}
+              {stats?.total || 0} {(stats?.total || 0) === 1 ? t('clients.client') : t('clients.clients_plural')}
             </p>
           </div>
           <div className="flex gap-2">
@@ -98,14 +100,14 @@ export default function ClientesPage() {
               className="flex items-center gap-2 px-4 py-2 bg-white/20 hover:bg-white/30 text-white rounded-lg border border-white/30 transition-colors"
             >
               <Upload className="w-4 h-4" />
-              <span className="text-sm font-semibold">Importar</span>
+              <span className="text-sm font-semibold">{t('clients.actions.import')}</span>
             </button>
             <button
               onClick={handleExport}
               className="flex items-center gap-2 px-4 py-2 bg-white/20 hover:bg-white/30 text-white rounded-lg border border-white/30 transition-colors"
             >
               <Download className="w-4 h-4" />
-              <span className="text-sm font-semibold">Exportar</span>
+              <span className="text-sm font-semibold">{t('clients.actions.export')}</span>
             </button>
           </div>
         </div>
@@ -118,25 +120,25 @@ export default function ClientesPage() {
           <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 text-center">
             <div className="text-3xl font-bold text-blue-900">{stats?.total || 0}</div>
             <div className="text-xs font-medium text-gray-600 uppercase tracking-wide mt-1">
-              Total
+              {t('clients.stats.total')}
             </div>
           </div>
           <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 text-center">
             <div className="text-3xl font-bold text-blue-900">{stats?.active || 0}</div>
             <div className="text-xs font-medium text-gray-600 uppercase tracking-wide mt-1">
-              Activos
+              {t('clients.stats.active')}
             </div>
           </div>
           <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 text-center">
             <div className="text-3xl font-bold text-blue-900">{stats?.vip || 0}</div>
             <div className="text-xs font-medium text-gray-600 uppercase tracking-wide mt-1">
-              VIP
+              {t('clients.stats.vip')}
             </div>
           </div>
           <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 text-center">
             <div className="text-3xl font-bold text-blue-900">{stats?.withPianos || 0}</div>
             <div className="text-xs font-medium text-gray-600 uppercase tracking-wide mt-1">
-              Con Pianos
+              {t('clients.stats.withPianos')}
             </div>
           </div>
         </div>
@@ -149,7 +151,7 @@ export default function ClientesPage() {
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="Buscar clientes por nombre, email, teléfono o dirección..."
+              placeholder={t('clients.search.placeholder')}
               className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>
@@ -159,14 +161,14 @@ export default function ClientesPage() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
           <div>
             <label className="block text-xs font-semibold text-gray-600 uppercase tracking-wide mb-2">
-              Comunidad
+              {t('clients.filters.region')}
             </label>
             <select
               value={selectedRegion}
               onChange={(e) => setSelectedRegion(e.target.value)}
               className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm font-medium text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
-              <option value="">Todas</option>
+              <option value="">{t('clients.filters.all')}</option>
               {filterOptions?.regions.map((region) => (
                 <option key={region} value={region}>
                   {region}
@@ -177,14 +179,14 @@ export default function ClientesPage() {
 
           <div>
             <label className="block text-xs font-semibold text-gray-600 uppercase tracking-wide mb-2">
-              Ciudad
+              {t('clients.filters.city')}
             </label>
             <select
               value={selectedCity}
               onChange={(e) => setSelectedCity(e.target.value)}
               className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm font-medium text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
-              <option value="">Todas</option>
+              <option value="">{t('clients.filters.all')}</option>
               {filterOptions?.cities.map((city) => (
                 <option key={city} value={city}>
                   {city}
@@ -195,14 +197,14 @@ export default function ClientesPage() {
 
           <div>
             <label className="block text-xs font-semibold text-gray-600 uppercase tracking-wide mb-2">
-              Grupo de Ruta
+              {t('clients.filters.routeGroup')}
             </label>
             <select
               value={selectedRouteGroup}
               onChange={(e) => setSelectedRouteGroup(e.target.value)}
               className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm font-medium text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
-              <option value="">Todos</option>
+              <option value="">{t('clients.filters.allMale')}</option>
               {filterOptions?.routeGroups.map((group) => (
                 <option key={group} value={group}>
                   {group}
@@ -215,7 +217,7 @@ export default function ClientesPage() {
         {/* Lista de clientes */}
         {clientsLoading ? (
           <div className="flex items-center justify-center py-12">
-            <div className="text-gray-500">Cargando clientes...</div>
+            <div className="text-gray-500">{t('clients.loading')}</div>
           </div>
         ) : clientsData && clientsData.clients.length > 0 ? (
           <>
@@ -244,11 +246,11 @@ export default function ClientesPage() {
                   }`}
                 >
                   <ChevronLeft className="w-5 h-5" />
-                  <span className="text-sm font-semibold">Anterior</span>
+                  <span className="text-sm font-semibold">{t('clients.pagination.previous')}</span>
                 </button>
 
                 <span className="text-sm font-semibold text-gray-900">
-                  Página {currentPage} de {totalPages}
+                  {t('clients.pagination.page')} {currentPage} {t('clients.pagination.of')} {totalPages}
                 </span>
 
                 <button
@@ -260,7 +262,7 @@ export default function ClientesPage() {
                       : 'border-blue-900 text-blue-900 hover:bg-blue-50'
                   }`}
                 >
-                  <span className="text-sm font-semibold">Siguiente</span>
+                  <span className="text-sm font-semibold">{t('clients.pagination.next')}</span>
                   <ChevronRight className="w-5 h-5" />
                 </button>
               </div>
@@ -270,8 +272,8 @@ export default function ClientesPage() {
           <div className="text-center py-12">
             <div className="text-gray-500 mb-4">
               {search
-                ? 'No se encontraron clientes que coincidan con tu búsqueda'
-                : 'No hay clientes registrados'}
+                ? t('clients.noResults')
+                : t('clients.noClients')}
             </div>
             {!search && (
               <button
@@ -279,7 +281,7 @@ export default function ClientesPage() {
                 className="inline-flex items-center gap-2 px-6 py-3 bg-blue-900 text-white rounded-lg hover:bg-blue-800 transition-colors"
               >
                 <Plus className="w-5 h-5" />
-                <span className="font-semibold">Agregar primer cliente</span>
+                <span className="font-semibold">{t('clients.actions.addFirst')}</span>
               </button>
             )}
           </div>
@@ -291,7 +293,7 @@ export default function ClientesPage() {
         onClick={handleAddClient}
         className="fixed bottom-6 right-6 w-14 h-14 rounded-full shadow-lg flex items-center justify-center transition-transform hover:scale-110"
         style={{ backgroundColor: COLORS.accent }}
-        aria-label="Agregar cliente"
+        aria-label={t('clients.actions.add')}
       >
         <Plus className="w-6 h-6 text-white" />
       </button>
@@ -320,8 +322,8 @@ export default function ClientesPage() {
             deleteClientMutation.mutate({ id: deletingClientId });
           }}
           isDeleting={deleteClientMutation.isPending}
-          title="Eliminar Cliente"
-          message="¿Estás seguro de que deseas eliminar este cliente? Se eliminarán también todos los pianos y servicios asociados."
+          title={t('clients.delete.title')}
+          message={t('clients.delete.message')}
           entityName={clientsData?.clients.find(c => c.id === deletingClientId)?.name}
         />
       )}

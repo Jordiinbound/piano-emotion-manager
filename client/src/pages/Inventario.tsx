@@ -11,10 +11,12 @@ import { InventoryCard } from '@/components/InventoryCard';
 import { Plus, Search, AlertTriangle } from 'lucide-react';
 import InventoryFormModal from '@/components/InventoryFormModal';
 import DeleteConfirmModal from '@/components/DeleteConfirmModal';
+import { useTranslation } from '@/hooks/use-translation';
 
 type FilterType = 'all' | 'low_stock' | 'strings' | 'hammers' | 'felts' | 'tools' | 'dampers' | 'keys' | 'action_parts' | 'pedals' | 'tuning_pins' | 'chemicals' | 'other';
 
 export default function Inventario() {
+  const { t } = useTranslation();
   const [search, setSearch] = useState('');
   const [filter, setFilter] = useState<FilterType>('all');
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -50,12 +52,12 @@ export default function Inventario() {
   const items = inventoryData?.items || [];
 
   const filters: { key: FilterType; label: string }[] = [
-    { key: 'all', label: 'Todos' },
-    { key: 'low_stock', label: `Stock Bajo (${lowStockItems?.length || 0})` },
-    { key: 'strings', label: 'Cuerdas' },
-    { key: 'hammers', label: 'Martillos' },
-    { key: 'felts', label: 'Fieltros' },
-    { key: 'tools', label: 'Herramientas' },
+    { key: 'all', label: t('common.all') },
+    { key: 'low_stock', label: `${t('inventory.lowStock')} (${lowStockItems?.length || 0})` },
+    { key: 'strings', label: t('inventory.categories.strings') },
+    { key: 'hammers', label: t('inventory.categories.hammers') },
+    { key: 'felts', label: t('inventory.categories.felts') },
+    { key: 'tools', label: t('inventory.categories.tools') },
   ];
 
   return (
@@ -73,7 +75,7 @@ export default function Inventario() {
             ) : (
               <>
                 <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
-                  Total Items
+                  {t('inventory.totalItems')}
                 </p>
                 <p className="text-2xl font-bold text-[#003a8c]">
                   {stats?.total || 0}
@@ -92,7 +94,7 @@ export default function Inventario() {
             ) : (
               <>
                 <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
-                  Stock Bajo
+                  {t('inventory.lowStock')}
                 </p>
                 <p className="text-2xl font-bold text-[#ea580c]">
                   {stats?.lowStock || 0}
@@ -111,7 +113,7 @@ export default function Inventario() {
             ) : (
               <>
                 <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
-                  Categorías
+                  {t('inventory.categories')}
                 </p>
                 <p className="text-2xl font-bold text-[#4A7C59]">
                   {stats?.categories || 0}
@@ -129,17 +131,17 @@ export default function Inventario() {
             <AlertTriangle className="w-5 h-5 text-orange-600 flex-shrink-0" />
             <div className="flex-1">
               <p className="text-sm font-semibold text-orange-900">
-                {lowStockItems.length} {lowStockItems.length === 1 ? 'artículo necesita' : 'artículos necesitan'} reposición
+                {lowStockItems.length} {lowStockItems.length === 1 ? t('inventory.itemNeedsRestock') : t('inventory.itemsNeedRestock')}
               </p>
               <p className="text-xs text-orange-700 mt-1">
-                Algunos items están por debajo del stock mínimo
+                {t('inventory.belowMinimumStock')}
               </p>
             </div>
             <button
               onClick={() => setFilter('low_stock')}
               className="px-3 py-1.5 bg-orange-600 text-white text-sm font-medium rounded-md hover:bg-orange-700 transition-colors"
             >
-              Ver
+              {t('common.view')}
             </button>
           </div>
         </div>
@@ -153,7 +155,7 @@ export default function Inventario() {
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Buscar por nombre, descripción o proveedor..."
+            placeholder={t('inventory.searchPlaceholder')}
             className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#003a8c] focus:border-transparent"
           />
         </div>
@@ -219,13 +221,13 @@ export default function Inventario() {
             </svg>
             <h3 className="mt-2 text-sm font-medium text-gray-900">
               {search || filter !== 'all'
-                ? 'No hay resultados'
-                : 'No hay items en inventario'}
+                ? t('inventory.noResults')
+                : t('inventory.noItems')}
             </h3>
             <p className="mt-1 text-sm text-gray-500">
               {search || filter !== 'all'
-                ? 'Intenta ajustar los filtros'
-                : 'Comienza agregando tu primer item'}
+                ? t('inventory.adjustFilters')
+                : t('inventory.addFirstItem')}
             </p>
           </div>
         ) : (
@@ -246,7 +248,7 @@ export default function Inventario() {
       <button
         onClick={() => setIsModalOpen(true)}
         className="fixed bottom-6 right-6 w-14 h-14 bg-[#e07a5f] text-white rounded-full shadow-lg hover:bg-[#d16a4f] transition-colors flex items-center justify-center"
-        aria-label="Agregar item"
+        aria-label={t('inventory.addItem')}
       >
         <Plus className="w-6 h-6" />
       </button>
@@ -275,8 +277,8 @@ export default function Inventario() {
             deleteItemMutation.mutate({ id: deletingItemId });
           }}
           isDeleting={deleteItemMutation.isPending}
-          title="Eliminar Item"
-          message="¿Estás seguro de que deseas eliminar este item del inventario? Esta acción no se puede deshacer."
+          title={t('inventory.deleteItem')}
+          message={t('inventory.deleteConfirmation')}
           entityName={items.find((i: any) => i.id === deletingItemId)?.name}
         />
       )}

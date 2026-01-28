@@ -808,10 +808,10 @@
 
 #### Páginas principales
 - [x] Home.tsx
-- [ ] Clientes.tsx
-- [ ] Pianos.tsx
-- [ ] Servicios.tsx
-- [ ] Inventario.tsx
+- [x] Clientes.tsx
+- [x] Pianos.tsx
+- [x] Servicios.tsx
+- [x] Inventario.tsx
 - [ ] Agenda.tsx
 - [ ] Facturacion.tsx
 - [ ] Presupuestos.tsx
@@ -880,3 +880,10 @@
 - [ ] Crear templates de email por idioma
 - [ ] Actualizar router de notificaciones para detectar idioma del usuario
 - [ ] Probar envío de emails en diferentes idiomas
+
+## Integrar traducciones existentes en páginas restantes
+- [ ] Copiar archivos de traducción completos del repositorio (HECHO)
+- [ ] Identificar 44 páginas sin useTranslation
+- [ ] Aplicar useTranslation a cada página
+- [ ] Reemplazar textos hardcodeados por claves t() existentes
+- [ ] Verificar funcionamiento completo
