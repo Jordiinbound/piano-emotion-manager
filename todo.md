@@ -696,10 +696,12 @@
 - [x] Mostrar top partners por licencias activas
 - [x] Crear router analytics.router.ts
 - [x] Crear página GlobalAnalytics.tsx con visualizaciones
-- [x] Registrar router y ruta en App.tsx
-- [ ] Desarrollar sistema de onboarding guiado
-- [ ] Crear flujo paso a paso para nuevos usuarios
-- [ ] Implementar tour interactivo de funcionalidades
-- [ ] Agregar checklist de configuración inicial
-- [ ] Crear wizard de creación de primera organización
+- [x] Registrar router y ruta en App.ts- [x] Desarrollar sistema de onboarding guiado
+- [x] Crear flujo paso a paso para nuevos usuarios (7 pasos)
+- [x] Crear tabla onboarding_progress
+- [x] Crear router onboarding.router.ts
+- [x] Implementar componente OnboardingWizard.tsx
+- [x] Integrar wizard en Layout principal
+- [x] Sistema de progreso con porcentaje
+- [x] Navegación automática a pasos pendientes organización
 - [ ] Implementar sistema de progreso de onboarding

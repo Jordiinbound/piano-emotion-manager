@@ -20,6 +20,7 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { LicenseNotificationBadge } from '@/components/LicenseNotificationBadge';
+import { OnboardingWizard } from '@/components/OnboardingWizard';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -118,9 +119,11 @@ export default function Layout({ children }: LayoutProps) {
   );
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Sidebar para desktop */}
-      <aside className="hidden lg:fixed lg:inset-y-0 lg:flex lg:w-64 lg:flex-col">
+    <>
+      <OnboardingWizard />
+      <div className="flex h-screen bg-background">
+        {/* Sidebar para desktop */}
+        <aside className="hidden lg:fixed lg:inset-y-0 lg:flex lg:w-64 lg:flex-col">
         <div className="flex grow flex-col gap-y-5 overflow-y-auto border-r border-border bg-card px-4 pb-4">
           {/* Logo/Brand */}
           <div className="flex h-16 shrink-0 items-center gap-3 border-b border-border">
@@ -275,5 +278,6 @@ export default function Layout({ children }: LayoutProps) {
         </main>
       </div>
     </div>
+    </>
   );
 }
