@@ -228,4 +228,51 @@ export const pianosRouter = router({
 
       return { success: true, url };
     }),
+
+  // Eliminar foto de piano de R2
+  deletePianoPhoto: publicProcedure
+    .input(
+      z.object({
+        pianoId: z.number(),
+        photoUrl: z.string(), // URL completa de la foto a eliminar
+      })
+    )
+    .mutation(async ({ input }) => {
+      const { storageDelete } = await import('../storage');
+      const db = await getDb();
+      if (!db) throw new Error('Database not available');
+
+      // Obtener piano actual
+      const [piano] = await db.select().from(pianos).where(eq(pianos.id, input.pianoId));
+      if (!piano) {
+        throw new Error('Piano not found');
+      }
+
+      // Extraer fileKey de la URL (formato: https://.../.../fileKey)
+      // Asumiendo que la URL tiene el formato: https://storage.../pianos/{pianoId}/{filename}
+      const urlParts = input.photoUrl.split('/');
+      const filename = urlParts[urlParts.length - 1];
+      const pianoIdFromUrl = urlParts[urlParts.length - 2];
+      const fileKey = `pianos/${pianoIdFromUrl}/${filename}`;
+
+      try {
+        // Eliminar de R2
+        await storageDelete(fileKey);
+      } catch (error) {
+        // Si falla la eliminación de R2, continuar de todos modos para limpiar la BD
+        console.error('Error deleting from R2:', error);
+      }
+
+      // Eliminar URL del array de fotos
+      const currentPhotos = piano.photos ? (Array.isArray(piano.photos) ? piano.photos : [piano.photos]) : [];
+      const updatedPhotos = currentPhotos.filter(url => url !== input.photoUrl);
+
+      // Actualizar piano sin la foto eliminada
+      await db
+        .update(pianos)
+        .set({ photos: updatedPhotos.length > 0 ? updatedPhotos : null })
+        .where(eq(pianos.id, input.pianoId));
+
+      return { success: true };
+    }),
 });

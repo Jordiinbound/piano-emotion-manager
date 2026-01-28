@@ -19,6 +19,7 @@ interface InspectionReportsCardProps {
 export default function InspectionReportsCard({ pianoId, clientId }: InspectionReportsCardProps) {
   const { t } = useTranslation();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isGeneratingPDF, setIsGeneratingPDF] = useState<number | null>(null);
   const [formData, setFormData] = useState({
     title: '',
     inspectionDate: new Date().toISOString().split('T')[0],
@@ -31,6 +32,7 @@ export default function InspectionReportsCard({ pianoId, clientId }: InspectionR
   const { data: reports, refetch } = trpc.pianoTechnical.getInspectionReports.useQuery({ pianoId });
   const createMutation = trpc.pianoTechnical.createInspectionReport.useMutation();
   const deleteMutation = trpc.pianoTechnical.deleteInspectionReport.useMutation();
+  const generatePDFMutation = trpc.pianoTechnical.generateInspectionPDF.useMutation();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -71,6 +73,31 @@ export default function InspectionReportsCard({ pianoId, clientId }: InspectionR
       refetch();
     } catch (error) {
       toast.error(t('pianos.couldNotDeleteInspectionReport'));
+    }
+  };
+
+  const handleGeneratePDF = async (reportId: number) => {
+    setIsGeneratingPDF(reportId);
+    try {
+      const result = await generatePDFMutation.mutateAsync({ reportId });
+      
+      if (result.success && result.url) {
+        // Descargar el PDF
+        const link = document.createElement('a');
+        link.href = result.url;
+        link.download = result.filename || 'informe-inspeccion.pdf';
+        link.target = '_blank';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        
+        toast.success(t('pianos.pdfGenerated'));
+        refetch();
+      }
+    } catch (error) {
+      toast.error(t('pianos.couldNotGeneratePDF'));
+    } finally {
+      setIsGeneratingPDF(null);
     }
   };
 
@@ -219,9 +246,11 @@ export default function InspectionReportsCard({ pianoId, clientId }: InspectionR
                       <Button
                         size="sm"
                         variant="ghost"
-                        onClick={() => toast.info(t('pianos.pdfGenerationNotImplemented'))}
+                        onClick={() => handleGeneratePDF(report.id)}
+                        disabled={isGeneratingPDF === report.id}
+                        title={t('pianos.generatePDF')}
                       >
-                        <Download className="h-4 w-4" />
+                        <Download className={`h-4 w-4 ${isGeneratingPDF === report.id ? 'animate-spin' : ''}`} />
                       </Button>
                       <Button
                         size="sm"

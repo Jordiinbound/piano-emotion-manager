@@ -1140,3 +1140,37 @@
 - [x] Mantener validación de tamaño y tipo de archivo
 - [ ] Probar upload de múltiples fotos
 - [ ] Verificar URLs permanentes en R2
+
+## FASE 3.2: Generador de Informes PDF de Inspección
+- [x] Crear servicio pdfInspectionService.ts con Puppeteer
+- [x] Diseñar template HTML profesional para PDF de inspección
+- [x] Incluir logo de Piano Emotion en el header del PDF
+- [x] Agregar sección de datos técnicos del piano (20 campos)
+- [x] Incluir fotos del piano desde URLs de R2
+- [x] Agregar sección de hallazgos y recomendaciones
+- [x] Implementar endpoint tRPC generateInspectionPDF en pianoTechnical.router.ts
+- [x] Agregar botón "Generar PDF" en InspectionReportsCard con icono Download
+- [x] Implementar descarga automática del PDF generado
+- [ ] Escribir tests para el servicio de generación de PDF
+
+## FASE 3.3: Eliminación de Fotos de R2
+- [x] Crear función storageDelete() en server/storage.ts
+- [x] Implementar endpoint tRPC deletePianoPhoto en router de pianos
+- [x] Actualizar PhotoGalleryCard con botón de eliminar en cada foto (ya existía)
+- [x] Implementar confirmación antes de eliminar foto (ya existía)
+- [x] Eliminar foto de R2 y actualizar array JSON en base de datos
+- [x] Agregar notificación toast de éxito/error (ya existía)
+- [ ] Escribir tests para eliminación de fotos
+
+## FASE 4: Historial Fotográfico Avanzado
+- [ ] Revisar funcionalidades de historial fotográfico en proyecto GitHub
+- [ ] Implementar timeline de fotos por fecha
+- [ ] Agregar comparación de fotos antes/después
+- [ ] Implementar zoom y visualización en lightbox
+- [ ] Agregar etiquetas y categorías a las fotos
+
+## FASE 5: Funcionalidades Adicionales
+- [ ] Revisar proyecto GitHub para identificar funcionalidades pendientes
+- [ ] Implementar cualquier característica no migrada aún
+- [ ] Completar integración de todas las funcionalidades
+- [ ] Verificar que no falte ninguna funcionalidad del proyecto original

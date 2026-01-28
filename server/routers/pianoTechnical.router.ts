@@ -4,6 +4,8 @@ import { getDb } from '../db';
 import { pianoTechnicalData, pianoInspectionReports, pianos, clients } from '../../drizzle/schema';
 import { eq, and, desc } from 'drizzle-orm';
 import { createId } from '@paralleldrive/cuid2';
+import { generateInspectionPDF } from '../services/pdfInspectionService';
+import { storagePut } from '../storage';
 
 export const pianoTechnicalRouter = router({
   // ============ DATOS TÉCNICOS ============
@@ -256,6 +258,48 @@ export const pianoTechnicalRouter = router({
         .where(eq(pianoInspectionReports.id, input.id));
       
       return { success: true };
+    }),
+
+  /**
+   * Generar PDF de un informe de inspección
+   */
+  generateInspectionPDF: protectedProcedure
+    .input(z.object({
+      reportId: z.number(),
+    }))
+    .mutation(async ({ input, ctx }) => {
+      const db = await getDb();
+      
+      // Verificar que el informe existe
+      const report = await db.query.pianoInspectionReports.findFirst({
+        where: eq(pianoInspectionReports.id, input.reportId),
+      });
+      
+      if (!report) {
+        throw new Error('Inspection report not found');
+      }
+      
+      // Generar PDF
+      const pdfBuffer = await generateInspectionPDF({
+        reportId: input.reportId,
+        partnerId: ctx.user.partnerId?.toString() || '1',
+        organizationId: ctx.user.organizationId,
+      });
+      
+      // Subir PDF a R2
+      const timestamp = Date.now();
+      const randomSuffix = Math.random().toString(36).substring(2, 8);
+      const filename = `inspection-report-${report.reportNumber}-${timestamp}-${randomSuffix}.pdf`;
+      const fileKey = `${ctx.user.partnerId || 1}/inspection-reports/${filename}`;
+      
+      const { url } = await storagePut(fileKey, pdfBuffer, 'application/pdf');
+      
+      // Actualizar el informe con la URL del PDF
+      await db.update(pianoInspectionReports)
+        .set({ pdfUrl: url })
+        .where(eq(pianoInspectionReports.id, input.reportId));
+      
+      return { success: true, url, filename };
     }),
 
   /**

@@ -17,7 +17,7 @@ export default function PhotoGalleryCard({ pianoId, photos: initialPhotos }: Pho
   const [isUploading, setIsUploading] = useState(false);
 
   const uploadMutation = trpc.pianos.uploadPianoPhoto.useMutation();
-  const updateMutation = trpc.pianos.updatePiano.useMutation();
+  const deleteMutation = trpc.pianos.deletePianoPhoto.useMutation();
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
@@ -76,14 +76,18 @@ export default function PhotoGalleryCard({ pianoId, photos: initialPhotos }: Pho
   const handleDeletePhoto = async (index: number) => {
     if (!confirm(t('pianos.confirmDeletePhoto'))) return;
 
+    const photoUrl = photos[index];
+    
     try {
+      // Eliminar de R2 y actualizar BD
+      await deleteMutation.mutateAsync({
+        pianoId,
+        photoUrl,
+      });
+
+      // Actualizar estado local
       const updatedPhotos = photos.filter((_, i) => i !== index);
       setPhotos(updatedPhotos);
-
-      await updateMutation.mutateAsync({
-        id: pianoId,
-        photos: updatedPhotos.length > 0 ? updatedPhotos : null,
-      });
 
       toast.success(t('pianos.photoDeleted'));
     } catch (error) {
