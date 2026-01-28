@@ -16,6 +16,7 @@ import ClienteEditar from "./pages/ClienteEditar";
 import Pianos from "./pages/Pianos";
 import PianoNuevo from "./pages/PianoNuevo";
 import PianoEditar from "./pages/PianoEditar";
+import PianoDetalle from "./pages/PianoDetalle";
 import Servicios from "./pages/Servicios";
 import ServicioNuevo from "./pages/ServicioNuevo";
 import ServicioEditar from "./pages/ServicioEditar";
@@ -157,6 +158,13 @@ function Router() {
         <ProtectedRoute>
           <Layout>
             <PianoEditar />
+          </Layout>
+        </ProtectedRoute>
+      </Route>
+      <Route path="/pianos/:id">
+        <ProtectedRoute>
+          <Layout>
+            <PianoDetalle />
           </Layout>
         </ProtectedRoute>
       </Route>

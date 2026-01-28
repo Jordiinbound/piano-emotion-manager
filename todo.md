@@ -1117,3 +1117,15 @@
 - [x] Agregar contador de recordatorios pendientes en barra de alertas
 - [x] Barra verde si no hay alertas/recordatorios, roja si los hay
 - [x] Agregar badge de recordatorios en menú lateral (muestra vencidos en rojo o pendientes en azul)
+
+## Interfaz de Ficha Técnica de Pianos
+- [x] Crear componente TechnicalDataCard para mostrar datos técnicos del piano
+- [x] Implementar formulario modal de edición de datos técnicos (20 campos)
+- [x] Crear página PianoDetalle.tsx con tabs (Ficha Técnica, Informes, Galería)
+- [x] Implementar upload de fotos con validación (tamaño, tipo)
+- [x] Crear galería de fotos del piano con visualización y eliminación
+- [x] Agregar tab de "Informes de Inspección" en detalle de piano
+- [x] Crear lista de informes de inspección con tarjetas y badges de estado
+- [x] Implementar formulario de crear informe de inspección
+- [x] Agregar botón de "Generar PDF" en cada informe (placeholder)
+- [x] Agregar ruta /pianos/:id al App.tsx
