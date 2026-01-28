@@ -1683,10 +1683,14 @@
 - [x] Crear sección de plantillas en página de Workflows
 - [x] Implementar tarjetas de plantillas con botón "Usar plantilla"
 - [x] Agregar modal de confirmación al crear workflow desde plantilla
-- [ ] Implementar selector de variables dinámicas en formularios de nodos
-- [ ] Crear lista de variables disponibles según tipo de trigger
-- [ ] Agregar autocompletado de variables en campos de texto
-- [ ] Crear página de dashboard de métricas de workflows
-- [ ] Implementar estadísticas de ejecuciones (total, exitosas, fallidas)
-- [ ] Agregar gráficos de actividad de workflows
-- [ ] Mostrar workflows más usados y métricas de rendimiento
+- [x] Implementar componente selector de variables dinámicas
+- [x] Integrar selector en formularios de configuración de nodos
+- [x] Crear lista de variables disponibles según tipo de trigger
+- [x] Agregar autocompletado de variables en campos de texto
+- [x] Crear página de dashboard de métricas de workflows
+- [x] Implementar gráficos de estadísticas de ejecuciones
+- [x] Agregar historial detallado de ejecuciones por workflow
+- [x] Implementar vista de logs y errores de ejecuciones
+- [x] Implementar estadísticas de ejecuciones (total, exitosas, fallidas)
+- [x] Agregar gráficos de actividad de workflows
+- [x] Mostrar workflows más usados y métricas de rendimiento

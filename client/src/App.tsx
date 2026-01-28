@@ -66,6 +66,8 @@ import { GlobalAnalytics } from "./pages/GlobalAnalytics";
 import Contabilidad from "./pages/Contabilidad";
 import Workflows from "./pages/Workflows";
 import WorkflowEditorPage from "./pages/WorkflowEditor";
+import WorkflowMetrics from "./pages/WorkflowMetrics";
+import WorkflowExecutionHistory from "./pages/WorkflowExecutionHistory";
 import TranslationManager from "./pages/TranslationManager";
 
 function Router() {
@@ -381,6 +383,20 @@ function Router() {
           <Layout>
             <Workflows />
           </Layout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/workflows/metrics">
+        <ProtectedRoute>
+          <Layout>
+            <WorkflowMetrics />
+          </Layout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/workflows/:id/history">
+        <ProtectedRoute>
+          <WorkflowExecutionHistory />
         </ProtectedRoute>
       </Route>
 

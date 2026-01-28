@@ -22,6 +22,7 @@ import {
   AlertCircle,
   Trash2,
   Edit,
+  History,
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useTranslation } from '@/hooks/use-translation';
@@ -250,10 +251,16 @@ export default function Workflows() {
             {t('workflows.subtitle')}
           </p>
         </div>
-        <Button onClick={handleCreateWorkflow}>
-          <Plus className="h-4 w-4 mr-2" />
-          {t('workflows.create')}
-        </Button>
+        <div className="flex items-center gap-3">
+          <Button variant="outline" onClick={() => setLocation('/workflows/metrics')}>
+            <Settings className="h-4 w-4 mr-2" />
+            Ver Métricas
+          </Button>
+          <Button onClick={handleCreateWorkflow}>
+            <Plus className="h-4 w-4 mr-2" />
+            {t('workflows.create')}
+          </Button>
+        </div>
       </div>
 
       {/* Estadísticas */}
@@ -396,6 +403,14 @@ export default function Workflows() {
                     onClick={() => handleExecuteWorkflow(workflow.id)}
                   >
                     <Play className="h-4 w-4" />
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={() => setLocation(`/workflows/${workflow.id}/history`)}
+                    title="Ver historial"
+                  >
+                    <History className="h-4 w-4" />
                   </Button>
                   <Button 
                     variant="outline" 

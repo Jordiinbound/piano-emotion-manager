@@ -24,6 +24,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { useTranslation } from '@/hooks/use-translation';
+import VariableSelector from '@/components/VariableSelector';
 
 interface NodeConfigDialogProps {
   open: boolean;
@@ -359,12 +360,32 @@ function ActionConfigForm({ config, onChange }: any) {
           </div>
           {config.emailTemplate === 'custom' && (
             <div>
-              <Label htmlFor="emailBody">Cuerpo del Email</Label>
+              <div className="flex items-center justify-between mb-2">
+                <Label htmlFor="emailBody">Cuerpo del Email</Label>
+                <VariableSelector
+                  triggerType={config.triggerType || 'manual'}
+                  onSelectVariable={(variable) => {
+                    const textarea = document.getElementById('emailBody') as HTMLTextAreaElement;
+                    if (textarea) {
+                      const start = textarea.selectionStart;
+                      const end = textarea.selectionEnd;
+                      const currentValue = config.emailBody || '';
+                      const newValue = currentValue.substring(0, start) + variable + currentValue.substring(end);
+                      updateConfig('emailBody', newValue);
+                      // Restaurar posición del cursor
+                      setTimeout(() => {
+                        textarea.focus();
+                        textarea.setSelectionRange(start + variable.length, start + variable.length);
+                      }, 0);
+                    }
+                  }}
+                />
+              </div>
               <Textarea
                 id="emailBody"
                 value={config.emailBody || ''}
                 onChange={(e) => updateConfig('emailBody', e.target.value)}
-                placeholder="Contenido del email"
+                placeholder="Contenido del email. Usa el botón 'Insertar Variable' para agregar datos dinámicos."
                 rows={5}
               />
             </div>
@@ -384,12 +405,31 @@ function ActionConfigForm({ config, onChange }: any) {
             />
           </div>
           <div>
-            <Label htmlFor="whatsappMessage">Mensaje</Label>
+            <div className="flex items-center justify-between mb-2">
+              <Label htmlFor="whatsappMessage">Mensaje</Label>
+              <VariableSelector
+                triggerType={config.triggerType || 'manual'}
+                onSelectVariable={(variable) => {
+                  const textarea = document.getElementById('whatsappMessage') as HTMLTextAreaElement;
+                  if (textarea) {
+                    const start = textarea.selectionStart;
+                    const end = textarea.selectionEnd;
+                    const currentValue = config.whatsappMessage || '';
+                    const newValue = currentValue.substring(0, start) + variable + currentValue.substring(end);
+                    updateConfig('whatsappMessage', newValue);
+                    setTimeout(() => {
+                      textarea.focus();
+                      textarea.setSelectionRange(start + variable.length, start + variable.length);
+                    }, 0);
+                  }
+                }}
+              />
+            </div>
             <Textarea
               id="whatsappMessage"
               value={config.whatsappMessage || ''}
               onChange={(e) => updateConfig('whatsappMessage', e.target.value)}
-              placeholder="Mensaje de WhatsApp"
+              placeholder="Mensaje de WhatsApp. Usa el botón 'Insertar Variable' para agregar datos dinámicos."
               rows={4}
             />
           </div>
