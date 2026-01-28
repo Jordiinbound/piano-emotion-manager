@@ -766,3 +766,10 @@
 - [x] Verificar si faltan otros tipos de alertas
 - [x] Restaurar funcionalidades faltantes
 - [x] Sistema completo de alertas implementado
+
+## Crear página de Alertas completa
+- [x] Crear Alertas.tsx con diseño profesional
+- [x] Implementar filtros por tipo y prioridad
+- [x] Agregar funcionalidad de marcar como leído
+- [x] Agregar funcionalidad de resolver alertas
+- [x] Registrar ruta /alertas en App.tsx
