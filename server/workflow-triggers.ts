@@ -5,7 +5,7 @@
  * Event listeners que detectan eventos del sistema y ejecutan workflows automáticamente
  */
 
-import { db } from './db';
+import { getDb } from './db';
 import { workflows, workflowExecutions } from '../drizzle/schema';
 import { eq, and } from 'drizzle-orm';
 import { executeWorkflow } from './workflow-engine';
@@ -46,6 +46,9 @@ export async function triggerWorkflowEvent(eventData: TriggerEventData): Promise
     });
 
     // Buscar workflows activos con este trigger
+    const db = await getDb();
+    if (!db) throw new Error('Database not available');
+    
     const activeWorkflows = await db
       .select()
       .from(workflows)

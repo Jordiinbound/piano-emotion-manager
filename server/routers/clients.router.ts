@@ -3,6 +3,7 @@ import { publicProcedure, router } from '../_core/trpc';
 import * as schema from '../../drizzle/schema';
 import { eq, and, desc, sql } from 'drizzle-orm';
 import { getDb } from '../db';
+import { triggerWorkflowEvent } from '../workflow-triggers';
 
 const { clients } = schema;
 
@@ -170,9 +171,20 @@ export const clientsRouter = router({
         updatedAt: new Date(),
       });
 
+      const clientId = (result as any).insertId || 0;
+
+      // Disparar trigger de nuevo cliente creado
+      await triggerWorkflowEvent('client_created', {
+        client_id: clientId,
+        client_name: input.name,
+        client_email: input.email || '',
+        client_phone: input.phone || '',
+        client_type: input.clientType,
+      });
+
       return {
         success: true,
-        clientId: (result as any).insertId || 0,
+        clientId,
       };
     }),
 

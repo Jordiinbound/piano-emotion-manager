@@ -35,6 +35,7 @@ import {
   Clock,
   CheckCircle,
   XCircle,
+  UserCheck,
 } from 'lucide-react';
 import { useTranslation } from '@/hooks/use-translation';
 import { toast } from 'sonner';
@@ -127,6 +128,12 @@ export default function WorkflowEditor({ workflowId, onSave, onTest }: WorkflowE
         icon = <Clock className="h-4 w-4 text-purple-500" />;
         bgColor = '#f3e8ff';
         borderColor = '#a855f7';
+        break;
+      case 'approval':
+        label = 'Aprobación';
+        icon = <UserCheck className="h-4 w-4 text-amber-500" />;
+        bgColor = '#fef3c7';
+        borderColor = '#f59e0b';
         break;
     }
 
@@ -272,6 +279,19 @@ export default function WorkflowEditor({ workflowId, onSave, onTest }: WorkflowE
                 <div>
                   <p className="font-medium text-sm">Esperar</p>
                   <p className="text-xs text-muted-foreground">Pausa el flujo</p>
+                </div>
+              </div>
+            </Card>
+
+            <Card
+              className="p-3 cursor-pointer hover:shadow-md transition-shadow"
+              onClick={() => addNode('approval')}
+            >
+              <div className="flex items-center gap-2">
+                <UserCheck className="h-5 w-5 text-amber-500" />
+                <div>
+                  <p className="font-medium text-sm">Aprobación</p>
+                  <p className="text-xs text-muted-foreground">Requiere aprobación manual</p>
                 </div>
               </div>
             </Card>

@@ -1,8 +1,9 @@
-import { z } from "zod";
+import { z } from 'zod';
 import { publicProcedure, router } from "../_core/trpc.js";
 import { getDb } from "../db.js";
 import { services, clients, pianos } from "../../drizzle/schema.js";
 import { eq, and, like, or, sql, desc } from "drizzle-orm";
+import { triggerWorkflowEvent } from '../workflow-triggers';
 
 export const servicesRouter = router({
   /**
@@ -180,23 +181,55 @@ export const servicesRouter = router({
         cost: z.number().optional(),
         duration: z.number().optional(),
         notes: z.string().optional(),
+        status: z.enum(['pending','in_progress','completed','cancelled']).optional(),
       })
     )
     .mutation(async ({ input }) => {
       const db = await getDb();
       if (!db) throw new Error('Database not available');
       
-      const { id, date, ...updateData } = input;
+      const { id, date, status, ...updateData } = input;
+      
+      // Get previous status to detect completion
+      const [previousService] = await db
+        .select()
+        .from(services)
+        .where(eq(services.id, id))
+        .limit(1);
       
       const dataToUpdate: any = { ...updateData };
       if (date) {
         dataToUpdate.date = new Date(date);
+      }
+      if (status) {
+        dataToUpdate.status = status;
       }
       
       await db
         .update(services)
         .set(dataToUpdate)
         .where(eq(services.id, id));
+      
+      // Trigger workflow if service was just completed
+      if (status === 'completed' && previousService?.status !== 'completed') {
+        const [updatedService] = await db
+          .select()
+          .from(services)
+          .where(eq(services.id, id))
+          .limit(1);
+        
+        if (updatedService) {
+          await triggerWorkflowEvent('service_completed', {
+            service_id: updatedService.id,
+            service_type: updatedService.serviceType,
+            client_id: updatedService.clientId,
+            piano_id: updatedService.pianoId,
+            service_date: updatedService.date,
+            cost: updatedService.cost,
+            notes: updatedService.notes,
+          });
+        }
+      }
       
       return { success: true };
     }),

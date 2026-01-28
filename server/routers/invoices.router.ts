@@ -8,6 +8,7 @@
 import { z } from 'zod';
 import { publicProcedure, protectedProcedure, router } from '../_core/trpc';
 import { getDb } from '../db';
+import { triggerWorkflowEvent } from '../workflow-triggers';
 import { invoices, users } from '../../drizzle/schema';
 import { eq, sql } from 'drizzle-orm';
 import { generatePaymentToken } from '../utils/paymentToken';
@@ -200,9 +201,28 @@ export const invoicesRouter = router({
         partnerId: 1 
       } as any);
 
+      const invoiceId = (result as any).insertId || 0;
+
+      // Disparar trigger de factura vencida si la fecha de vencimiento ya pasó
+      if (input.dueDate) {
+        const dueDate = new Date(input.dueDate);
+        const now = new Date();
+        if (dueDate < now && input.status !== 'paid') {
+          await triggerWorkflowEvent('invoice_overdue', {
+            invoice_id: invoiceId,
+            invoice_number: invoiceNumber,
+            invoice_total: input.total,
+            invoice_due_date: input.dueDate,
+            client_id: input.clientId,
+            client_name: input.clientName,
+            client_email: input.clientEmail || '',
+          });
+        }
+      }
+
       return {
         success: true,
-        invoiceId: (result as any).insertId || 0,
+        invoiceId,
         invoiceNumber,
       };
     }),

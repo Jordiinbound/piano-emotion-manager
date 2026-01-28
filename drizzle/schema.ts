@@ -958,6 +958,7 @@ export const services = mysqlTable("services", {
 	photosBefore: json(),
 	photosAfter: json(),
 	clientSignature: text(),
+	status: mysqlEnum(['pending','in_progress','completed','cancelled']).default('pending').notNull(),
 	createdAt: timestamp().defaultNow().notNull(),
 	updatedAt: timestamp().defaultNow().onUpdateNow().notNull(),
 	humidity: decimal({ precision: 5, scale: 2 }),
@@ -1958,3 +1959,41 @@ export const userSettings = mysqlTable('user_settings', {
 
 export type UserSettings = typeof userSettings.$inferSelect;
 export type InsertUserSettings = typeof userSettings.$inferInsert;
+
+// ============================================
+// NOTIFICATIONS (Notificaciones del Sistema)
+// ============================================
+
+export const notifications = mysqlTable('notifications', {
+  id: int().autoincrement().notNull().primaryKey(),
+  userId: int('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  
+  // Tipo de notificación
+  type: mysqlEnum('type', ['approval_pending', 'workflow_completed', 'workflow_failed', 'system']).notNull(),
+  
+  // Título y mensaje
+  title: varchar('title', { length: 255 }).notNull(),
+  message: text('message'),
+  
+  // Datos adicionales (JSON)
+  data: json('data'), // { executionId: 123, workflowId: 456, approvalNodeId: 789 }
+  
+  // URL de acción (opcional)
+  actionUrl: varchar('action_url', { length: 500 }),
+  
+  // Estado
+  isRead: tinyint('is_read').default(0).notNull(),
+  readAt: timestamp('read_at'),
+  
+  // Metadata
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+},
+(table) => [
+  index('idx_notifications_user').on(table.userId),
+  index('idx_notifications_read').on(table.isRead),
+  index('idx_notifications_created').on(table.createdAt),
+  index('idx_notifications_user_read').on(table.userId, table.isRead),
+]);
+
+export type Notification = typeof notifications.$inferSelect;
+export type InsertNotification = typeof notifications.$inferInsert;

@@ -8,6 +8,7 @@
 import { z } from 'zod';
 import { publicProcedure, router } from '../_core/trpc';
 import { getDb } from '../db';
+import { triggerWorkflowEvent } from '../workflow-triggers';
 import { appointments } from '../../drizzle/schema';
 import { eq, sql } from 'drizzle-orm';
 
@@ -200,9 +201,21 @@ export const appointmentsRouter = router({
       const odId = `APPT-${Date.now()}-${Math.random().toString(36).substring(7)}`;
       const result = await db.insert(appointments).values({ ...input, odId, partnerId: 1 } as any);
 
+      const appointmentId = (result as any).insertId || 0;
+
+      // Disparar trigger de cita programada
+      await triggerWorkflowEvent('appointment_scheduled', {
+        appointment_id: appointmentId,
+        appointment_title: input.title,
+        appointment_date: input.date,
+        appointment_duration: input.duration,
+        client_id: input.clientId,
+        service_type: input.serviceType || '',
+      });
+
       return {
         success: true,
-        appointmentId: (result as any).insertId || 0,
+        appointmentId,
       };
     }),
 

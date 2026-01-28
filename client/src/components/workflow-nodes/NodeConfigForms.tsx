@@ -29,7 +29,7 @@ import VariableSelector from '@/components/VariableSelector';
 interface NodeConfigDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  nodeType: 'trigger' | 'condition' | 'action' | 'delay';
+  nodeType: 'trigger' | 'condition' | 'action' | 'delay' | 'approval';
   initialConfig: any;
   onSave: (config: any) => void;
 }
@@ -63,6 +63,8 @@ export function NodeConfigDialog({
         return <ActionConfigForm config={config} onChange={setConfig} />;
       case 'delay':
         return <DelayConfigForm config={config} onChange={setConfig} />;
+      case 'approval':
+        return <ApprovalConfigForm config={config} onChange={setConfig} />;
       default:
         return null;
     }
@@ -78,6 +80,8 @@ export function NodeConfigDialog({
         return 'Configurar Acción';
       case 'delay':
         return 'Configurar Espera';
+      case 'approval':
+        return 'Configurar Aprobación';
       default:
         return 'Configurar Nodo';
     }
@@ -527,6 +531,94 @@ function ActionConfigForm({ config, onChange }: any) {
 // ============================================
 // Formulario de Delay
 // ============================================
+// Formulario de configuración de Aprobación
+function ApprovalConfigForm({ config, onChange }: any) {
+  const updateConfig = (key: string, value: any) => {
+    onChange({ ...config, [key]: value });
+  };
+
+  return (
+    <div className="space-y-4">
+      <div>
+        <Label htmlFor="approvalLabel">Etiqueta de la Aprobación</Label>
+        <Input
+          id="approvalLabel"
+          value={config.label || ''}
+          onChange={(e) => updateConfig('label', e.target.value)}
+          placeholder="Ej: Aprobar presupuesto mayor a $500"
+        />
+      </div>
+
+      <div>
+        <Label htmlFor="approvers">Aprobadores</Label>
+        <Input
+          id="approvers"
+          value={config.approvers || ''}
+          onChange={(e) => updateConfig('approvers', e.target.value)}
+          placeholder="Ej: admin, gerente"
+        />
+        <p className="text-xs text-muted-foreground mt-1">
+          Lista de roles o usuarios separados por comas que pueden aprobar
+        </p>
+      </div>
+
+      <div>
+        <Label htmlFor="timeout">Timeout (horas)</Label>
+        <Input
+          id="timeout"
+          type="number"
+          min="1"
+          value={config.timeout || 24}
+          onChange={(e) => updateConfig('timeout', parseInt(e.target.value))}
+          placeholder="24"
+        />
+        <p className="text-xs text-muted-foreground mt-1">
+          Tiempo máximo de espera antes de rechazar automáticamente
+        </p>
+      </div>
+
+      <div>
+        <Label htmlFor="approvalMessage">Mensaje de Aprobación</Label>
+        <Textarea
+          id="approvalMessage"
+          value={config.message || ''}
+          onChange={(e) => updateConfig('message', e.target.value)}
+          placeholder="Descripción de qué se está aprobando y por qué"
+          rows={3}
+        />
+      </div>
+
+      <div>
+        <Label htmlFor="autoReject">Acción al Timeout</Label>
+        <Select
+          value={config.autoReject !== false ? 'reject' : 'continue'}
+          onValueChange={(value) => updateConfig('autoReject', value === 'reject')}
+        >
+          <SelectTrigger>
+            <SelectValue placeholder="Seleccionar acción" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="reject">Rechazar automáticamente</SelectItem>
+            <SelectItem value="continue">Continuar sin aprobación</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+
+      <div>
+        <Label htmlFor="approvalDescription">Descripción</Label>
+        <Textarea
+          id="approvalDescription"
+          value={config.description || ''}
+          onChange={(e) => updateConfig('description', e.target.value)}
+          placeholder="Descripción interna de este paso de aprobación"
+          rows={2}
+        />
+      </div>
+    </div>
+  );
+}
+
+// Formulario de configuración de Delay
 function DelayConfigForm({ config, onChange }: any) {
   const updateConfig = (key: string, value: any) => {
     onChange({ ...config, [key]: value });

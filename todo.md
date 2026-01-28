@@ -1710,3 +1710,18 @@
 - [x] Implementar sistema de pausas en workflows
 - [x] Crear UI para aprobar/rechazar workflows pausados
 - [x] Agregar notificaciones de workflows pendientes de aprobación
+
+
+## FASE 12 - Integración Completa de Triggers y Notificaciones
+- [ ] Integrar trigger de nuevo cliente con router de clientes
+- [ ] Integrar trigger de cita programada con router de agenda
+- [ ] Integrar trigger de factura vencida con router de facturación
+- [ ] Integrar trigger de servicio completado con router de servicios
+- [ ] Crear componente ApprovalNode para React Flow
+- [ ] Agregar ApprovalNode a la paleta de nodos del editor visual
+- [ ] Implementar formulario de configuración para nodo de aprobación
+- [ ] Crear sistema de notificaciones push en tiempo real
+- [ ] Implementar notificaciones para aprobaciones pendientes
+- [ ] Agregar badge de notificaciones en header de la app
+- [ ] Probar flujo completo de triggers automáticos
+- [ ] Probar flujo completo de aprobaciones con notificaciones

@@ -21,6 +21,8 @@ import {
   FileText,
   DollarSign,
   Edit2,
+  UserCheck,
+  Pause,
 } from 'lucide-react';
 
 // Nodo de Trigger
@@ -250,10 +252,81 @@ export function DelayNode({ data, id }: NodeProps) {
   );
 }
 
+// Nodo de Aprobación
+export function ApprovalNode({ data, id }: NodeProps) {
+  return (
+    <Card className="min-w-[200px] bg-gradient-to-br from-amber-50 to-yellow-50 border-2 border-amber-400 shadow-lg">
+      <Handle
+        type="target"
+        position={Position.Top}
+        className="!bg-amber-500 !w-3 !h-3"
+      />
+      <div className="p-4">
+        <div className="flex items-center gap-2 mb-2">
+          <div className="p-2 bg-amber-100 rounded-lg">
+            <UserCheck className="h-5 w-5" />
+          </div>
+          <Badge variant="outline" className="bg-amber-100 text-amber-800 border-amber-300">
+            Aprobación
+          </Badge>
+        </div>
+        <h4 className="font-semibold text-sm mb-1">{data.label}</h4>
+        <p className="text-xs text-muted-foreground">{data.description}</p>
+        {data.config && (
+          <div className="mt-2 space-y-1">
+            {data.config.approvers && (
+              <div className="text-xs">
+                <span className="text-muted-foreground">Aprobadores:</span>{' '}
+                <span className="font-medium">{data.config.approvers}</span>
+              </div>
+            )}
+            {data.config.timeout && (
+              <div className="text-xs">
+                <span className="text-muted-foreground">Timeout:</span>{' '}
+                <span className="font-medium">{data.config.timeout} horas</span>
+              </div>
+            )}
+          </div>
+        )}
+        <div className="mt-2 flex items-center gap-1 text-xs text-amber-600">
+          <Pause className="h-3 w-3" />
+          <span>Pausa el workflow</span>
+        </div>
+        <Button
+          size="sm"
+          variant="ghost"
+          className="mt-2 w-full"
+          onClick={() => data.onConfigure?.(id, data)}
+        >
+          <Edit2 className="h-3 w-3 mr-1" />
+          Configurar
+        </Button>
+      </div>
+      <div className="flex justify-between px-4 pb-2">
+        <div className="text-xs text-green-600 font-medium">✓ Aprobado</div>
+        <div className="text-xs text-red-600 font-medium">✗ Rechazado</div>
+      </div>
+      <Handle
+        type="source"
+        position={Position.Bottom}
+        id="approved"
+        className="!bg-green-500 !w-3 !h-3 !left-[25%]"
+      />
+      <Handle
+        type="source"
+        position={Position.Bottom}
+        id="rejected"
+        className="!bg-red-500 !w-3 !h-3 !left-[75%]"
+      />
+    </Card>
+  );
+}
+
 // Exportar todos los tipos de nodos
 export const nodeTypes = {
   trigger: TriggerNode,
   condition: ConditionNode,
   action: ActionNode,
   delay: DelayNode,
+  approval: ApprovalNode,
 };
