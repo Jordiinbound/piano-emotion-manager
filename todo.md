@@ -1046,12 +1046,14 @@
 - [ ] Verificar funcionalidad completa
 
 ### FASE 3: Documentación Técnica de Pianos
-- [ ] Analizar implementación de fichas técnicas en proyecto GitHub
-- [ ] Extender tabla de pianos con campos técnicos adicionales
-- [ ] Crear tabla de mediciones técnicas en schema de Drizzle
-- [ ] Crear tabla de fotos de pianos en schema de Drizzle
-- [ ] Migrar campos de ficha técnica (medidas, características)
-- [ ] Crear router de documentación técnica con endpoints tRPC
+- [x] Analizar implementación de fichas técnicas en proyecto GitHub
+- [x] Tabla de pianos ya tiene campo `photos` (JSON) - no se requiere tabla separada
+- [x] Crear tabla piano_technical_data con 20 campos (medidas físicas, características técnicas, estado)
+- [x] Crear tabla piano_inspection_reports con informes de inspección detallados
+- [x] Definir relaciones de Drizzle para tablas de documentación técnica
+- [x] Router de documentación técnica creado con 8 endpoints tRPC
+- [x] Endpoints para datos técnicos: getTechnicalData, upsertTechnicalData
+- [x] Endpoints para informes: getInspectionReports, getInspectionReportById, createInspectionReport, updateInspectionReport, deleteInspectionReport, getInspectionStats
 - [ ] Implementar upload de fotos a S3
 - [ ] Crear componente de Ficha Técnica del piano
 - [ ] Implementar formulario de mediciones técnicas

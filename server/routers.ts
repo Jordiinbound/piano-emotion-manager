@@ -38,6 +38,7 @@ import { whatsappRouter } from "./routers/whatsapp.router";
 import { whatsappNotificationsRouter } from "./routers/whatsappNotifications.router";
 import { remindersRouter } from "./routers/reminders.router";
 import { marketingRouter } from "./routers/marketing.router";
+import { pianoTechnicalRouter } from "./routers/pianoTechnical.router";
 
 export const appRouter = router({
     // if you need to use socket.io, read and register route in server/_core/index.ts, all api should start with '/api/' so that the gateway can route correctly
@@ -92,6 +93,7 @@ export const appRouter = router({
   whatsappNotifications: whatsappNotificationsRouter,
   reminders: remindersRouter,
   marketing: marketingRouter,
+  pianoTechnical: pianoTechnicalRouter,
 
   // TODO: add more feature routers here
 });

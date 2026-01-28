@@ -1603,3 +1603,109 @@ export const messageHistoryRelations = relations(messageHistory, ({ one }) => ({
     references: [clients.id],
   }),
 }));
+
+/**
+ * Datos técnicos detallados de pianos (mediciones, características)
+ */
+export const pianoTechnicalData = mysqlTable('piano_technical_data', {
+  id: int().primaryKey().autoincrement(),
+  pianoId: int('piano_id').notNull(),
+  partnerId: int('partner_id').default(1).notNull(),
+  organizationId: int('organization_id'),
+  
+  // Medidas físicas (en cm)
+  height: decimal({ precision: 6, scale: 2 }),
+  width: decimal({ precision: 6, scale: 2 }),
+  depth: decimal({ precision: 6, scale: 2 }),
+  weight: decimal({ precision: 7, scale: 2 }), // en kg
+  
+  // Características técnicas
+  numberOfKeys: int('number_of_keys').default(88),
+  numberOfPedals: int('number_of_pedals').default(3),
+  numberOfStrings: int('number_of_strings'),
+  hammerType: varchar('hammer_type', { length: 100 }),
+  soundboardMaterial: varchar('soundboard_material', { length: 100 }),
+  frameMaterial: varchar('frame_material', { length: 100 }),
+  
+  // Características del teclado
+  keyboardType: varchar('keyboard_type', { length: 100 }), // ébano, marfil sintético, etc.
+  touchWeight: varchar('touch_weight', { length: 50 }), // ligero, medio, pesado
+  
+  // Estado técnico
+  lastTuningDate: timestamp('last_tuning_date'),
+  lastRegulationDate: timestamp('last_regulation_date'),
+  lastMaintenanceDate: timestamp('last_maintenance_date'),
+  
+  // Notas técnicas
+  technicalNotes: text('technical_notes'),
+  
+  createdAt: timestamp('created_at').defaultNow(),
+  updatedAt: timestamp('updated_at').defaultNow().onUpdateNow(),
+});
+
+/**
+ * Informes de inspección de pianos (generados por técnicos)
+ */
+export const pianoInspectionReports = mysqlTable('piano_inspection_reports', {
+  id: int().primaryKey().autoincrement(),
+  odId: varchar('od_id', { length: 64 }).notNull(),
+  pianoId: int('piano_id').notNull(),
+  clientId: int('client_id').notNull(),
+  partnerId: int('partner_id').default(1).notNull(),
+  organizationId: int('organization_id'),
+  
+  // Información del informe
+  reportNumber: varchar('report_number', { length: 50 }).notNull(),
+  inspectionDate: timestamp('inspection_date').notNull(),
+  inspectorName: varchar('inspector_name', { length: 255 }),
+  inspectorId: int('inspector_id'),
+  
+  // Tipo de inspección
+  inspectionType: varchar('inspection_type', { length: 50 }).notNull(), // pre-compra, mantenimiento, evaluación, etc.
+  
+  // Evaluación general
+  overallCondition: varchar('overall_condition', { length: 50 }), // excelente, bueno, regular, malo
+  estimatedValue: decimal('estimated_value', { precision: 10, scale: 2 }),
+  
+  // Secciones del informe (JSON con estructura detallada)
+  exteriorCondition: json('exterior_condition'), // estado de la caja, barniz, etc.
+  interiorCondition: json('interior_condition'), // cuerdas, martillos, fieltros, etc.
+  mechanicalCondition: json('mechanical_condition'), // mecánica, pedales, teclado
+  soundQuality: json('sound_quality'), // afinación, tono, resonancia
+  
+  // Recomendaciones
+  recommendations: text(),
+  estimatedRepairCost: decimal('estimated_repair_cost', { precision: 10, scale: 2 }),
+  urgency: varchar({ length: 20 }).default('normal'), // urgent, high, normal, low
+  
+  // Fotos del informe
+  photos: json(), // array de URLs de fotos
+  
+  // PDF generado
+  pdfUrl: varchar('pdf_url', { length: 500 }),
+  
+  // Notas adicionales
+  notes: text(),
+  
+  createdAt: timestamp('created_at').defaultNow(),
+  updatedAt: timestamp('updated_at').defaultNow().onUpdateNow(),
+});
+
+// Relaciones de documentación técnica
+export const pianoTechnicalDataRelations = relations(pianoTechnicalData, ({ one }) => ({
+  piano: one(pianos, {
+    fields: [pianoTechnicalData.pianoId],
+    references: [pianos.id],
+  }),
+}));
+
+export const pianoInspectionReportsRelations = relations(pianoInspectionReports, ({ one }) => ({
+  piano: one(pianos, {
+    fields: [pianoInspectionReports.pianoId],
+    references: [pianoInspectionReports.id],
+  }),
+  client: one(clients, {
+    fields: [pianoInspectionReports.clientId],
+    references: [clients.id],
+  }),
+}));
