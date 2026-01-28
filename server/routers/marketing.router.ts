@@ -6,6 +6,7 @@
 import { z } from 'zod';
 import { router, protectedProcedure } from '../_core/trpc.js';
 import { getDb } from '../db.js';
+import { sql } from 'drizzle-orm';
 import { 
   messageTemplates, 
   marketingCampaigns, 
@@ -178,20 +179,24 @@ export const marketingRouter = router({
     .mutation(async ({ ctx }) => {
       const db = await getDb();
       
-      const templates = Object.entries(defaultTemplates).map(([type, template]) => ({
-        type,
-        channel: 'whatsapp' as const,
-        name: template.name,
-        content: template.content,
-        availableVariables: JSON.stringify(templateVariables[type as MessageTemplateType]),
-        isDefault: 1,
-        isActive: 1,
-        createdBy: ctx.user.id,
-      }));
+      // Primero eliminar plantillas por defecto existentes para evitar duplicados
+      await db.execute(sql`DELETE FROM message_templates WHERE is_default = 1`);
       
-      await db.insert(messageTemplates).values(templates);
+      let count = 0;
+      for (const [type, template] of Object.entries(defaultTemplates)) {
+        await db.execute(sql`
+          INSERT INTO message_templates (
+            type, channel, name, content, available_variables, is_default, is_active, created_by
+          ) VALUES (
+            ${type}, 'whatsapp', ${template.name}, ${template.content}, 
+            ${JSON.stringify(templateVariables[type as MessageTemplateType])}, 
+            1, 1, ${ctx.user.id}
+          )
+        `);
+        count++;
+      }
       
-      return { success: true, count: templates.length };
+      return { success: true, count };
     }),
 
   // ============================================================================

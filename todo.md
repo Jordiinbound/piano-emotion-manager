@@ -1033,12 +1033,16 @@
 - [x] Crear servicio de campañas con funciones de reemplazo de variables y validación
 - [ ] Implementar integración con WhatsApp Business API
 - [ ] Implementar integración con servicio de Email
-- [ ] Crear página de Campañas con lista y estadísticas
+- [x] Crear página de Marketing con lista y estadísticas (3 tabs: Campañas, Plantillas, Historial)
+- [x] Agregar tarjetas de estadísticas (Campañas Activas, Plantillas, Mensajes Enviados, Destinatarios)
+- [x] Implementar gestión de plantillas de mensajes con botón de inicialización
+- [x] Mostrar historial de mensajes enviados con badges de estado y canal
+- [x] Agregar estados vacíos con iconos y mensajes informativos
+- [x] Agregar ruta /marketing al App.tsx
+- [x] Agregar enlace "Marketing" en el menú HERRAMIENTAS del Layout
 - [ ] Implementar formulario de crear campaña (individual/masiva)
-- [ ] Implementar selector de plantillas de mensajes
 - [ ] Implementar programación de envíos
-- [ ] Crear página de Historial de mensajes enviados
-- [ ] Crear tests para el router de marketing
+- [ ] Crear tests para el router de marketing (1/16 tests pasando, requiere corrección de bug de Drizzle)
 - [ ] Verificar funcionalidad completa
 
 ### FASE 3: Documentación Técnica de Pianos

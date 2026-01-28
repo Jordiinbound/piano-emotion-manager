@@ -28,6 +28,7 @@ import InventarioEditar from "./pages/InventarioEditar";
 import Store from "./pages/Store";
 import Reportes from "./pages/Reportes";
 import AccesosRapidos from "./pages/AccesosRapidos";
+import Marketing from "./pages/Marketing";
 import Alertas from "./pages/Alertas";
 import ConfiguracionAlertas from "./pages/ConfiguracionAlertas";
 import HerramientasAvanzadas from "./pages/HerramientasAvanzadas";
@@ -240,6 +241,13 @@ function Router() {
         <ProtectedRoute>
           <Layout>
             <Recordatorios />
+          </Layout>
+        </ProtectedRoute>
+      </Route>
+      <Route path="/marketing">
+        <ProtectedRoute>
+          <Layout>
+            <Marketing />
           </Layout>
         </ProtectedRoute>
       </Route>

@@ -26,6 +26,7 @@ import {
   UserCog,
   Languages,
   ClipboardList,
+  Megaphone,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { LicenseNotificationBadge } from '@/components/LicenseNotificationBadge';
@@ -77,6 +78,7 @@ const menuSections: MenuSection[] = [
       { name: 'Accesos Rápidos', href: '/accesos-rapidos', icon: Zap },
       { name: 'Notificaciones', href: '/notificaciones', icon: Bell },
       { name: 'Recordatorios', href: '/recordatorios', icon: ClipboardList },
+      { name: 'Marketing', href: '/marketing', icon: Megaphone },
       { name: 'Alertas', href: '/alertas', icon: Bell },
       { name: 'Herramientas Avanzadas', href: '/herramientas-avanzadas', icon: Hammer },
       { name: 'Configuración', href: '/configuracion', icon: Settings },
