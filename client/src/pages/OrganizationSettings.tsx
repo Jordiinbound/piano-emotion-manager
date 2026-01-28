@@ -9,8 +9,10 @@ import { Separator } from "@/components/ui/separator";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Save, Shield, Users, Database, Calendar, FileText, DollarSign } from "lucide-react";
 import { toast } from "sonner";
+import { useTranslation } from "@/hooks/use-translation";
 
 export function OrganizationSettings() {
+  const { t } = useTranslation();
   const [selectedOrgId, setSelectedOrgId] = useState<number | null>(null);
   
   // Estados para cada permiso
@@ -35,7 +37,7 @@ export function OrganizationSettings() {
 
   const updateMutation = trpc.organizations.updateSettings.useMutation({
     onSuccess: () => {
-      toast.success("Configuración guardada exitosamente");
+      toast.success(t('organizationSettings.settingsSavedSuccess'));
       refetchSettings();
     },
     onError: (error) => {
@@ -90,8 +92,7 @@ export function OrganizationSettings() {
         <Alert>
           <Shield className="h-4 w-4" />
           <AlertDescription>
-            No tienes permisos de administrador en ninguna organización.
-            Solo los administradores pueden configurar permisos.
+            {t('organizationSettings.noAdminPermissions')}
           </AlertDescription>
         </Alert>
       </div>
@@ -101,18 +102,18 @@ export function OrganizationSettings() {
   return (
     <div className="container py-8 space-y-6">
       <div>
-        <h1 className="text-3xl font-bold">Configuración de Permisos</h1>
+        <h1 className="text-3xl font-bold">{t('organizationSettings.title')}</h1>
         <p className="text-muted-foreground">
-          Configura qué recursos comparten los miembros de tu organización
+          {t('organizationSettings.description')}
         </p>
       </div>
 
       {/* Selector de Organización */}
       <Card>
         <CardHeader>
-          <CardTitle>Seleccionar Organización</CardTitle>
+          <CardTitle>{t('organizationSettings.selectOrganization')}</CardTitle>
           <CardDescription>
-            Elige la organización que deseas configurar
+            {t('organizationSettings.selectOrganizationDescription')}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -121,7 +122,7 @@ export function OrganizationSettings() {
             onValueChange={(value) => setSelectedOrgId(parseInt(value))}
           >
             <SelectTrigger>
-              <SelectValue placeholder="Selecciona una organización..." />
+              <SelectValue placeholder={t('organizationSettings.selectOrganizationPlaceholder')} />
             </SelectTrigger>
             <SelectContent>
               {adminOrgs.map((org) => (
@@ -141,18 +142,18 @@ export function OrganizationSettings() {
             <CardHeader>
               <div className="flex items-center gap-2">
                 <Database className="h-5 w-5" />
-                <CardTitle>Recursos Compartidos</CardTitle>
+                <CardTitle>{t('organizationSettings.sharedResources')}</CardTitle>
               </div>
               <CardDescription>
-                Define qué datos se comparten entre todos los miembros de la organización
+                {t('organizationSettings.sharedResourcesDescription')}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="flex items-center justify-between">
                 <div className="space-y-0.5">
-                  <Label>Compartir Clientes</Label>
+                  <Label>{t('organizationSettings.shareClients')}</Label>
                   <p className="text-sm text-muted-foreground">
-                    Todos los miembros ven la misma base de clientes
+                    {t('organizationSettings.shareClientsDescription')}
                   </p>
                 </div>
                 <Switch checked={shareClients} onCheckedChange={setShareClients} />
@@ -162,9 +163,9 @@ export function OrganizationSettings() {
 
               <div className="flex items-center justify-between">
                 <div className="space-y-0.5">
-                  <Label>Compartir Pianos</Label>
+                  <Label>{t('organizationSettings.sharePianos')}</Label>
                   <p className="text-sm text-muted-foreground">
-                    Todos los miembros ven todos los pianos registrados
+                    {t('organizationSettings.sharePianosDescription')}
                   </p>
                 </div>
                 <Switch checked={sharePianos} onCheckedChange={setSharePianos} />
@@ -174,9 +175,9 @@ export function OrganizationSettings() {
 
               <div className="flex items-center justify-between">
                 <div className="space-y-0.5">
-                  <Label>Compartir Inventario</Label>
+                  <Label>{t('organizationSettings.shareInventory')}</Label>
                   <p className="text-sm text-muted-foreground">
-                    El inventario de repuestos es común para todos
+                    {t('organizationSettings.shareInventoryDescription')}
                   </p>
                 </div>
                 <Switch checked={shareInventory} onCheckedChange={setShareInventory} />
@@ -186,9 +187,9 @@ export function OrganizationSettings() {
 
               <div className="flex items-center justify-between">
                 <div className="space-y-0.5">
-                  <Label>Compartir Agenda</Label>
+                  <Label>{t('organizationSettings.shareAgenda')}</Label>
                   <p className="text-sm text-muted-foreground">
-                    Todos ven las citas de todos (útil para coordinación)
+                    {t('organizationSettings.shareAgendaDescription')}
                   </p>
                 </div>
                 <Switch checked={shareAgenda} onCheckedChange={setShareAgenda} />
@@ -198,9 +199,9 @@ export function OrganizationSettings() {
 
               <div className="flex items-center justify-between">
                 <div className="space-y-0.5">
-                  <Label>Compartir Facturas</Label>
+                  <Label>{t('organizationSettings.shareInvoices')}</Label>
                   <p className="text-sm text-muted-foreground">
-                    Todos los miembros ven todas las facturas
+                    {t('organizationSettings.shareInvoicesDescription')}
                   </p>
                 </div>
                 <Switch checked={shareInvoices} onCheckedChange={setShareInvoices} />
@@ -210,9 +211,9 @@ export function OrganizationSettings() {
 
               <div className="flex items-center justify-between">
                 <div className="space-y-0.5">
-                  <Label>Compartir Presupuestos</Label>
+                  <Label>{t('organizationSettings.shareQuotes')}</Label>
                   <p className="text-sm text-muted-foreground">
-                    Todos los miembros ven todos los presupuestos
+                    {t('organizationSettings.shareQuotesDescription')}
                   </p>
                 </div>
                 <Switch checked={shareQuotes} onCheckedChange={setShareQuotes} />
@@ -225,18 +226,18 @@ export function OrganizationSettings() {
             <CardHeader>
               <div className="flex items-center gap-2">
                 <Users className="h-5 w-5" />
-                <CardTitle>Permisos de Visualización</CardTitle>
+                <CardTitle>{t('organizationSettings.viewPermissions')}</CardTitle>
               </div>
               <CardDescription>
-                Controla qué pueden ver los miembros del trabajo de otros
+                {t('organizationSettings.viewPermissionsDescription')}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="flex items-center justify-between">
                 <div className="space-y-0.5">
-                  <Label>Ver Clientes de Otros</Label>
+                  <Label>{t('organizationSettings.viewOthersClients')}</Label>
                   <p className="text-sm text-muted-foreground">
-                    Los miembros pueden ver clientes asignados a otros técnicos
+                    {t('organizationSettings.viewOthersClientsDescription')}
                   </p>
                 </div>
                 <Switch
@@ -249,9 +250,9 @@ export function OrganizationSettings() {
 
               <div className="flex items-center justify-between">
                 <div className="space-y-0.5">
-                  <Label>Editar Clientes de Otros</Label>
+                  <Label>{t('organizationSettings.editOthersClients')}</Label>
                   <p className="text-sm text-muted-foreground">
-                    Los miembros pueden modificar clientes de otros técnicos
+                    {t('organizationSettings.editOthersClientsDescription')}
                   </p>
                 </div>
                 <Switch
@@ -265,9 +266,9 @@ export function OrganizationSettings() {
 
               <div className="flex items-center justify-between">
                 <div className="space-y-0.5">
-                  <Label>Ver Servicios de Otros</Label>
+                  <Label>{t('organizationSettings.viewOthersServices')}</Label>
                   <p className="text-sm text-muted-foreground">
-                    Los miembros pueden ver servicios realizados por otros
+                    {t('organizationSettings.viewOthersServicesDescription')}
                   </p>
                 </div>
                 <Switch
@@ -280,9 +281,9 @@ export function OrganizationSettings() {
 
               <div className="flex items-center justify-between">
                 <div className="space-y-0.5">
-                  <Label>Ver Facturas de Otros</Label>
+                  <Label>{t('organizationSettings.viewOthersInvoices')}</Label>
                   <p className="text-sm text-muted-foreground">
-                    Los miembros pueden ver facturas emitidas por otros
+                    {t('organizationSettings.viewOthersInvoicesDescription')}
                   </p>
                 </div>
                 <Switch
@@ -298,18 +299,18 @@ export function OrganizationSettings() {
             <CardHeader>
               <div className="flex items-center gap-2">
                 <Calendar className="h-5 w-5" />
-                <CardTitle>Automatizaciones y Flujos</CardTitle>
+                <CardTitle>{t('organizationSettings.automationsAndFlows')}</CardTitle>
               </div>
               <CardDescription>
-                Configura comportamientos automáticos del sistema
+                {t('organizationSettings.automationsDescription')}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="flex items-center justify-between">
                 <div className="space-y-0.5">
-                  <Label>Asignación Automática de Servicios</Label>
+                  <Label>{t('organizationSettings.autoAssignServices')}</Label>
                   <p className="text-sm text-muted-foreground">
-                    El sistema asigna servicios automáticamente según disponibilidad
+                    {t('organizationSettings.autoAssignServicesDescription')}
                   </p>
                 </div>
                 <Switch
@@ -322,9 +323,9 @@ export function OrganizationSettings() {
 
               <div className="flex items-center justify-between">
                 <div className="space-y-0.5">
-                  <Label>Requiere Aprobación para Facturas</Label>
+                  <Label>{t('organizationSettings.requireApprovalForInvoices')}</Label>
                   <p className="text-sm text-muted-foreground">
-                    Las facturas deben ser aprobadas por un admin antes de enviarse
+                    {t('organizationSettings.requireApprovalForInvoicesDescription')}
                   </p>
                 </div>
                 <Switch
@@ -339,11 +340,11 @@ export function OrganizationSettings() {
           <div className="flex justify-end">
             <Button onClick={handleSave} disabled={updateMutation.isPending} size="lg">
               {updateMutation.isPending ? (
-                "Guardando..."
+                t('organizationSettings.saving')
               ) : (
                 <>
                   <Save className="mr-2 h-4 w-4" />
-                  Guardar Configuración
+                  {t('organizationSettings.saveSettings')}
                 </>
               )}
             </Button>

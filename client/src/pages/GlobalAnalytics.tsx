@@ -10,8 +10,10 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { useTranslation } from "@/hooks/use-translation";
 
 export function GlobalAnalytics() {
+  const { t } = useTranslation();
   const { data: metrics, isLoading: metricsLoading } = trpc.analytics.getGlobalMetrics.useQuery();
   const { data: trends, isLoading: trendsLoading } = trpc.analytics.getTimeTrends.useQuery();
   const { data: distribution, isLoading: distributionLoading } = trpc.analytics.getLicenseDistribution.useQuery();
@@ -28,9 +30,9 @@ export function GlobalAnalytics() {
     <div className="container py-8 space-y-8">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold">Analytics Global</h1>
+        <h1 className="text-3xl font-bold">{t('globalAnalytics.title')}</h1>
         <p className="text-muted-foreground mt-2">
-          Métricas clave del negocio y tendencias
+          {t('globalAnalytics.description')}
         </p>
       </div>
 
@@ -38,7 +40,7 @@ export function GlobalAnalytics() {
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">MRR</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('globalAnalytics.mrr')}</CardTitle>
             <DollarSign className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -46,14 +48,14 @@ export function GlobalAnalytics() {
               {metricsLoading ? '...' : formatCurrency(metrics?.mrr || 0)}
             </div>
             <p className="text-xs text-muted-foreground">
-              Monthly Recurring Revenue
+              {t('globalAnalytics.monthlyRecurringRevenue')}
             </p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Licencias Activas</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('globalAnalytics.activeLicenses')}</CardTitle>
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -61,14 +63,14 @@ export function GlobalAnalytics() {
               {metricsLoading ? '...' : metrics?.activeLicenses || 0}
             </div>
             <p className="text-xs text-muted-foreground">
-              +{metrics?.newLicenses || 0} en los últimos 30 días
+              {t('globalAnalytics.newInLast30Days', { count: metrics?.newLicenses || 0 })}
             </p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Churn Rate</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('globalAnalytics.churnRate')}</CardTitle>
             <TrendingUp className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -76,14 +78,14 @@ export function GlobalAnalytics() {
               {metricsLoading ? '...' : `${metrics?.churnRate || 0}%`}
             </div>
             <p className="text-xs text-muted-foreground">
-              {metrics?.canceledLicenses || 0} cancelaciones en 30 días
+              {t('globalAnalytics.cancellationsIn30Days', { count: metrics?.canceledLicenses || 0 })}
             </p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">LTV</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('globalAnalytics.ltv')}</CardTitle>
             <Target className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -91,7 +93,7 @@ export function GlobalAnalytics() {
               {metricsLoading ? '...' : formatCurrency(metrics?.ltv || 0)}
             </div>
             <p className="text-xs text-muted-foreground">
-              Lifetime Value estimado
+              {t('globalAnalytics.estimatedLifetimeValue')}
             </p>
           </CardContent>
         </Card>
@@ -101,7 +103,7 @@ export function GlobalAnalytics() {
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Ingresos (30 días)</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('globalAnalytics.revenue30Days')}</CardTitle>
             <DollarSign className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -113,7 +115,7 @@ export function GlobalAnalytics() {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Usuarios</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('globalAnalytics.totalUsers')}</CardTitle>
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -125,7 +127,7 @@ export function GlobalAnalytics() {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Conversión Códigos</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('globalAnalytics.codeConversion')}</CardTitle>
             <Percent className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -139,9 +141,9 @@ export function GlobalAnalytics() {
       {/* Tabs con Detalles */}
       <Tabs defaultValue="trends" className="space-y-4">
         <TabsList>
-          <TabsTrigger value="trends">Tendencias</TabsTrigger>
-          <TabsTrigger value="distribution">Distribución</TabsTrigger>
-          <TabsTrigger value="partners">Top Partners</TabsTrigger>
+          <TabsTrigger value="trends">{t('globalAnalytics.trends')}</TabsTrigger>
+          <TabsTrigger value="distribution">{t('globalAnalytics.distribution')}</TabsTrigger>
+          <TabsTrigger value="partners">{t('globalAnalytics.topPartners')}</TabsTrigger>
         </TabsList>
 
         {/* Tendencias */}
@@ -149,18 +151,18 @@ export function GlobalAnalytics() {
           <div className="grid gap-4 md:grid-cols-2">
             <Card>
               <CardHeader>
-                <CardTitle>Licencias por Mes</CardTitle>
-                <CardDescription>Últimos 6 meses</CardDescription>
+                <CardTitle>{t('globalAnalytics.licensesByMonth')}</CardTitle>
+                <CardDescription>{t('globalAnalytics.last6Months')}</CardDescription>
               </CardHeader>
               <CardContent>
                 {trendsLoading ? (
-                  <p className="text-center text-muted-foreground py-8">Cargando...</p>
+                  <p className="text-center text-muted-foreground py-8">{t('globalAnalytics.loading')}</p>
                 ) : trends && trends.licensesByMonth.length > 0 ? (
                   <Table>
                     <TableHeader>
                       <TableRow>
-                        <TableHead>Mes</TableHead>
-                        <TableHead className="text-right">Licencias</TableHead>
+                        <TableHead>{t('globalAnalytics.month')}</TableHead>
+                        <TableHead className="text-right">{t('globalAnalytics.licenses')}</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -173,25 +175,25 @@ export function GlobalAnalytics() {
                     </TableBody>
                   </Table>
                 ) : (
-                  <p className="text-center text-muted-foreground py-8">Sin datos</p>
+                  <p className="text-center text-muted-foreground py-8">{t('globalAnalytics.noData')}</p>
                 )}
               </CardContent>
             </Card>
 
             <Card>
               <CardHeader>
-                <CardTitle>Ingresos por Mes</CardTitle>
-                <CardDescription>Últimos 6 meses</CardDescription>
+                <CardTitle>{t('globalAnalytics.revenueByMonth')}</CardTitle>
+                <CardDescription>{t('globalAnalytics.last6Months')}</CardDescription>
               </CardHeader>
               <CardContent>
                 {trendsLoading ? (
-                  <p className="text-center text-muted-foreground py-8">Cargando...</p>
+                  <p className="text-center text-muted-foreground py-8">{t('globalAnalytics.loading')}</p>
                 ) : trends && trends.revenueByMonth.length > 0 ? (
                   <Table>
                     <TableHeader>
                       <TableRow>
-                        <TableHead>Mes</TableHead>
-                        <TableHead className="text-right">Ingresos</TableHead>
+                        <TableHead>{t('globalAnalytics.month')}</TableHead>
+                        <TableHead className="text-right">{t('globalAnalytics.revenue')}</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -204,7 +206,7 @@ export function GlobalAnalytics() {
                     </TableBody>
                   </Table>
                 ) : (
-                  <p className="text-center text-muted-foreground py-8">Sin datos</p>
+                  <p className="text-center text-muted-foreground py-8">{t('globalAnalytics.noData')}</p>
                 )}
               </CardContent>
             </Card>
@@ -215,18 +217,18 @@ export function GlobalAnalytics() {
         <TabsContent value="distribution" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>Distribución por Tipo de Licencia</CardTitle>
-              <CardDescription>Licencias activas</CardDescription>
+              <CardTitle>{t('globalAnalytics.distributionByLicenseType')}</CardTitle>
+              <CardDescription>{t('globalAnalytics.activeLicenses')}</CardDescription>
             </CardHeader>
             <CardContent>
               {distributionLoading ? (
-                <p className="text-center text-muted-foreground py-8">Cargando...</p>
+                <p className="text-center text-muted-foreground py-8">{t('globalAnalytics.loading')}</p>
               ) : distribution && distribution.length > 0 ? (
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Tipo</TableHead>
-                      <TableHead className="text-right">Cantidad</TableHead>
+                      <TableHead>{t('globalAnalytics.type')}</TableHead>
+                      <TableHead className="text-right">{t('globalAnalytics.quantity')}</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -239,7 +241,7 @@ export function GlobalAnalytics() {
                   </TableBody>
                 </Table>
               ) : (
-                <p className="text-center text-muted-foreground py-8">Sin datos</p>
+                <p className="text-center text-muted-foreground py-8">{t('globalAnalytics.noData')}</p>
               )}
             </CardContent>
           </Card>
@@ -249,18 +251,18 @@ export function GlobalAnalytics() {
         <TabsContent value="partners" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>Top 10 Partners</CardTitle>
-              <CardDescription>Por licencias activas</CardDescription>
+              <CardTitle>{t('globalAnalytics.top10Partners')}</CardTitle>
+              <CardDescription>{t('globalAnalytics.byActiveLicenses')}</CardDescription>
             </CardHeader>
             <CardContent>
               {partnersLoading ? (
-                <p className="text-center text-muted-foreground py-8">Cargando...</p>
+                <p className="text-center text-muted-foreground py-8">{t('globalAnalytics.loading')}</p>
               ) : topPartners && topPartners.length > 0 ? (
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Partner</TableHead>
-                      <TableHead className="text-right">Licencias Activas</TableHead>
+                      <TableHead>{t('globalAnalytics.partner')}</TableHead>
+                      <TableHead className="text-right">{t('globalAnalytics.activeLicenses')}</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -269,7 +271,7 @@ export function GlobalAnalytics() {
                         <TableCell>
                           <div className="flex items-center gap-2">
                             <span className="text-muted-foreground">#{index + 1}</span>
-                            <span className="font-medium">{partner.partnerName || `Partner #${partner.partnerId}`}</span>
+                            <span className="font-medium">{partner.partnerName || t('globalAnalytics.partnerNumber', { id: partner.partnerId })}</span>
                           </div>
                         </TableCell>
                         <TableCell className="text-right font-bold">{partner.count}</TableCell>
@@ -278,7 +280,7 @@ export function GlobalAnalytics() {
                   </TableBody>
                 </Table>
               ) : (
-                <p className="text-center text-muted-foreground py-8">Sin datos</p>
+                <p className="text-center text-muted-foreground py-8">{t('globalAnalytics.noData')}</p>
               )}
             </CardContent>
           </Card>

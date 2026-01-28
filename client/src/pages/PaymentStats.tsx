@@ -10,8 +10,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Loader2, TrendingUp, TrendingDown, DollarSign, FileText, Clock, CheckCircle, AlertCircle, Calendar } from 'lucide-react';
 import { trpc } from '@/lib/trpc';
+import { useTranslation } from '@/hooks/use-translation';
 
 export default function PaymentStats() {
+  const { t } = useTranslation();
   const [timeRange, setTimeRange] = useState<'week' | 'month' | 'quarter' | 'year'>('month');
 
   // Obtener estadísticas
@@ -44,9 +46,9 @@ export default function PaymentStats() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Estadísticas de Pagos</h1>
+          <h1 className="text-3xl font-bold text-gray-900">{t('paymentStats.title')}</h1>
           <p className="text-gray-600 mt-2">
-            Análisis detallado de facturación y pagos
+            {t('paymentStats.description')}
           </p>
         </div>
 
@@ -57,28 +59,28 @@ export default function PaymentStats() {
             size="sm"
             onClick={() => setTimeRange('week')}
           >
-            Semana
+            {t('paymentStats.week')}
           </Button>
           <Button
             variant={timeRange === 'month' ? 'default' : 'outline'}
             size="sm"
             onClick={() => setTimeRange('month')}
           >
-            Mes
+            {t('paymentStats.month')}
           </Button>
           <Button
             variant={timeRange === 'quarter' ? 'default' : 'outline'}
             size="sm"
             onClick={() => setTimeRange('quarter')}
           >
-            Trimestre
+            {t('paymentStats.quarter')}
           </Button>
           <Button
             variant={timeRange === 'year' ? 'default' : 'outline'}
             size="sm"
             onClick={() => setTimeRange('year')}
           >
-            Año
+            {t('paymentStats.year')}
           </Button>
         </div>
       </div>
@@ -88,13 +90,13 @@ export default function PaymentStats() {
         {/* Ingresos totales */}
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Ingresos Totales</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('paymentStats.totalRevenue')}</CardTitle>
             <DollarSign className="h-4 w-4 text-green-600" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-green-600">€{totalRevenue.toFixed(2)}</div>
             <p className="text-xs text-gray-500 mt-1">
-              {paidCount} facturas pagadas
+              {t('paymentStats.paidInvoices', { count: paidCount })}
             </p>
           </CardContent>
         </Card>
@@ -102,13 +104,13 @@ export default function PaymentStats() {
         {/* Pendiente de cobro */}
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Pendiente de Cobro</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('paymentStats.pendingCollection')}</CardTitle>
             <Clock className="h-4 w-4 text-yellow-600" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-yellow-600">€{pendingAmount.toFixed(2)}</div>
             <p className="text-xs text-gray-500 mt-1">
-              {sentCount} facturas enviadas
+              {t('paymentStats.sentInvoices', { count: sentCount })}
             </p>
           </CardContent>
         </Card>
@@ -116,13 +118,13 @@ export default function PaymentStats() {
         {/* Facturas vencidas */}
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Facturas Vencidas</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('paymentStats.overdueInvoices')}</CardTitle>
             <AlertCircle className="h-4 w-4 text-red-600" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-red-600">€{overdueAmount.toFixed(2)}</div>
             <p className="text-xs text-gray-500 mt-1">
-              Requieren atención
+              {t('paymentStats.requireAttention')}
             </p>
           </CardContent>
         </Card>
@@ -130,13 +132,13 @@ export default function PaymentStats() {
         {/* Total de facturas */}
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Facturas</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('paymentStats.totalInvoices')}</CardTitle>
             <FileText className="h-4 w-4 text-blue-600" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-blue-600">{totalCount}</div>
             <p className="text-xs text-gray-500 mt-1">
-              {draftCount} borradores
+              {t('paymentStats.drafts', { count: draftCount })}
             </p>
           </CardContent>
         </Card>
@@ -147,8 +149,8 @@ export default function PaymentStats() {
         {/* Estado de facturas */}
         <Card>
           <CardHeader>
-            <CardTitle>Estado de Facturas</CardTitle>
-            <CardDescription>Distribución por estado</CardDescription>
+            <CardTitle>{t('paymentStats.invoiceStatus')}</CardTitle>
+            <CardDescription>{t('paymentStats.distributionByStatus')}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             {/* Pagadas */}
@@ -156,7 +158,7 @@ export default function PaymentStats() {
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-2">
                   <CheckCircle className="h-4 w-4 text-green-600" />
-                  <span className="text-sm font-medium">Pagadas</span>
+                  <span className="text-sm font-medium">{t('paymentStats.paid')}</span>
                 </div>
                 <span className="text-sm font-bold text-green-600">{paidCount}</span>
               </div>
@@ -166,7 +168,7 @@ export default function PaymentStats() {
                   style={{ width: `${paidPercentage}%` }}
                 />
               </div>
-              <p className="text-xs text-gray-500 mt-1">{paidPercentage.toFixed(1)}% del total</p>
+              <p className="text-xs text-gray-500 mt-1">{t('paymentStats.percentOfTotal', { percent: paidPercentage.toFixed(1) })}</p>
             </div>
 
             {/* Enviadas */}
@@ -174,7 +176,7 @@ export default function PaymentStats() {
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-2">
                   <Clock className="h-4 w-4 text-yellow-600" />
-                  <span className="text-sm font-medium">Enviadas</span>
+                  <span className="text-sm font-medium">{t('paymentStats.sent')}</span>
                 </div>
                 <span className="text-sm font-bold text-yellow-600">{sentCount}</span>
               </div>
@@ -184,7 +186,7 @@ export default function PaymentStats() {
                   style={{ width: `${sentPercentage}%` }}
                 />
               </div>
-              <p className="text-xs text-gray-500 mt-1">{sentPercentage.toFixed(1)}% del total</p>
+              <p className="text-xs text-gray-500 mt-1">{t('paymentStats.percentOfTotal', { percent: sentPercentage.toFixed(1) })}</p>
             </div>
 
             {/* Borradores */}
@@ -192,7 +194,7 @@ export default function PaymentStats() {
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-2">
                   <FileText className="h-4 w-4 text-gray-600" />
-                  <span className="text-sm font-medium">Borradores</span>
+                  <span className="text-sm font-medium">{t('paymentStats.drafts', { count: draftCount })}</span>
                 </div>
                 <span className="text-sm font-bold text-gray-600">{draftCount}</span>
               </div>
@@ -203,7 +205,7 @@ export default function PaymentStats() {
                 />
               </div>
               <p className="text-xs text-gray-500 mt-1">
-                {totalCount > 0 ? ((draftCount / totalCount) * 100).toFixed(1) : 0}% del total
+                {t('paymentStats.percentOfTotal', { percent: totalCount > 0 ? ((draftCount / totalCount) * 100).toFixed(1) : '0' })}
               </p>
             </div>
           </CardContent>
@@ -212,13 +214,13 @@ export default function PaymentStats() {
         {/* Resumen financiero */}
         <Card>
           <CardHeader>
-            <CardTitle>Resumen Financiero</CardTitle>
-            <CardDescription>Análisis de ingresos y pendientes</CardDescription>
+            <CardTitle>{t('paymentStats.financialSummary')}</CardTitle>
+            <CardDescription>{t('paymentStats.revenueAndPendingAnalysis')}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex items-center justify-between p-4 bg-green-50 rounded-lg">
               <div>
-                <p className="text-sm text-green-700 font-medium">Ingresos Totales</p>
+                <p className="text-sm text-green-700 font-medium">{t('paymentStats.totalRevenue')}</p>
                 <p className="text-2xl font-bold text-green-900">€{totalRevenue.toFixed(2)}</p>
               </div>
               <TrendingUp className="h-8 w-8 text-green-600" />
@@ -226,7 +228,7 @@ export default function PaymentStats() {
 
             <div className="flex items-center justify-between p-4 bg-yellow-50 rounded-lg">
               <div>
-                <p className="text-sm text-yellow-700 font-medium">Pendiente de Cobro</p>
+                <p className="text-sm text-yellow-700 font-medium">{t('paymentStats.pendingCollection')}</p>
                 <p className="text-2xl font-bold text-yellow-900">€{pendingAmount.toFixed(2)}</p>
               </div>
               <Clock className="h-8 w-8 text-yellow-600" />
@@ -234,7 +236,7 @@ export default function PaymentStats() {
 
             <div className="flex items-center justify-between p-4 bg-red-50 rounded-lg">
               <div>
-                <p className="text-sm text-red-700 font-medium">Facturas Vencidas</p>
+                <p className="text-sm text-red-700 font-medium">{t('paymentStats.overdueInvoices')}</p>
                 <p className="text-2xl font-bold text-red-900">€{overdueAmount.toFixed(2)}</p>
               </div>
               <AlertCircle className="h-8 w-8 text-red-600" />
@@ -243,7 +245,7 @@ export default function PaymentStats() {
             {/* Tasa de cobro */}
             <div className="pt-4 border-t">
               <div className="flex items-center justify-between">
-                <span className="text-sm font-medium text-gray-700">Tasa de Cobro</span>
+                <span className="text-sm font-medium text-gray-700">{t('paymentStats.collectionRate')}</span>
                 <span className="text-lg font-bold text-blue-600">
                   {totalCount > 0 ? ((paidCount / totalCount) * 100).toFixed(1) : 0}%
                 </span>
@@ -262,16 +264,16 @@ export default function PaymentStats() {
       {/* Información adicional */}
       <Card>
         <CardHeader>
-          <CardTitle>Próximos Pasos</CardTitle>
+          <CardTitle>{t('paymentStats.nextSteps')}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
           {overdueAmount > 0 && (
             <div className="flex items-start gap-3 p-4 bg-red-50 border border-red-200 rounded-lg">
               <AlertCircle className="h-5 w-5 text-red-600 mt-0.5" />
               <div>
-                <p className="font-semibold text-red-900">Facturas vencidas pendientes</p>
+                <p className="font-semibold text-red-900">{t('paymentStats.overdueInvoicesPending')}</p>
                 <p className="text-sm text-red-700">
-                  Tienes €{overdueAmount.toFixed(2)} en facturas vencidas. Considera enviar recordatorios a tus clientes.
+                  {t('paymentStats.overdueInvoicesMessage', { amount: overdueAmount.toFixed(2) })}
                 </p>
               </div>
             </div>
@@ -281,9 +283,9 @@ export default function PaymentStats() {
             <div className="flex items-start gap-3 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
               <Clock className="h-5 w-5 text-yellow-600 mt-0.5" />
               <div>
-                <p className="font-semibold text-yellow-900">Facturas pendientes de pago</p>
+                <p className="font-semibold text-yellow-900">{t('paymentStats.pendingPaymentInvoices')}</p>
                 <p className="text-sm text-yellow-700">
-                  Tienes {sentCount} facturas enviadas esperando pago por un total de €{pendingAmount.toFixed(2)}.
+                  {t('paymentStats.pendingPaymentMessage', { count: sentCount, amount: pendingAmount.toFixed(2) })}
                 </p>
               </div>
             </div>
@@ -293,9 +295,9 @@ export default function PaymentStats() {
             <div className="flex items-start gap-3 p-4 bg-blue-50 border border-blue-200 rounded-lg">
               <FileText className="h-5 w-5 text-blue-600 mt-0.5" />
               <div>
-                <p className="font-semibold text-blue-900">Borradores pendientes</p>
+                <p className="font-semibold text-blue-900">{t('paymentStats.pendingDrafts')}</p>
                 <p className="text-sm text-blue-700">
-                  Tienes {draftCount} facturas en borrador. Revísalas y envíalas a tus clientes.
+                  {t('paymentStats.pendingDraftsMessage', { count: draftCount })}
                 </p>
               </div>
             </div>
@@ -305,9 +307,9 @@ export default function PaymentStats() {
             <div className="flex items-start gap-3 p-4 bg-green-50 border border-green-200 rounded-lg">
               <CheckCircle className="h-5 w-5 text-green-600 mt-0.5" />
               <div>
-                <p className="font-semibold text-green-900">¡Todo al día!</p>
+                <p className="font-semibold text-green-900">{t('paymentStats.allUpToDate')}</p>
                 <p className="text-sm text-green-700">
-                  No tienes facturas pendientes. Excelente gestión de cobros.
+                  {t('paymentStats.allUpToDateMessage')}
                 </p>
               </div>
             </div>

@@ -21,8 +21,10 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useTranslation } from "@/hooks/use-translation";
 
 export function RolesManagement() {
+  const { t } = useTranslation();
   const [selectedUserId, setSelectedUserId] = useState<number | null>(null);
   const [selectedRole, setSelectedRole] = useState<string>('');
 
@@ -41,10 +43,10 @@ export function RolesManagement() {
         userId,
         role: role as any,
       });
-      toast.success("Rol asignado correctamente");
+      toast.success(t('rolesManagement.roleAssignedSuccess'));
       refetchUsers();
     } catch (error: any) {
-      toast.error("Error al asignar rol: " + error.message);
+      toast.error(t('rolesManagement.roleAssignedError', { message: error.message }));
     }
   };
 
@@ -64,13 +66,13 @@ export function RolesManagement() {
   const getRoleLabel = (role: string) => {
     switch (role) {
       case 'admin':
-        return 'Administrador';
+        return t('rolesManagement.administrator');
       case 'partner':
-        return 'Partner';
+        return t('rolesManagement.partner');
       case 'technician':
-        return 'Técnico';
+        return t('rolesManagement.technician');
       case 'user':
-        return 'Usuario';
+        return t('rolesManagement.user');
       default:
         return role;
     }
@@ -80,32 +82,32 @@ export function RolesManagement() {
     <div className="container py-8 space-y-8">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold">Gestión de Roles y Permisos</h1>
+        <h1 className="text-3xl font-bold">{t('rolesManagement.title')}</h1>
         <p className="text-muted-foreground mt-2">
-          Administra roles, permisos y control de acceso del sistema
+          {t('rolesManagement.description')}
         </p>
       </div>
 
       {/* Tabs */}
       <Tabs defaultValue="roles" className="space-y-4">
         <TabsList>
-          <TabsTrigger value="roles">Roles y Permisos</TabsTrigger>
-          <TabsTrigger value="users">Usuarios</TabsTrigger>
-          <TabsTrigger value="my-permissions">Mis Permisos</TabsTrigger>
+          <TabsTrigger value="roles">{t('rolesManagement.rolesAndPermissions')}</TabsTrigger>
+          <TabsTrigger value="users">{t('rolesManagement.users')}</TabsTrigger>
+          <TabsTrigger value="my-permissions">{t('rolesManagement.myPermissions')}</TabsTrigger>
         </TabsList>
 
         {/* Roles y Permisos */}
         <TabsContent value="roles" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>Roles del Sistema</CardTitle>
+              <CardTitle>{t('rolesManagement.systemRoles')}</CardTitle>
               <CardDescription>
-                Permisos asignados a cada rol
+                {t('rolesManagement.permissionsAssignedToEachRole')}
               </CardDescription>
             </CardHeader>
             <CardContent>
               {rolesLoading ? (
-                <p className="text-center text-muted-foreground py-8">Cargando roles...</p>
+                <p className="text-center text-muted-foreground py-8">{t('rolesManagement.loadingRoles')}</p>
               ) : roles && roles.length > 0 ? (
                 <div className="space-y-6">
                   {roles.map((role) => (
@@ -114,7 +116,7 @@ export function RolesManagement() {
                         <Shield className="h-5 w-5 text-primary" />
                         <h3 className="text-lg font-semibold">{getRoleLabel(role.role)}</h3>
                         <Badge variant={getRoleBadgeVariant(role.role)}>
-                          {role.permissions.length} permisos
+                          {t('rolesManagement.permissionsCount', { count: role.permissions.length })}
                         </Badge>
                       </div>
                       <div className="flex flex-wrap gap-2">
@@ -130,7 +132,7 @@ export function RolesManagement() {
                 </div>
               ) : (
                 <p className="text-center text-muted-foreground py-8">
-                  No hay roles configurados
+                  {t('rolesManagement.noRolesConfigured')}
                 </p>
               )}
             </CardContent>
@@ -141,31 +143,31 @@ export function RolesManagement() {
         <TabsContent value="users" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>Usuarios del Sistema</CardTitle>
+              <CardTitle>{t('rolesManagement.systemUsers')}</CardTitle>
               <CardDescription>
-                Asigna roles a los usuarios
+                {t('rolesManagement.assignRolesToUsers')}
               </CardDescription>
             </CardHeader>
             <CardContent>
               {usersLoading ? (
-                <p className="text-center text-muted-foreground py-8">Cargando usuarios...</p>
+                <p className="text-center text-muted-foreground py-8">{t('rolesManagement.loadingUsers')}</p>
               ) : usersData && usersData.users.length > 0 ? (
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>ID</TableHead>
-                      <TableHead>Nombre</TableHead>
-                      <TableHead>Email</TableHead>
-                      <TableHead>Rol Actual</TableHead>
-                      <TableHead>Cambiar Rol</TableHead>
-                      <TableHead>Acciones</TableHead>
+                      <TableHead>{t('rolesManagement.id')}</TableHead>
+                      <TableHead>{t('rolesManagement.name')}</TableHead>
+                      <TableHead>{t('rolesManagement.email')}</TableHead>
+                      <TableHead>{t('rolesManagement.currentRole')}</TableHead>
+                      <TableHead>{t('rolesManagement.changeRole')}</TableHead>
+                      <TableHead>{t('rolesManagement.actions')}</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {usersData.users.map((user) => (
                       <TableRow key={user.id}>
                         <TableCell>#{user.id}</TableCell>
-                        <TableCell>{user.name || 'Sin nombre'}</TableCell>
+                        <TableCell>{user.name || t('rolesManagement.noName')}</TableCell>
                         <TableCell>{user.email}</TableCell>
                         <TableCell>
                           <Badge variant={getRoleBadgeVariant(user.role)}>
@@ -181,13 +183,13 @@ export function RolesManagement() {
                             }}
                           >
                             <SelectTrigger className="w-[180px]">
-                              <SelectValue placeholder="Seleccionar rol" />
+                              <SelectValue placeholder={t('rolesManagement.selectRole')} />
                             </SelectTrigger>
                             <SelectContent>
-                              <SelectItem value="user">Usuario</SelectItem>
-                              <SelectItem value="technician">Técnico</SelectItem>
-                              <SelectItem value="partner">Partner</SelectItem>
-                              <SelectItem value="admin">Administrador</SelectItem>
+                              <SelectItem value="user">{t('rolesManagement.user')}</SelectItem>
+                              <SelectItem value="technician">{t('rolesManagement.technician')}</SelectItem>
+                              <SelectItem value="partner">{t('rolesManagement.partner')}</SelectItem>
+                              <SelectItem value="admin">{t('rolesManagement.administrator')}</SelectItem>
                             </SelectContent>
                           </Select>
                         </TableCell>
@@ -197,7 +199,7 @@ export function RolesManagement() {
                             onClick={() => handleAssignRole(user.id, selectedUserId === user.id ? selectedRole : user.role)}
                             disabled={selectedUserId !== user.id || selectedRole === user.role}
                           >
-                            Aplicar
+                            {t('rolesManagement.apply')}
                           </Button>
                         </TableCell>
                       </TableRow>
@@ -206,7 +208,7 @@ export function RolesManagement() {
                 </Table>
               ) : (
                 <p className="text-center text-muted-foreground py-8">
-                  No hay usuarios registrados
+                  {t('rolesManagement.noUsersRegistered')}
                 </p>
               )}
             </CardContent>
@@ -217,9 +219,9 @@ export function RolesManagement() {
         <TabsContent value="my-permissions" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>Mis Permisos</CardTitle>
+              <CardTitle>{t('rolesManagement.myPermissions')}</CardTitle>
               <CardDescription>
-                Permisos que tienes asignados actualmente
+                {t('rolesManagement.myPermissionsDescription')}
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -234,7 +236,7 @@ export function RolesManagement() {
                 </div>
               ) : (
                 <p className="text-center text-muted-foreground py-8">
-                  No tienes permisos asignados
+                  {t('rolesManagement.noPermissionsAssigned')}
                 </p>
               )}
             </CardContent>
