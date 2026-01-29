@@ -4,7 +4,7 @@
  */
 
 import { getDb } from './db';
-import { workflows, workflowNodes, workflowConnections, workflowExecutions, userSettings } from '../drizzle/schema';
+import { workflows, workflowNodes, workflowConnections, workflowExecutions, userSettings, notifications } from '../drizzle/schema';
 import { eq, and } from 'drizzle-orm';
 import { sendEmail as sendEmailIntegration, replaceEmailVariables, emailTemplates, isEmailConfigured } from './integrations/email';
 import { sendWhatsAppMessage, replaceWhatsAppVariables, isWhatsAppConfigured } from './integrations/whatsapp';
@@ -590,8 +590,36 @@ async function pauseForApproval(node: WorkflowNode, context: ExecutionContext) {
     })
     .where(eq(workflowExecutions.id, context.executionId));
 
-  // TODO: Enviar notificación al usuario sobre la aprobación pendiente
-  // Esto podría ser un email, notificación push, etc.
+  // Crear notificación para el usuario
+  if (context.userId) {
+    try {
+      // Obtener información del workflow
+      const [workflow] = await db
+        .select()
+        .from(workflows)
+        .where(eq(workflows.id, context.workflowId))
+        .limit(1);
+
+      await db.insert(notifications).values({
+        userId: context.userId,
+        type: 'approval_pending',
+        title: `Aprobación requerida: ${workflow?.name || 'Workflow'}`,
+        message: config.message || config.approvalMessage || 'Se requiere tu aprobación para continuar con este workflow',
+        data: JSON.stringify({
+          executionId: context.executionId,
+          workflowId: context.workflowId,
+          nodeId: node.id,
+          approvalMessage: config.message || config.approvalMessage,
+        }),
+        actionUrl: `/workflows/approvals`,
+        isRead: 0,
+      } as any);
+
+      console.log('[Workflow Engine] Notification created for approval');
+    } catch (error) {
+      console.error('[Workflow Engine] Error creating notification:', error);
+    }
+  }
 }
 
 /**

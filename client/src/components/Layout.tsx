@@ -36,6 +36,7 @@ import { OnboardingWizard } from '@/components/OnboardingWizard';
 import { GlobalSearch } from '@/components/GlobalSearch';
 import AIAssistantButton from '@/components/AIAssistantButton';
 import { LanguageSelector } from '@/components/LanguageSelector';
+import { NotificationBell } from '@/components/NotificationBell';
 import { trpc } from '@/lib/trpc';
 import { Badge } from '@/components/ui/badge';
 
@@ -334,6 +335,7 @@ export default function Layout({ children }: LayoutProps) {
             </div>
             <div className="flex items-center gap-2">
               <LanguageSelector />
+              <NotificationBell />
               <LicenseNotificationBadge />
             </div>
           </div>
