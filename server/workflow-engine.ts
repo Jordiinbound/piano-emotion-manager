@@ -194,6 +194,22 @@ async function executeNode(
         // Pausar workflow y esperar aprobación manual
         await pauseForApproval(node, context);
         return; // Detener ejecución hasta que se apruebe
+
+      case 'send_email':
+        await executeSendEmail(node, context);
+        break;
+
+      case 'create_task':
+        await executeCreateTask(node, context);
+        break;
+
+      case 'create_event':
+        await executeCreateEvent(node, context);
+        break;
+
+      case 'webhook':
+        await executeWebhook(node, context);
+        break;
     }
 
     // Encontrar y ejecutar nodos siguientes (para nodos sin bifurcación)
@@ -793,4 +809,213 @@ export async function triggerWorkflows(triggerType: string, data: any) {
   }
   
   return results;
+}
+
+// ============================================
+// Nuevas funciones de ejecución de nodos
+// ============================================
+
+import { replaceVariables } from './workflow-variables';
+import { sendGmailEmail } from './integrations/gmail';
+import { createClickUpTask } from './integrations/clickup';
+import { createCalendarEvent } from './integrations/google-calendar';
+
+/**
+ * Ejecuta nodo de envío de email
+ */
+async function executeSendEmail(node: WorkflowNode, context: ExecutionContext) {
+  const config = node.nodeConfig;
+  console.log('[Workflow Engine] Executing send_email node');
+
+  try {
+    // Preparar datos para reemplazo de variables
+    const data = {
+      ...context.triggerData,
+      ...context.variables,
+      workflow: {
+        id: context.workflowId,
+        executionId: context.executionId
+      }
+    };
+
+    // Reemplazar variables en los campos
+    const to = replaceVariables(config.to || '', data);
+    const subject = replaceVariables(config.subject || '', data);
+    const body = replaceVariables(config.body || '', data);
+
+    // Enviar email usando Gmail
+    const result = await sendGmailEmail({
+      to,
+      subject,
+      body,
+      cc: config.cc ? replaceVariables(config.cc, data) : undefined,
+      bcc: config.bcc ? replaceVariables(config.bcc, data) : undefined
+    });
+
+    console.log('[Workflow Engine] Email sent successfully:', result.messageId);
+
+    // Guardar resultado en variables del contexto
+    context.variables.lastEmailId = result.messageId;
+  } catch (error: any) {
+    console.error('[Workflow Engine] Error sending email:', error);
+    throw new Error(`Error al enviar email: ${error.message}`);
+  }
+}
+
+/**
+ * Ejecuta nodo de creación de tarea en ClickUp
+ */
+async function executeCreateTask(node: WorkflowNode, context: ExecutionContext) {
+  const config = node.nodeConfig;
+  console.log('[Workflow Engine] Executing create_task node');
+
+  try {
+    // Preparar datos para reemplazo de variables
+    const data = {
+      ...context.triggerData,
+      ...context.variables,
+      workflow: {
+        id: context.workflowId,
+        executionId: context.executionId
+      }
+    };
+
+    // Reemplazar variables en los campos
+    const taskName = replaceVariables(config.taskName || '', data);
+    const taskDescription = config.taskDescription ? replaceVariables(config.taskDescription, data) : undefined;
+    const listName = replaceVariables(config.listName || '', data);
+
+    // Crear tarea en ClickUp
+    const result = await createClickUpTask({
+      taskName,
+      listName,
+      taskDescription,
+      assignee: config.assignee,
+      priority: config.priority || 'normal',
+      dueDate: config.dueDate
+    });
+
+    console.log('[Workflow Engine] Task created successfully:', result.taskId);
+
+    // Guardar resultado en variables del contexto
+    context.variables.lastTaskId = result.taskId;
+    context.variables.lastTaskUrl = result.url;
+  } catch (error: any) {
+    console.error('[Workflow Engine] Error creating task:', error);
+    throw new Error(`Error al crear tarea en ClickUp: ${error.message}`);
+  }
+}
+
+/**
+ * Ejecuta nodo de creación de evento en Google Calendar
+ */
+async function executeCreateEvent(node: WorkflowNode, context: ExecutionContext) {
+  const config = node.nodeConfig;
+  console.log('[Workflow Engine] Executing create_event node');
+
+  try {
+    // Preparar datos para reemplazo de variables
+    const data = {
+      ...context.triggerData,
+      ...context.variables,
+      workflow: {
+        id: context.workflowId,
+        executionId: context.executionId
+      }
+    };
+
+    // Reemplazar variables en los campos
+    const eventTitle = replaceVariables(config.eventTitle || '', data);
+    const eventDescription = config.eventDescription ? replaceVariables(config.eventDescription, data) : undefined;
+    const attendees = config.attendees ? replaceVariables(config.attendees, data) : undefined;
+
+    // Crear evento en Google Calendar
+    const result = await createCalendarEvent({
+      eventTitle,
+      date: config.date || new Date().toISOString(),
+      duration: config.duration || 60,
+      eventDescription,
+      attendees,
+      location: config.location,
+      reminders: config.reminders
+    });
+
+    console.log('[Workflow Engine] Event created successfully:', result.eventId);
+
+    // Guardar resultado en variables del contexto
+    context.variables.lastEventId = result.eventId;
+    context.variables.lastEventUrl = result.url;
+  } catch (error: any) {
+    console.error('[Workflow Engine] Error creating event:', error);
+    throw new Error(`Error al crear evento en Google Calendar: ${error.message}`);
+  }
+}
+
+/**
+ * Ejecuta nodo de webhook
+ */
+async function executeWebhook(node: WorkflowNode, context: ExecutionContext) {
+  const config = node.nodeConfig;
+  console.log('[Workflow Engine] Executing webhook node');
+
+  try {
+    // Preparar datos para reemplazo de variables
+    const data = {
+      ...context.triggerData,
+      ...context.variables,
+      workflow: {
+        id: context.workflowId,
+        executionId: context.executionId
+      }
+    };
+
+    // Reemplazar variables en URL y body
+    const url = replaceVariables(config.url || '', data);
+    const method = config.method || 'POST';
+    
+    // Parsear headers
+    let headers: Record<string, string> = {
+      'Content-Type': 'application/json'
+    };
+    
+    if (config.headers) {
+      try {
+        const customHeaders = typeof config.headers === 'string' 
+          ? JSON.parse(config.headers) 
+          : config.headers;
+        headers = { ...headers, ...customHeaders };
+      } catch (e) {
+        console.warn('[Workflow Engine] Invalid headers JSON, using defaults');
+      }
+    }
+
+    // Preparar body
+    let body = undefined;
+    if (config.body && (method === 'POST' || method === 'PUT' || method === 'PATCH')) {
+      const bodyWithVariables = replaceVariables(config.body, data);
+      try {
+        body = JSON.parse(bodyWithVariables);
+      } catch (e) {
+        // Si no es JSON válido, enviar como string
+        body = bodyWithVariables;
+      }
+    }
+
+    // Hacer la petición HTTP
+    const response = await fetch(url, {
+      method,
+      headers,
+      body: body ? JSON.stringify(body) : undefined
+    });
+
+    const responseData = await response.text();
+    console.log('[Workflow Engine] Webhook executed successfully:', response.status);
+
+    // Guardar resultado en variables del contexto
+    context.variables.lastWebhookStatus = response.status;
+    context.variables.lastWebhookResponse = responseData;
+  } catch (error: any) {
+    console.error('[Workflow Engine] Error executing webhook:', error);
+    throw new Error(`Error al ejecutar webhook: ${error.message}`);
+  }
 }

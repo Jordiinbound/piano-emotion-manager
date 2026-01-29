@@ -23,6 +23,9 @@ import {
   Edit2,
   UserCheck,
   Pause,
+  Send,
+  ListTodo,
+  Webhook,
 } from 'lucide-react';
 
 // Nodo de Trigger
@@ -322,6 +325,226 @@ export function ApprovalNode({ data, id }: NodeProps) {
   );
 }
 
+// Nodo de Enviar Email
+export function SendEmailNode({ data, id }: NodeProps) {
+  return (
+    <Card className="min-w-[200px] bg-gradient-to-br from-blue-50 to-cyan-50 border-2 border-blue-400 shadow-lg">
+      <Handle
+        type="target"
+        position={Position.Top}
+        className="!bg-blue-500 !w-3 !h-3"
+      />
+      <div className="p-4">
+        <div className="flex items-center gap-2 mb-2">
+          <div className="p-2 bg-blue-100 rounded-lg">
+            <Send className="h-5 w-5" />
+          </div>
+          <Badge variant="outline" className="bg-blue-100 text-blue-800 border-blue-300">
+            Enviar Email
+          </Badge>
+        </div>
+        <h4 className="font-semibold text-sm mb-1">{data.label}</h4>
+        <p className="text-xs text-muted-foreground">{data.description}</p>
+        {data.config && (
+          <div className="mt-2 space-y-1">
+            {data.config.to && (
+              <div className="text-xs">
+                <span className="text-muted-foreground">Para:</span>{' '}
+                <span className="font-medium">{data.config.to}</span>
+              </div>
+            )}
+            {data.config.subject && (
+              <div className="text-xs">
+                <span className="text-muted-foreground">Asunto:</span>{' '}
+                <span className="font-medium">{data.config.subject}</span>
+              </div>
+            )}
+          </div>
+        )}
+        <Button
+          size="sm"
+          variant="ghost"
+          className="mt-2 w-full"
+          onClick={() => data.onConfigure?.(id, data)}
+        >
+          <Edit2 className="h-3 w-3 mr-1" />
+          Configurar
+        </Button>
+      </div>
+      <Handle
+        type="source"
+        position={Position.Bottom}
+        className="!bg-blue-500 !w-3 !h-3"
+      />
+    </Card>
+  );
+}
+
+// Nodo de Crear Tarea en ClickUp
+export function CreateTaskNode({ data, id }: NodeProps) {
+  return (
+    <Card className="min-w-[200px] bg-gradient-to-br from-pink-50 to-rose-50 border-2 border-pink-400 shadow-lg">
+      <Handle
+        type="target"
+        position={Position.Top}
+        className="!bg-pink-500 !w-3 !h-3"
+      />
+      <div className="p-4">
+        <div className="flex items-center gap-2 mb-2">
+          <div className="p-2 bg-pink-100 rounded-lg">
+            <ListTodo className="h-5 w-5" />
+          </div>
+          <Badge variant="outline" className="bg-pink-100 text-pink-800 border-pink-300">
+            Crear Tarea
+          </Badge>
+        </div>
+        <h4 className="font-semibold text-sm mb-1">{data.label}</h4>
+        <p className="text-xs text-muted-foreground">{data.description}</p>
+        {data.config && (
+          <div className="mt-2 space-y-1">
+            {data.config.taskName && (
+              <div className="text-xs">
+                <span className="text-muted-foreground">Tarea:</span>{' '}
+                <span className="font-medium">{data.config.taskName}</span>
+              </div>
+            )}
+            {data.config.listName && (
+              <div className="text-xs">
+                <span className="text-muted-foreground">Lista:</span>{' '}
+                <span className="font-medium">{data.config.listName}</span>
+              </div>
+            )}
+          </div>
+        )}
+        <Button
+          size="sm"
+          variant="ghost"
+          className="mt-2 w-full"
+          onClick={() => data.onConfigure?.(id, data)}
+        >
+          <Edit2 className="h-3 w-3 mr-1" />
+          Configurar
+        </Button>
+      </div>
+      <Handle
+        type="source"
+        position={Position.Bottom}
+        className="!bg-pink-500 !w-3 !h-3"
+      />
+    </Card>
+  );
+}
+
+// Nodo de Crear Evento en Calendar
+export function CreateEventNode({ data, id }: NodeProps) {
+  return (
+    <Card className="min-w-[200px] bg-gradient-to-br from-teal-50 to-emerald-50 border-2 border-teal-400 shadow-lg">
+      <Handle
+        type="target"
+        position={Position.Top}
+        className="!bg-teal-500 !w-3 !h-3"
+      />
+      <div className="p-4">
+        <div className="flex items-center gap-2 mb-2">
+          <div className="p-2 bg-teal-100 rounded-lg">
+            <Calendar className="h-5 w-5" />
+          </div>
+          <Badge variant="outline" className="bg-teal-100 text-teal-800 border-teal-300">
+            Crear Evento
+          </Badge>
+        </div>
+        <h4 className="font-semibold text-sm mb-1">{data.label}</h4>
+        <p className="text-xs text-muted-foreground">{data.description}</p>
+        {data.config && (
+          <div className="mt-2 space-y-1">
+            {data.config.eventTitle && (
+              <div className="text-xs">
+                <span className="text-muted-foreground">Título:</span>{' '}
+                <span className="font-medium">{data.config.eventTitle}</span>
+              </div>
+            )}
+            {data.config.date && (
+              <div className="text-xs">
+                <span className="text-muted-foreground">Fecha:</span>{' '}
+                <span className="font-medium">{data.config.date}</span>
+              </div>
+            )}
+          </div>
+        )}
+        <Button
+          size="sm"
+          variant="ghost"
+          className="mt-2 w-full"
+          onClick={() => data.onConfigure?.(id, data)}
+        >
+          <Edit2 className="h-3 w-3 mr-1" />
+          Configurar
+        </Button>
+      </div>
+      <Handle
+        type="source"
+        position={Position.Bottom}
+        className="!bg-teal-500 !w-3 !h-3"
+      />
+    </Card>
+  );
+}
+
+// Nodo de Webhook
+export function WebhookNode({ data, id }: NodeProps) {
+  return (
+    <Card className="min-w-[200px] bg-gradient-to-br from-slate-50 to-gray-50 border-2 border-slate-400 shadow-lg">
+      <Handle
+        type="target"
+        position={Position.Top}
+        className="!bg-slate-500 !w-3 !h-3"
+      />
+      <div className="p-4">
+        <div className="flex items-center gap-2 mb-2">
+          <div className="p-2 bg-slate-100 rounded-lg">
+            <Webhook className="h-5 w-5" />
+          </div>
+          <Badge variant="outline" className="bg-slate-100 text-slate-800 border-slate-300">
+            Webhook
+          </Badge>
+        </div>
+        <h4 className="font-semibold text-sm mb-1">{data.label}</h4>
+        <p className="text-xs text-muted-foreground">{data.description}</p>
+        {data.config && (
+          <div className="mt-2 space-y-1">
+            {data.config.url && (
+              <div className="text-xs">
+                <span className="text-muted-foreground">URL:</span>{' '}
+                <span className="font-medium truncate block">{data.config.url}</span>
+              </div>
+            )}
+            {data.config.method && (
+              <div className="text-xs">
+                <span className="text-muted-foreground">Método:</span>{' '}
+                <span className="font-medium">{data.config.method}</span>
+              </div>
+            )}
+          </div>
+        )}
+        <Button
+          size="sm"
+          variant="ghost"
+          className="mt-2 w-full"
+          onClick={() => data.onConfigure?.(id, data)}
+        >
+          <Edit2 className="h-3 w-3 mr-1" />
+          Configurar
+        </Button>
+      </div>
+      <Handle
+        type="source"
+        position={Position.Bottom}
+        className="!bg-slate-500 !w-3 !h-3"
+      />
+    </Card>
+  );
+}
+
 // Exportar todos los tipos de nodos
 export const nodeTypes = {
   trigger: TriggerNode,
@@ -329,4 +552,8 @@ export const nodeTypes = {
   action: ActionNode,
   delay: DelayNode,
   approval: ApprovalNode,
+  send_email: SendEmailNode,
+  create_task: CreateTaskNode,
+  create_event: CreateEventNode,
+  webhook: WebhookNode,
 };

@@ -29,7 +29,7 @@ import VariableSelector from '@/components/VariableSelector';
 interface NodeConfigDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  nodeType: 'trigger' | 'condition' | 'action' | 'delay' | 'approval';
+  nodeType: 'trigger' | 'condition' | 'action' | 'delay' | 'approval' | 'send_email' | 'create_task' | 'create_event' | 'webhook';
   initialConfig: any;
   onSave: (config: any) => void;
 }
@@ -65,6 +65,14 @@ export function NodeConfigDialog({
         return <DelayConfigForm config={config} onChange={setConfig} />;
       case 'approval':
         return <ApprovalConfigForm config={config} onChange={setConfig} />;
+      case 'send_email':
+        return <SendEmailConfigForm config={config} onChange={setConfig} />;
+      case 'create_task':
+        return <CreateTaskConfigForm config={config} onChange={setConfig} />;
+      case 'create_event':
+        return <CreateEventConfigForm config={config} onChange={setConfig} />;
+      case 'webhook':
+        return <WebhookConfigForm config={config} onChange={setConfig} />;
       default:
         return null;
     }
@@ -82,6 +90,14 @@ export function NodeConfigDialog({
         return 'Configurar Espera';
       case 'approval':
         return 'Configurar Aprobación';
+      case 'send_email':
+        return 'Configurar Envío de Email';
+      case 'create_task':
+        return 'Configurar Creación de Tarea';
+      case 'create_event':
+        return 'Configurar Creación de Evento';
+      case 'webhook':
+        return 'Configurar Webhook';
       default:
         return 'Configurar Nodo';
     }
@@ -696,6 +712,451 @@ function DelayConfigForm({ config, onChange }: any) {
           value={config.description || ''}
           onChange={(e) => updateConfig('description', e.target.value)}
           placeholder="Descripción de la espera"
+          rows={2}
+        />
+      </div>
+    </div>
+  );
+}
+
+// ============================================
+// Formulario de Send Email
+// ============================================
+function SendEmailConfigForm({ config, onChange }: any) {
+  const updateConfig = (key: string, value: any) => {
+    onChange({ ...config, [key]: value });
+  };
+
+  return (
+    <div className="space-y-4">
+      <div>
+        <Label htmlFor="emailLabel">Etiqueta</Label>
+        <Input
+          id="emailLabel"
+          value={config.label || ''}
+          onChange={(e) => updateConfig('label', e.target.value)}
+          placeholder="Ej: Enviar confirmación al cliente"
+        />
+      </div>
+
+      <div>
+        <div className="flex items-center justify-between mb-2">
+          <Label htmlFor="to">Para (Email)</Label>
+          <VariableSelector
+            triggerType={config.triggerType || 'manual'}
+            onSelectVariable={(variable) => {
+              updateConfig('to', (config.to || '') + variable);
+            }}
+          />
+        </div>
+        <Input
+          id="to"
+          value={config.to || ''}
+          onChange={(e) => updateConfig('to', e.target.value)}
+          placeholder="email@ejemplo.com o {client.email}"
+        />
+      </div>
+
+      <div>
+        <div className="flex items-center justify-between mb-2">
+          <Label htmlFor="subject">Asunto</Label>
+          <VariableSelector
+            triggerType={config.triggerType || 'manual'}
+            onSelectVariable={(variable) => {
+              updateConfig('subject', (config.subject || '') + variable);
+            }}
+          />
+        </div>
+        <Input
+          id="subject"
+          value={config.subject || ''}
+          onChange={(e) => updateConfig('subject', e.target.value)}
+          placeholder="Asunto del email"
+        />
+      </div>
+
+      <div>
+        <div className="flex items-center justify-between mb-2">
+          <Label htmlFor="body">Cuerpo del Email</Label>
+          <VariableSelector
+            triggerType={config.triggerType || 'manual'}
+            onSelectVariable={(variable) => {
+              const textarea = document.getElementById('body') as HTMLTextAreaElement;
+              if (textarea) {
+                const start = textarea.selectionStart;
+                const end = textarea.selectionEnd;
+                const currentValue = config.body || '';
+                const newValue = currentValue.substring(0, start) + variable + currentValue.substring(end);
+                updateConfig('body', newValue);
+                setTimeout(() => {
+                  textarea.focus();
+                  textarea.setSelectionRange(start + variable.length, start + variable.length);
+                }, 0);
+              }
+            }}
+          />
+        </div>
+        <Textarea
+          id="body"
+          value={config.body || ''}
+          onChange={(e) => updateConfig('body', e.target.value)}
+          placeholder="Contenido del email. Usa variables para personalizar."
+          rows={6}
+        />
+      </div>
+
+      <div>
+        <Label htmlFor="emailDescription">Descripción</Label>
+        <Textarea
+          id="emailDescription"
+          value={config.description || ''}
+          onChange={(e) => updateConfig('description', e.target.value)}
+          placeholder="Descripción interna"
+          rows={2}
+        />
+      </div>
+    </div>
+  );
+}
+
+// ============================================
+// Formulario de Create Task (ClickUp)
+// ============================================
+function CreateTaskConfigForm({ config, onChange }: any) {
+  const updateConfig = (key: string, value: any) => {
+    onChange({ ...config, [key]: value });
+  };
+
+  return (
+    <div className="space-y-4">
+      <div>
+        <Label htmlFor="taskLabel">Etiqueta</Label>
+        <Input
+          id="taskLabel"
+          value={config.label || ''}
+          onChange={(e) => updateConfig('label', e.target.value)}
+          placeholder="Ej: Crear tarea de seguimiento"
+        />
+      </div>
+
+      <div>
+        <div className="flex items-center justify-between mb-2">
+          <Label htmlFor="taskName">Nombre de la Tarea</Label>
+          <VariableSelector
+            triggerType={config.triggerType || 'manual'}
+            onSelectVariable={(variable) => {
+              updateConfig('taskName', (config.taskName || '') + variable);
+            }}
+          />
+        </div>
+        <Input
+          id="taskName"
+          value={config.taskName || ''}
+          onChange={(e) => updateConfig('taskName', e.target.value)}
+          placeholder="Nombre de la tarea en ClickUp"
+        />
+      </div>
+
+      <div>
+        <Label htmlFor="listName">Lista de ClickUp</Label>
+        <Input
+          id="listName"
+          value={config.listName || ''}
+          onChange={(e) => updateConfig('listName', e.target.value)}
+          placeholder="Nombre de la lista donde crear la tarea"
+        />
+      </div>
+
+      <div>
+        <div className="flex items-center justify-between mb-2">
+          <Label htmlFor="taskDescription">Descripción de la Tarea</Label>
+          <VariableSelector
+            triggerType={config.triggerType || 'manual'}
+            onSelectVariable={(variable) => {
+              const textarea = document.getElementById('taskDescription') as HTMLTextAreaElement;
+              if (textarea) {
+                const start = textarea.selectionStart;
+                const end = textarea.selectionEnd;
+                const currentValue = config.taskDescription || '';
+                const newValue = currentValue.substring(0, start) + variable + currentValue.substring(end);
+                updateConfig('taskDescription', newValue);
+                setTimeout(() => {
+                  textarea.focus();
+                  textarea.setSelectionRange(start + variable.length, start + variable.length);
+                }, 0);
+              }
+            }}
+          />
+        </div>
+        <Textarea
+          id="taskDescription"
+          value={config.taskDescription || ''}
+          onChange={(e) => updateConfig('taskDescription', e.target.value)}
+          placeholder="Descripción de la tarea"
+          rows={4}
+        />
+      </div>
+
+      <div>
+        <Label htmlFor="assignee">Asignar a (email o username)</Label>
+        <Input
+          id="assignee"
+          value={config.assignee || ''}
+          onChange={(e) => updateConfig('assignee', e.target.value)}
+          placeholder="email@ejemplo.com o 'me' para ti mismo"
+        />
+      </div>
+
+      <div>
+        <Label htmlFor="priority">Prioridad</Label>
+        <Select
+          value={config.priority || 'normal'}
+          onValueChange={(value) => updateConfig('priority', value)}
+        >
+          <SelectTrigger>
+            <SelectValue placeholder="Seleccionar prioridad" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="urgent">Urgente</SelectItem>
+            <SelectItem value="high">Alta</SelectItem>
+            <SelectItem value="normal">Normal</SelectItem>
+            <SelectItem value="low">Baja</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+
+      <div>
+        <Label htmlFor="taskNodeDescription">Descripción del Nodo</Label>
+        <Textarea
+          id="taskNodeDescription"
+          value={config.description || ''}
+          onChange={(e) => updateConfig('description', e.target.value)}
+          placeholder="Descripción interna del nodo"
+          rows={2}
+        />
+      </div>
+    </div>
+  );
+}
+
+// ============================================
+// Formulario de Create Event (Google Calendar)
+// ============================================
+function CreateEventConfigForm({ config, onChange }: any) {
+  const updateConfig = (key: string, value: any) => {
+    onChange({ ...config, [key]: value });
+  };
+
+  return (
+    <div className="space-y-4">
+      <div>
+        <Label htmlFor="eventLabel">Etiqueta</Label>
+        <Input
+          id="eventLabel"
+          value={config.label || ''}
+          onChange={(e) => updateConfig('label', e.target.value)}
+          placeholder="Ej: Crear evento de seguimiento"
+        />
+      </div>
+
+      <div>
+        <div className="flex items-center justify-between mb-2">
+          <Label htmlFor="eventTitle">Título del Evento</Label>
+          <VariableSelector
+            triggerType={config.triggerType || 'manual'}
+            onSelectVariable={(variable) => {
+              updateConfig('eventTitle', (config.eventTitle || '') + variable);
+            }}
+          />
+        </div>
+        <Input
+          id="eventTitle"
+          value={config.eventTitle || ''}
+          onChange={(e) => updateConfig('eventTitle', e.target.value)}
+          placeholder="Título del evento en el calendario"
+        />
+      </div>
+
+      <div>
+        <Label htmlFor="date">Fecha y Hora</Label>
+        <Input
+          id="date"
+          type="datetime-local"
+          value={config.date || ''}
+          onChange={(e) => updateConfig('date', e.target.value)}
+        />
+      </div>
+
+      <div>
+        <Label htmlFor="duration">Duración (minutos)</Label>
+        <Input
+          id="duration"
+          type="number"
+          min="15"
+          step="15"
+          value={config.duration || 60}
+          onChange={(e) => updateConfig('duration', parseInt(e.target.value))}
+          placeholder="60"
+        />
+      </div>
+
+      <div>
+        <div className="flex items-center justify-between mb-2">
+          <Label htmlFor="eventDescription">Descripción del Evento</Label>
+          <VariableSelector
+            triggerType={config.triggerType || 'manual'}
+            onSelectVariable={(variable) => {
+              const textarea = document.getElementById('eventDescription') as HTMLTextAreaElement;
+              if (textarea) {
+                const start = textarea.selectionStart;
+                const end = textarea.selectionEnd;
+                const currentValue = config.eventDescription || '';
+                const newValue = currentValue.substring(0, start) + variable + currentValue.substring(end);
+                updateConfig('eventDescription', newValue);
+                setTimeout(() => {
+                  textarea.focus();
+                  textarea.setSelectionRange(start + variable.length, start + variable.length);
+                }, 0);
+              }
+            }}
+          />
+        </div>
+        <Textarea
+          id="eventDescription"
+          value={config.eventDescription || ''}
+          onChange={(e) => updateConfig('eventDescription', e.target.value)}
+          placeholder="Descripción del evento"
+          rows={3}
+        />
+      </div>
+
+      <div>
+        <Label htmlFor="attendees">Asistentes (emails separados por comas)</Label>
+        <Input
+          id="attendees"
+          value={config.attendees || ''}
+          onChange={(e) => updateConfig('attendees', e.target.value)}
+          placeholder="email1@ejemplo.com, email2@ejemplo.com"
+        />
+      </div>
+
+      <div>
+        <Label htmlFor="eventNodeDescription">Descripción del Nodo</Label>
+        <Textarea
+          id="eventNodeDescription"
+          value={config.description || ''}
+          onChange={(e) => updateConfig('description', e.target.value)}
+          placeholder="Descripción interna del nodo"
+          rows={2}
+        />
+      </div>
+    </div>
+  );
+}
+
+// ============================================
+// Formulario de Webhook
+// ============================================
+function WebhookConfigForm({ config, onChange }: any) {
+  const updateConfig = (key: string, value: any) => {
+    onChange({ ...config, [key]: value });
+  };
+
+  return (
+    <div className="space-y-4">
+      <div>
+        <Label htmlFor="webhookLabel">Etiqueta</Label>
+        <Input
+          id="webhookLabel"
+          value={config.label || ''}
+          onChange={(e) => updateConfig('label', e.target.value)}
+          placeholder="Ej: Notificar sistema externo"
+        />
+      </div>
+
+      <div>
+        <Label htmlFor="url">URL del Webhook</Label>
+        <Input
+          id="url"
+          value={config.url || ''}
+          onChange={(e) => updateConfig('url', e.target.value)}
+          placeholder="https://api.ejemplo.com/webhook"
+        />
+      </div>
+
+      <div>
+        <Label htmlFor="method">Método HTTP</Label>
+        <Select
+          value={config.method || 'POST'}
+          onValueChange={(value) => updateConfig('method', value)}
+        >
+          <SelectTrigger>
+            <SelectValue placeholder="Seleccionar método" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="GET">GET</SelectItem>
+            <SelectItem value="POST">POST</SelectItem>
+            <SelectItem value="PUT">PUT</SelectItem>
+            <SelectItem value="PATCH">PATCH</SelectItem>
+            <SelectItem value="DELETE">DELETE</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+
+      <div>
+        <Label htmlFor="headers">Headers (JSON)</Label>
+        <Textarea
+          id="headers"
+          value={config.headers || ''}
+          onChange={(e) => updateConfig('headers', e.target.value)}
+          placeholder='{"Content-Type": "application/json", "Authorization": "Bearer token"}'
+          rows={3}
+        />
+        <p className="text-xs text-muted-foreground mt-1">
+          Formato JSON válido
+        </p>
+      </div>
+
+      <div>
+        <div className="flex items-center justify-between mb-2">
+          <Label htmlFor="body">Body (JSON)</Label>
+          <VariableSelector
+            triggerType={config.triggerType || 'manual'}
+            onSelectVariable={(variable) => {
+              const textarea = document.getElementById('body') as HTMLTextAreaElement;
+              if (textarea) {
+                const start = textarea.selectionStart;
+                const end = textarea.selectionEnd;
+                const currentValue = config.body || '';
+                const newValue = currentValue.substring(0, start) + variable + currentValue.substring(end);
+                updateConfig('body', newValue);
+                setTimeout(() => {
+                  textarea.focus();
+                  textarea.setSelectionRange(start + variable.length, start + variable.length);
+                }, 0);
+              }
+            }}
+          />
+        </div>
+        <Textarea
+          id="body"
+          value={config.body || ''}
+          onChange={(e) => updateConfig('body', e.target.value)}
+          placeholder='{"event": "client_created", "data": {client.name}}'
+          rows={6}
+        />
+        <p className="text-xs text-muted-foreground mt-1">
+          Usa variables para enviar datos dinámicos
+        </p>
+      </div>
+
+      <div>
+        <Label htmlFor="webhookDescription">Descripción</Label>
+        <Textarea
+          id="webhookDescription"
+          value={config.description || ''}
+          onChange={(e) => updateConfig('description', e.target.value)}
+          placeholder="Descripción interna del webhook"
           rows={2}
         />
       </div>

@@ -36,6 +36,9 @@ import {
   CheckCircle,
   XCircle,
   UserCheck,
+  Send,
+  ListTodo,
+  Webhook,
 } from 'lucide-react';
 import { useTranslation } from '@/hooks/use-translation';
 import { toast } from 'sonner';
@@ -134,6 +137,30 @@ export default function WorkflowEditor({ workflowId, onSave, onTest }: WorkflowE
         icon = <UserCheck className="h-4 w-4 text-amber-500" />;
         bgColor = '#fef3c7';
         borderColor = '#f59e0b';
+        break;
+      case 'send_email':
+        label = 'Enviar Email';
+        icon = <Send className="h-4 w-4 text-blue-500" />;
+        bgColor = '#dbeafe';
+        borderColor = '#3b82f6';
+        break;
+      case 'create_task':
+        label = 'Crear Tarea';
+        icon = <ListTodo className="h-4 w-4 text-pink-500" />;
+        bgColor = '#fce7f3';
+        borderColor = '#ec4899';
+        break;
+      case 'create_event':
+        label = 'Crear Evento';
+        icon = <Calendar className="h-4 w-4 text-teal-500" />;
+        bgColor = '#ccfbf1';
+        borderColor = '#14b8a6';
+        break;
+      case 'webhook':
+        label = 'Webhook';
+        icon = <Webhook className="h-4 w-4 text-slate-500" />;
+        bgColor = '#f1f5f9';
+        borderColor = '#64748b';
         break;
     }
 
@@ -300,22 +327,57 @@ export default function WorkflowEditor({ workflowId, onSave, onTest }: WorkflowE
           <div className="mt-6">
             <h4 className="font-semibold mb-3 text-sm">Acciones Disponibles</h4>
             <div className="space-y-2">
-              <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                <Mail className="h-4 w-4" />
-                <span>Enviar Email</span>
-              </div>
-              <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                <MessageSquare className="h-4 w-4" />
-                <span>Enviar WhatsApp</span>
-              </div>
-              <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                <Bell className="h-4 w-4" />
-                <span>Crear Recordatorio</span>
-              </div>
-              <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                <Calendar className="h-4 w-4" />
-                <span>Crear Cita</span>
-              </div>
+              <Card
+                className="p-3 cursor-pointer hover:shadow-md transition-shadow"
+                onClick={() => addNode('send_email')}
+              >
+                <div className="flex items-center gap-2">
+                  <Send className="h-5 w-5 text-blue-500" />
+                  <div>
+                    <p className="font-medium text-sm">Enviar Email</p>
+                    <p className="text-xs text-muted-foreground">Envía email a destinatarios</p>
+                  </div>
+                </div>
+              </Card>
+
+              <Card
+                className="p-3 cursor-pointer hover:shadow-md transition-shadow"
+                onClick={() => addNode('create_task')}
+              >
+                <div className="flex items-center gap-2">
+                  <ListTodo className="h-5 w-5 text-pink-500" />
+                  <div>
+                    <p className="font-medium text-sm">Crear Tarea</p>
+                    <p className="text-xs text-muted-foreground">Crea tarea en ClickUp</p>
+                  </div>
+                </div>
+              </Card>
+
+              <Card
+                className="p-3 cursor-pointer hover:shadow-md transition-shadow"
+                onClick={() => addNode('create_event')}
+              >
+                <div className="flex items-center gap-2">
+                  <Calendar className="h-5 w-5 text-teal-500" />
+                  <div>
+                    <p className="font-medium text-sm">Crear Evento</p>
+                    <p className="text-xs text-muted-foreground">Crea evento en Google Calendar</p>
+                  </div>
+                </div>
+              </Card>
+
+              <Card
+                className="p-3 cursor-pointer hover:shadow-md transition-shadow"
+                onClick={() => addNode('webhook')}
+              >
+                <div className="flex items-center gap-2">
+                  <Webhook className="h-5 w-5 text-slate-500" />
+                  <div>
+                    <p className="font-medium text-sm">Webhook</p>
+                    <p className="text-xs text-muted-foreground">Llama a API externa</p>
+                  </div>
+                </div>
+              </Card>
             </div>
           </div>
         </div>
