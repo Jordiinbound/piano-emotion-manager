@@ -40,6 +40,22 @@ export default function CacheMonitor() {
     },
   });
   
+  const resetMetricsMutation = trpc.systemMonitor.resetCacheMetrics.useMutation({
+    onSuccess: (data) => {
+      toast.success(data.message);
+      refetch();
+    },
+    onError: (error) => {
+      toast.error(`Error al resetear métricas: ${error.message}`);
+    },
+  });
+  
+  const handleResetMetrics = () => {
+    if (confirm('¿Estás seguro de que deseas resetear las métricas de rendimiento?')) {
+      resetMetricsMutation.mutate();
+    }
+  };
+  
   const handleClearAll = () => {
     if (confirm('¿Estás seguro de que deseas limpiar todo el caché?')) {
       clearCacheMutation.mutate();
@@ -106,6 +122,95 @@ export default function CacheMonitor() {
           </Button>
         </div>
       </div>
+      
+      {/* Métricas de Rendimiento */}
+      {cacheStats?.metrics && (
+        <Card>
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle>Métricas de Rendimiento</CardTitle>
+                <CardDescription>
+                  Estadísticas de uso y rendimiento del caché
+                </CardDescription>
+              </div>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleResetMetrics}
+                disabled={resetMetricsMutation.isPending}
+              >
+                <RefreshCw className={`h-4 w-4 mr-2 ${resetMetricsMutation.isPending ? 'animate-spin' : ''}`} />
+                Resetear Métricas
+              </Button>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+              <div>
+                <Label className="text-sm font-medium">Cache Hits</Label>
+                <p className="text-2xl font-bold text-green-600 mt-1">
+                  {cacheStats.metrics.hits.toLocaleString()}
+                </p>
+              </div>
+              
+              <div>
+                <Label className="text-sm font-medium">Cache Misses</Label>
+                <p className="text-2xl font-bold text-orange-600 mt-1">
+                  {cacheStats.metrics.misses.toLocaleString()}
+                </p>
+              </div>
+              
+              <div>
+                <Label className="text-sm font-medium">Hit Rate</Label>
+                <p className="text-2xl font-bold mt-1">
+                  {cacheStats.metrics.hitRate.toFixed(2)}%
+                </p>
+                {cacheStats.metrics.hitRate < 80 && cacheStats.metrics.totalOperations > 10 && (
+                  <Badge variant="destructive" className="mt-2">
+                    Hit rate bajo
+                  </Badge>
+                )}
+              </div>
+              
+              <div>
+                <Label className="text-sm font-medium">Latencia Promedio</Label>
+                <p className="text-2xl font-bold mt-1">
+                  {cacheStats.metrics.avgLatency.toFixed(2)}ms
+                </p>
+              </div>
+              
+              <div>
+                <Label className="text-sm font-medium">Total Operaciones</Label>
+                <p className="text-2xl font-bold mt-1">
+                  {cacheStats.metrics.totalOperations.toLocaleString()}
+                </p>
+              </div>
+              
+              <div>
+                <Label className="text-sm font-medium">Sets</Label>
+                <p className="text-2xl font-bold mt-1">
+                  {cacheStats.metrics.sets.toLocaleString()}
+                </p>
+              </div>
+              
+              <div>
+                <Label className="text-sm font-medium">Deletes</Label>
+                <p className="text-2xl font-bold mt-1">
+                  {cacheStats.metrics.deletes.toLocaleString()}
+                </p>
+              </div>
+              
+              <div>
+                <Label className="text-sm font-medium">Uptime Métricas</Label>
+                <p className="text-2xl font-bold mt-1">
+                  {formatUptime(cacheStats.metrics.uptime)}
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
       
       {/* Estado del Caché */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">

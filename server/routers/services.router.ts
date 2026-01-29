@@ -4,7 +4,7 @@ import { getDb } from "../db.js";
 import { services, clients, pianos } from "../../drizzle/schema.js";
 import { eq, and, like, or, sql, desc } from "drizzle-orm";
 import { triggerWorkflowEvent } from '../workflow-triggers';
-import { withCache } from '../cache';
+import { withCache, invalidateCachePattern } from '../cache';
 
 export const servicesRouter = router({
   /**
@@ -182,6 +182,10 @@ export const servicesRouter = router({
         partnerId: 1, // Required by TiDB schema
       } as any);
       
+      // Invalidar caché relacionado
+      await invalidateCachePattern('services:list');
+      await invalidateCachePattern('services:stats');
+      
       return { 
         success: true,
         serviceId: (result as any).insertId || 0,
@@ -252,6 +256,10 @@ export const servicesRouter = router({
         }
       }
       
+      // Invalidar caché relacionado
+      await invalidateCachePattern(`services:detail:${id}`);
+      await invalidateCachePattern('services:list');
+      
       return { success: true };
     }),
 
@@ -264,6 +272,12 @@ export const servicesRouter = router({
       const db = await getDb();
       if (!db) throw new Error('Database not available');
       await db.delete(services).where(eq(services.id, input.id));
+      
+      // Invalidar caché relacionado
+      await invalidateCachePattern(`services:detail:${input.id}`);
+      await invalidateCachePattern('services:list');
+      await invalidateCachePattern('services:stats');
+      
       return { success: true };
     }),
 });

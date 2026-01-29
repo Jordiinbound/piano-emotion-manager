@@ -1808,10 +1808,24 @@
 - [x] Mostrar información del sistema (Node.js, memoria, plataforma)
 - [x] Registrar ruta /monitor-cache en App.tsx
 
-## FASE 20 - Historial Fotográfico Avanzado
+## FASE 20 - Invalidación Inteligente de Caché
 
-- [ ] Diseñar timeline de fotos con orden cronológico
-- [ ] Implementar vista de comparación antes/después (slider)
-- [ ] Agregar lightbox con zoom y navegación entre fotos
-- [ ] Crear sistema de tags para categorizar fotos (antes, después, detalle, problema)
-- [ ] Implementar filtros por fecha, servicio y tags
+- [x] Agregar invalidación automática en createClient (invalidar clients:list:*, clients:stats)
+- [x] Agregar invalidación automática en updateClient (invalidar clients:detail:{id}, clients:list:*)
+- [x] Agregar invalidación automática en deleteClient (invalidar clients:detail:{id}, clients:list:*, clients:stats)
+- [x] Agregar invalidación automática en createPiano (invalidar pianos:list:*, pianos:stats)
+- [x] Agregar invalidación automática en updatePiano (invalidar pianos:detail:{id}, pianos:list:*)
+- [x] Agregar invalidación automática en deletePiano (invalidar pianos:detail:{id}, pianos:list:*, pianos:stats)
+- [x] Agregar invalidación automática en createService (invalidar services:list:*, services:stats)
+- [x] Agregar invalidación automática en updateService (invalidar services:detail:{id}, services:list:*)
+- [x] Agregar invalidación automática en deleteService (invalidar services:detail:{id}, services:list:*, services:stats)
+
+## FASE 21 - Métricas de Rendimiento de Caché
+
+- [x] Agregar tracking de cache hits/misses en cache.ts
+- [x] Agregar medición de latencia por operación
+- [x] Agregar métricas a getCacheStats (hitRate, avgLatency, totalOperations, uptime)
+- [x] Implementar reset de métricas (resetCacheMetrics)
+- [x] Agregar endpoint tRPC para resetear métricas
+- [x] Actualizar dashboard de monitoreo para mostrar métricas de rendimiento
+- [x] Agregar alertas visuales cuando el hit rate es bajo (<80%)

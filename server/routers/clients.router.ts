@@ -4,7 +4,7 @@ import * as schema from '../../drizzle/schema';
 import { eq, and, desc, sql } from 'drizzle-orm';
 import { getDb } from '../db';
 import { triggerWorkflowEvent } from '../workflow-triggers';
-import { withCache } from '../cache';
+import { withCache, invalidateCachePattern } from '../cache';
 
 const { clients } = schema;
 
@@ -205,6 +205,10 @@ export const clientsRouter = router({
         client_type: input.clientType,
       });
 
+      // Invalidar caché relacionado
+      await invalidateCachePattern('clients:list');
+      await invalidateCachePattern('clients:stats');
+
       return {
         success: true,
         clientId,
@@ -243,6 +247,10 @@ export const clientsRouter = router({
         })
         .where(eq(clients.id, id));
 
+      // Invalidar caché relacionado
+      await invalidateCachePattern(`clients:detail:${id}`);
+      await invalidateCachePattern('clients:list');
+
       return {
         success: true,
       };
@@ -257,6 +265,11 @@ export const clientsRouter = router({
       const db = await getDb();
       if (!db) throw new Error('Database not available');
       await db.delete(clients).where(eq(clients.id, input.id));
+
+      // Invalidar caché relacionado
+      await invalidateCachePattern(`clients:detail:${input.id}`);
+      await invalidateCachePattern('clients:list');
+      await invalidateCachePattern('clients:stats');
 
       return {
         success: true,

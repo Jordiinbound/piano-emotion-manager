@@ -3,7 +3,7 @@ import { router, publicProcedure } from '../_core/trpc';
 import { getDb } from '../db';
 import { pianos } from '../../drizzle/schema';
 import { eq, like, or, and, sql, desc } from 'drizzle-orm';
-import { withCache } from '../cache';
+import { withCache, invalidateCachePattern } from '../cache';
 
 export const pianosRouter = router({
   // Obtener estadísticas de pianos
@@ -146,6 +146,10 @@ export const pianosRouter = router({
       const odId = `PIANO-${Date.now()}-${Math.random().toString(36).substring(7)}`;
       const result = await db.insert(pianos).values({ ...input, odId, partnerId: 1 } as any);
 
+      // Invalidar caché relacionado
+      await invalidateCachePattern('pianos:list');
+      await invalidateCachePattern('pianos:stats');
+
       return {
         success: true,
         pianoId: (result as any).insertId || 0,
@@ -179,6 +183,10 @@ export const pianosRouter = router({
         .set(updateData as any)
         .where(eq(pianos.id, id));
 
+      // Invalidar caché relacionado
+      await invalidateCachePattern(`pianos:detail:${id}`);
+      await invalidateCachePattern('pianos:list');
+
       return { success: true };
     }),
 
@@ -190,6 +198,11 @@ export const pianosRouter = router({
       if (!db) throw new Error('Database not available');
 
       await db.delete(pianos).where(eq(pianos.id, input.id));
+
+      // Invalidar caché relacionado
+      await invalidateCachePattern(`pianos:detail:${input.id}`);
+      await invalidateCachePattern('pianos:list');
+      await invalidateCachePattern('pianos:stats');
 
       return { success: true };
     }),

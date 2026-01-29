@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { publicProcedure, router } from '../_core/trpc';
-import { getCacheStats, deleteCache, cacheService } from '../cache';
+import { getCacheStats, deleteCache, cacheService, resetCacheMetrics } from '../cache';
 
 /**
  * Router de Sistema
@@ -81,6 +81,19 @@ export const systemRouter = router({
         pattern,
       };
     }),
+
+  /**
+   * Resetear métricas de rendimiento del caché
+   */
+  resetCacheMetrics: publicProcedure.mutation(async () => {
+    resetCacheMetrics();
+    
+    return {
+      success: true,
+      message: 'Métricas de caché reseteadas correctamente',
+      timestamp: new Date().toISOString(),
+    };
+  }),
 
   /**
    * Obtener información del sistema

@@ -11,12 +11,31 @@ import { monitoring } from './monitoring.js';
  * Servicio de caché distribuido usando Upstash Redis
  * Con fallback a caché en memoria si Redis no está disponible
  */
+interface CacheMetrics {
+  hits: number;
+  misses: number;
+  sets: number;
+  deletes: number;
+  totalLatency: number;
+  operationCount: number;
+  startTime: number;
+}
+
 class CacheService {
   private client: Redis | null = null;
   private isConnected: boolean = false;
   private useMemoryFallback: boolean = false;
   private memoryCache: Map<string, { value: any; expiry: number }> = new Map();
   private connectPromise: Promise<void> | null = null;
+  private metrics: CacheMetrics = {
+    hits: 0,
+    misses: 0,
+    sets: 0,
+    deletes: 0,
+    totalLatency: 0,
+    operationCount: 0,
+    startTime: Date.now(),
+  };
 
   constructor() {
     console.log('[Cache Service] 🚀 Service initialized', {
@@ -139,10 +158,16 @@ class CacheService {
       const value = await this.client.get<T>(key);
       const duration = Date.now() - startTime;
       
+      // Tracking de métricas
+      this.metrics.operationCount++;
+      this.metrics.totalLatency += duration;
+      
       if (value !== null) {
+        this.metrics.hits++;
         console.log(`[Cache Service] GET HIT: ${key} (${duration}ms)`);
         monitoring.trackCacheOperation('hit', key, duration);
       } else {
+        this.metrics.misses++;
         monitoring.trackCacheOperation('miss', key, duration);
       }
       
@@ -171,6 +196,12 @@ class CacheService {
 
       await this.client.set(key, value, { ex: ttlSeconds });
       const duration = Date.now() - startTime;
+      
+      // Tracking de métricas
+      this.metrics.sets++;
+      this.metrics.operationCount++;
+      this.metrics.totalLatency += duration;
+      
       console.log(`[Cache Service] SET: ${key} (${duration}ms, TTL: ${ttlSeconds}s)`);
       monitoring.trackCacheOperation('set', key, duration);
     } catch (error) {
@@ -195,6 +226,10 @@ class CacheService {
       }
 
       await this.client.del(key);
+      
+      // Tracking de métricas
+      this.metrics.deletes++;
+      
       console.log(`[Cache Service] DEL: ${key}`);
     } catch (error) {
       console.error('[Cache Service] DEL error', {
@@ -258,13 +293,47 @@ class CacheService {
    * Obtener estadísticas del caché
    */
   getStats() {
+    const uptime = Date.now() - this.metrics.startTime;
+    const avgLatency = this.metrics.operationCount > 0 
+      ? this.metrics.totalLatency / this.metrics.operationCount 
+      : 0;
+    const hitRate = (this.metrics.hits + this.metrics.misses) > 0
+      ? (this.metrics.hits / (this.metrics.hits + this.metrics.misses)) * 100
+      : 0;
+
     return {
       isConnected: this.isConnected,
       useMemoryFallback: this.useMemoryFallback,
       memoryCacheSize: this.memoryCache.size,
       hasClient: !!this.client,
-      hasRedisEnvVars: this.hasRedisEnvVars()
+      hasRedisEnvVars: this.hasRedisEnvVars(),
+      metrics: {
+        hits: this.metrics.hits,
+        misses: this.metrics.misses,
+        sets: this.metrics.sets,
+        deletes: this.metrics.deletes,
+        hitRate: Math.round(hitRate * 100) / 100,
+        avgLatency: Math.round(avgLatency * 100) / 100,
+        totalOperations: this.metrics.operationCount,
+        uptime: Math.round(uptime / 1000), // segundos
+      }
     };
+  }
+
+  /**
+   * Resetear métricas
+   */
+  resetMetrics() {
+    this.metrics = {
+      hits: 0,
+      misses: 0,
+      sets: 0,
+      deletes: 0,
+      totalLatency: 0,
+      operationCount: 0,
+      startTime: Date.now(),
+    };
+    console.log('[Cache Service] Metrics reset');
   }
 }
 
@@ -329,10 +398,47 @@ export function withCache<T>(
 }
 
 /**
+ * Invalida todas las claves de caché que coincidan con un patrón
+ * @param pattern - Patrón a buscar en las claves (ej: 'clients:', 'pianos:list')
+ * @returns Número de claves invalidadas
+ */
+export async function invalidateCachePattern(pattern: string): Promise<number> {
+  let invalidatedCount = 0;
+
+  // Acceder al caché en memoria directamente
+  const memCache = (cacheService as any).memoryCache as Map<string, any>;
+  const keysToDelete: string[] = [];
+
+  for (const key of memCache.keys()) {
+    if (key.includes(pattern)) {
+      keysToDelete.push(key);
+    }
+  }
+
+  for (const key of keysToDelete) {
+    await deleteCache(key);
+    invalidatedCount++;
+  }
+
+  if (invalidatedCount > 0) {
+    console.log(`[Cache] Invalidated ${invalidatedCount} keys matching pattern: ${pattern}`);
+  }
+
+  return invalidatedCount;
+}
+
+/**
  * Obtener estadísticas del caché
  */
 export function getCacheStats() {
   return cacheService.getStats();
+}
+
+/**
+ * Resetear métricas de rendimiento
+ */
+export function resetCacheMetrics() {
+  return cacheService.resetMetrics();
 }
 
 // Exportar también el servicio para uso avanzado
