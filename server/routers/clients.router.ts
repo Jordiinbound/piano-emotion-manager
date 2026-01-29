@@ -4,6 +4,7 @@ import * as schema from '../../drizzle/schema';
 import { eq, and, desc, sql } from 'drizzle-orm';
 import { getDb } from '../db';
 import { triggerWorkflowEvent } from '../workflow-triggers';
+import { withCache } from '../cache';
 
 const { clients } = schema;
 
@@ -16,8 +17,11 @@ export const clientsRouter = router({
    * Obtener estadísticas de clientes
    */
   getStats: publicProcedure.query(async () => {
-    const db = await getDb();
-    if (!db) throw new Error('Database not available');
+    return withCache(
+      'clients:stats',
+      async () => {
+        const db = await getDb();
+        if (!db) throw new Error('Database not available');
 
     // Total de clientes
     const totalResult = await db
@@ -39,12 +43,15 @@ export const clientsRouter = router({
     `);
     const withPianos = Number((withPianosResult as any)[0]?.count || 0);
 
-    return {
-      total,
-      active,
-      vip,
-      withPianos,
-    };
+        return {
+          total,
+          active,
+          vip,
+          withPianos,
+        };
+      },
+      300 // 5 minutos de TTL
+    );
   }),
 
   /**
@@ -62,10 +69,17 @@ export const clientsRouter = router({
       })
     )
     .query(async ({ input }) => {
-      const db = await getDb();
-      if (!db) throw new Error('Database not available');
       const { page, pageSize, search, region, city, routeGroup } = input;
-      const offset = (page - 1) * pageSize;
+      
+      // Crear clave de caché dinámica basada en los parámetros
+      const cacheKey = `clients:list:${page}:${pageSize}:${search || 'all'}:${region || 'all'}:${city || 'all'}:${routeGroup || 'all'}`;
+      
+      return withCache(
+        cacheKey,
+        async () => {
+          const db = await getDb();
+          if (!db) throw new Error('Database not available');
+          const offset = (page - 1) * pageSize;
 
       // Construir condiciones de filtrado
       const conditions = [];
@@ -111,14 +125,17 @@ export const clientsRouter = router({
         .where(whereClause);
       const totalCount = Number(countResult[0]?.count || 0);
 
-      return {
-        clients: clientsList,
-        totalCount,
-        page,
-        pageSize,
-        totalPages: Math.ceil(totalCount / pageSize),
-        hasMore: offset + clientsList.length < totalCount,
-      };
+          return {
+            clients: clientsList,
+            totalCount,
+            page,
+            pageSize,
+            totalPages: Math.ceil(totalCount / pageSize),
+            hasMore: offset + clientsList.length < totalCount,
+          };
+        },
+        300 // 5 minutos de TTL
+      );
     }),
 
   /**
@@ -127,19 +144,25 @@ export const clientsRouter = router({
   getClientById: publicProcedure
     .input(z.object({ id: z.number() }))
     .query(async ({ input }) => {
-      const db = await getDb();
-      if (!db) throw new Error('Database not available');
-      const client = await db
-        .select()
-        .from(clients)
-        .where(eq(clients.id, input.id))
-        .limit(1);
+      return withCache(
+        `clients:detail:${input.id}`,
+        async () => {
+          const db = await getDb();
+          if (!db) throw new Error('Database not available');
+          const client = await db
+            .select()
+            .from(clients)
+            .where(eq(clients.id, input.id))
+            .limit(1);
 
-      if (!client || client.length === 0) {
-        throw new Error('Cliente no encontrado');
-      }
+          if (!client || client.length === 0) {
+            throw new Error('Cliente no encontrado');
+          }
 
-      return client[0];
+          return client[0];
+        },
+        300 // 5 minutos de TTL
+      );
     }),
 
   /**

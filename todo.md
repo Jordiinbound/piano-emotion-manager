@@ -1791,3 +1791,27 @@
 - [x] Verificar región de despliegue de Vercel (dub1, cdg1, fra1 - todas en Europa)
 - [x] Confirmar que ambas regiones están alineadas para baja latencia (5-35ms en producción)
 - [x] Asegurar que todos los tests pasen (10/10) ✅
+
+## FASE 18 - Extensión del Sistema de Caché
+
+- [x] Extender caché al router de clientes (listados, búsquedas)
+- [x] Extender caché al router de pianos (listados, búsquedas)
+- [x] Extender caché al router de servicios (listados, estadísticas)
+- [x] Optimizar TTL según tipo de datos (clientes: 5min, pianos: 10min, servicios: 2min)
+
+## FASE 19 - Dashboard de Monitoreo de Caché
+
+- [x] Crear endpoint tRPC para estadísticas de caché en tiempo real
+- [x] Diseñar componente de dashboard con métricas (conexión, tipo, entradas, uptime)
+- [x] Implementar auto-refresh cada 5 segundos (opcional)
+- [x] Agregar botón para limpiar caché manualmente (todo o por patrón)
+- [x] Mostrar información del sistema (Node.js, memoria, plataforma)
+- [x] Registrar ruta /monitor-cache en App.tsx
+
+## FASE 20 - Historial Fotográfico Avanzado
+
+- [ ] Diseñar timeline de fotos con orden cronológico
+- [ ] Implementar vista de comparación antes/después (slider)
+- [ ] Agregar lightbox con zoom y navegación entre fotos
+- [ ] Crear sistema de tags para categorizar fotos (antes, después, detalle, problema)
+- [ ] Implementar filtros por fecha, servicio y tags

@@ -1,42 +1,49 @@
-import { z } from 'zod';
+import { z } from "zod";
 import { publicProcedure, router } from "../_core/trpc.js";
 import { getDb } from "../db.js";
 import { services, clients, pianos } from "../../drizzle/schema.js";
 import { eq, and, like, or, sql, desc } from "drizzle-orm";
 import { triggerWorkflowEvent } from '../workflow-triggers';
+import { withCache } from '../cache';
 
 export const servicesRouter = router({
   /**
    * Get statistics by service type
    */
   getStats: publicProcedure.query(async () => {
-    const db = await getDb();
-    if (!db) throw new Error('Database not available');
-    
-    // Get total count
-    const totalResult = await db
-      .select({ count: sql<number>`count(*)` })
-      .from(services);
-    const total = Number(totalResult[0]?.count || 0);
-    
-    // Get count by type
-    const byTypeResult = await db
-      .select({
-        serviceType: services.serviceType,
-        count: sql<number>`count(*)`,
-      })
-      .from(services)
-      .groupBy(services.serviceType);
-    
-    const byType = byTypeResult.map((row) => ({
-      serviceType: row.serviceType,
-      count: Number(row.count),
-    }));
-    
-    return {
-      total,
-      byType,
-    };
+    return withCache(
+      'services:stats',
+      async () => {
+        const db = await getDb();
+        if (!db) throw new Error('Database not available');
+        
+        // Get total count
+        const totalResult = await db
+          .select({ count: sql<number>`count(*)` })
+          .from(services);
+        const total = Number(totalResult[0]?.count || 0);
+        
+        // Get count by type
+        const byTypeResult = await db
+          .select({
+            serviceType: services.serviceType,
+            count: sql<number>`count(*)`,
+          })
+          .from(services)
+          .groupBy(services.serviceType);
+        
+        const byType = byTypeResult.map((row) => ({
+          serviceType: row.serviceType,
+          count: Number(row.count),
+        }));
+        
+        return {
+          total,
+          byType,
+        };
+      },
+      120 // 2 minutos de TTL (servicios cambian más frecuentemente)
+    );
   }),
 
   /**
@@ -52,10 +59,15 @@ export const servicesRouter = router({
       })
     )
     .query(async ({ input }) => {
-      const db = await getDb();
-      if (!db) throw new Error('Database not available');
       const { page, limit, search, serviceType } = input;
-      const offset = (page - 1) * limit;
+      const cacheKey = `services:list:${page}:${limit}:${search || 'all'}:${serviceType || 'all'}`;
+      
+      return withCache(
+        cacheKey,
+        async () => {
+          const db = await getDb();
+          if (!db) throw new Error('Database not available');
+          const offset = (page - 1) * limit;
 
       let query = db
         .select({
@@ -105,9 +117,12 @@ export const servicesRouter = router({
         query = query.where(and(...conditions)) as any;
       }
 
-      const results = await query;
-      
-      return results;
+          const results = await query;
+          
+          return results;
+        },
+        120 // 2 minutos de TTL
+      );
     }),
 
   /**
@@ -116,15 +131,21 @@ export const servicesRouter = router({
   getServiceById: publicProcedure
     .input(z.object({ id: z.number() }))
     .query(async ({ input }) => {
-      const db = await getDb();
-      if (!db) throw new Error('Database not available');
-      const result = await db
-        .select()
-        .from(services)
-        .where(eq(services.id, input.id))
-        .limit(1);
-      
-      return result[0] || null;
+      return withCache(
+        `services:detail:${input.id}`,
+        async () => {
+          const db = await getDb();
+          if (!db) throw new Error('Database not available');
+          const result = await db
+            .select()
+            .from(services)
+            .where(eq(services.id, input.id))
+            .limit(1);
+          
+          return result[0] || null;
+        },
+        120 // 2 minutos de TTL
+      );
     }),
 
   /**

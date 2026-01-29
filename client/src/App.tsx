@@ -72,6 +72,7 @@ import WorkflowExecutionHistory from "./pages/WorkflowExecutionHistory";
 import WorkflowApprovals from "./pages/WorkflowApprovals";
 import TranslationManager from "./pages/TranslationManager";
 import Previsiones from "./pages/Previsiones";
+import CacheMonitor from "./pages/CacheMonitor";
 
 function Router() {
   return (
@@ -466,6 +467,13 @@ function Router() {
         <ProtectedRoute>
           <Layout>
             <HerramientasAvanzadas />
+          </Layout>
+        </ProtectedRoute>
+      </Route>
+      <Route path="/monitor-cache">
+        <ProtectedRoute>
+          <Layout>
+            <CacheMonitor />
           </Layout>
         </ProtectedRoute>
       </Route>

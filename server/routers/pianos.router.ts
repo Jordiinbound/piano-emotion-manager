@@ -3,26 +3,33 @@ import { router, publicProcedure } from '../_core/trpc';
 import { getDb } from '../db';
 import { pianos } from '../../drizzle/schema';
 import { eq, like, or, and, sql, desc } from 'drizzle-orm';
+import { withCache } from '../cache';
 
 export const pianosRouter = router({
   // Obtener estadísticas de pianos
   getStats: publicProcedure.query(async () => {
-    const db = await getDb();
-    if (!db) throw new Error('Database not available');
+    return withCache(
+      'pianos:stats',
+      async () => {
+        const db = await getDb();
+        if (!db) throw new Error('Database not available');
 
-    const [result] = await db
-      .select({
-        total: sql<number>`COUNT(*)`,
-        vertical: sql<number>`SUM(CASE WHEN ${pianos.category} = 'vertical' THEN 1 ELSE 0 END)`,
-        grand: sql<number>`SUM(CASE WHEN ${pianos.category} = 'grand' THEN 1 ELSE 0 END)`,
-      })
-      .from(pianos);
+        const [result] = await db
+          .select({
+            total: sql<number>`COUNT(*)`,
+            vertical: sql<number>`SUM(CASE WHEN ${pianos.category} = 'vertical' THEN 1 ELSE 0 END)`,
+            grand: sql<number>`SUM(CASE WHEN ${pianos.category} = 'grand' THEN 1 ELSE 0 END)`,
+          })
+          .from(pianos);
 
-    return {
-      total: Number(result?.total || 0),
-      vertical: Number(result?.vertical || 0),
-      grand: Number(result?.grand || 0),
-    };
+        return {
+          total: Number(result?.total || 0),
+          vertical: Number(result?.vertical || 0),
+          grand: Number(result?.grand || 0),
+        };
+      },
+      600 // 10 minutos de TTL
+    );
   }),
 
   // Obtener lista de pianos con paginación y filtros
@@ -36,11 +43,15 @@ export const pianosRouter = router({
       })
     )
     .query(async ({ input }) => {
-      const db = await getDb();
-      if (!db) throw new Error('Database not available');
-
       const { page, pageSize, search, category } = input;
-      const offset = (page - 1) * pageSize;
+      const cacheKey = `pianos:list:${page}:${pageSize}:${search || 'all'}:${category || 'all'}`;
+      
+      return withCache(
+        cacheKey,
+        async () => {
+          const db = await getDb();
+          if (!db) throw new Error('Database not available');
+          const offset = (page - 1) * pageSize;
 
       // Construir condiciones de filtrado
       const conditions = [];
@@ -78,29 +89,38 @@ export const pianosRouter = router({
 
       const total = Number(countResult?.count || 0);
 
-      return {
-        pianos: result,
-        total,
-        page,
-        pageSize,
-        totalPages: Math.ceil(total / pageSize),
-      };
+          return {
+            pianos: result,
+            total,
+            page,
+            pageSize,
+            totalPages: Math.ceil(total / pageSize),
+          };
+        },
+        600 // 10 minutos de TTL
+      );
     }),
 
   // Obtener piano por ID
   getPianoById: publicProcedure
     .input(z.object({ id: z.number() }))
     .query(async ({ input }) => {
-      const db = await getDb();
-      if (!db) throw new Error('Database not available');
+      return withCache(
+        `pianos:detail:${input.id}`,
+        async () => {
+          const db = await getDb();
+          if (!db) throw new Error('Database not available');
 
-      const [piano] = await db
-        .select()
-        .from(pianos)
-        .where(eq(pianos.id, input.id))
-        .limit(1);
+          const [piano] = await db
+            .select()
+            .from(pianos)
+            .where(eq(pianos.id, input.id))
+            .limit(1);
 
-      return piano || null;
+          return piano || null;
+        },
+        600 // 10 minutos de TTL
+      );
     }),
 
   // Crear nuevo piano
