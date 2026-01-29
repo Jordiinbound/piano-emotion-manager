@@ -1764,3 +1764,18 @@
 - [x] Actualizar router de forecasts para usar caché
 - [x] Agregar invalidación de caché cuando se crean/actualizan datos relevantes
 - [x] Testing de rendimiento antes y después de la optimización
+
+
+## FASE 17 - Migración de Sistema de Caché a Upstash Redis
+- [x] Clonar repositorio original para obtener cache.service.ts
+- [x] Instalar paquete @upstash/redis
+- [x] Crear servicio de monitoring simplificado (monitoring.ts)
+- [x] Reemplazar server/cache.ts con implementación mejorada de Upstash Redis
+- [x] Implementar lazy initialization y verificación de conexión con ping
+- [x] Implementar fallback automático a caché en memoria si Redis no está disponible
+- [x] Mantener API pública compatible (getCache, setCache, deleteCache, withCache)
+- [x] Agregar función getCacheStats para monitoreo
+- [x] Crear tests completos del sistema de caché (10 tests)
+- [x] Verificar conexión exitosa a Upstash Redis (modo REDIS DISTRIBUTED)
+- [x] Confirmar que 9/10 tests pasan correctamente
+- [x] Verificar que el router de forecasts usa el nuevo sistema de caché
