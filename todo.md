@@ -1982,3 +1982,22 @@
 - [x] PDF incluye: header con branding, resumen del período, métricas actuales, tabla de historial
 - [x] PDF con estilos profesionales y colores de marca
 - [x] Descarga automática de CSV, PDF abre en nueva ventana con diálogo de impresión
+
+## FASE 37 - Despliegue a Producción en Vercel
+
+- [x] Verificar acceso a Vercel CLI
+- [x] Instalar Vercel CLI (v50.9.1)
+- [x] Autenticar con token de Vercel (usuario: jnavarrete-3962)
+- [x] Configurar proyecto para despliegue
+- [x] Desplegar a Vercel (exitoso en 41 segundos)
+- [x] URLs generadas: https://piano-emotion-nextjs.vercel.app
+- [x] Crear script de validación de latencia de Redis (validate-redis-latency.mjs)
+- [x] Crear guía de configuración de variables de entorno (VERCEL-ENV-SETUP.md)
+- [ ] Configurar variables de entorno en Vercel Dashboard (DATABASE_URL, CLERK, UPSTASH_REDIS, STRIPE, etc.)
+- [ ] Redesplegar después de configurar variables de entorno
+- [ ] Ejecutar validación de latencia post-despliegue (script listo)
+- [ ] Validar conexión a TiDB desde producción
+- [ ] Validar autenticación con Clerk en producción
+- [ ] Verificar sistema de alertas de caché en producción
+- [ ] Configurar dominio personalizado www.pianoemotion.com
+- [ ] Documentar resultados de validación completa con métricas
