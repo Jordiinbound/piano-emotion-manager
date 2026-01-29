@@ -10,9 +10,8 @@ let _db: ReturnType<typeof drizzle> | null = null;
 export async function getDb() {
   if (!_db) {
     try {
-      // Usar TiDB de producción
-      const tidbUrl = 'mysql://2GeAqAcm5LrcHRv.root:PianoEmotion2026@gateway01.eu-central-1.prod.aws.tidbcloud.com:4000/piano_emotion_db?ssl={"rejectUnauthorized":true}';
-      const connectionUrl = tidbUrl || process.env.DATABASE_URL;
+      // Usar DATABASE_URL del entorno
+      const connectionUrl = process.env.DATABASE_URL;
       
       if (connectionUrl) {
         _db = drizzle(connectionUrl, { schema, mode: 'default' });
