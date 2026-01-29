@@ -15,6 +15,7 @@ import {
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
 import { ArrowLeft, Save, Loader2 } from "lucide-react";
+import { usePrefetchClientData } from "@/hooks/usePrefetch";
 
 export default function ClientForm() {
   const navigate = useNavigate();
@@ -39,6 +40,9 @@ export default function ClientForm() {
     { id: clientId! },
     { enabled: isEdit }
   );
+  
+  // Prefetch: precargar pianos y servicios del cliente
+  usePrefetchClientData(clientId || undefined);
 
   // Prellenar formulario cuando se carguen los datos
   if (client && isEdit && formData.name === "") {

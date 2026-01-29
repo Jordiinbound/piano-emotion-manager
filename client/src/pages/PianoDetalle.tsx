@@ -12,6 +12,7 @@ import PhotoGalleryCard from '../components/PhotoGalleryCard';
 import { PhotoTimeline } from '../components/PhotoTimeline';
 import OwnershipHistoryCard from '../components/OwnershipHistoryCard';
 import PriceHistoryCard from '../components/PriceHistoryCard';
+import { usePrefetchPianoData } from '../hooks/usePrefetch';
 
 export default function PianoDetalle() {
   const { t } = useTranslation();
@@ -24,6 +25,9 @@ export default function PianoDetalle() {
     { id: piano?.clientId || 0 },
     { enabled: !!piano?.clientId }
   );
+  
+  // Prefetch: precargar cliente y servicios relacionados
+  usePrefetchPianoData(pianoId, piano?.clientId);
 
   if (isLoading) {
     return <div className="container mx-auto py-6">{t('common.loading')}</div>;

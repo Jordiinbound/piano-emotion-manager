@@ -6,6 +6,7 @@ import { Search, Plus, Loader2, Download } from "lucide-react";
 import ServiceFormModal from "@/components/ServiceFormModal";
 import DeleteConfirmModal from "@/components/DeleteConfirmModal";
 import { useTranslation } from "@/hooks/use-translation";
+import { usePrefetchOnHover } from "@/hooks/usePrefetch";
 
 type FilterType = 'all' | 'tuning' | 'maintenance' | 'repair' | 'regulation';
 
@@ -25,6 +26,9 @@ export default function Servicios() {
     serviceType: filter === 'all' ? undefined : filter,
   });
 
+  // Prefetch on-hover
+  const { prefetchService } = usePrefetchOnHover();
+  
   // Mutación para eliminar servicio
   const utils = trpc.useUtils();
   const deleteServiceMutation = trpc.services.deleteService.useMutation({
@@ -198,15 +202,19 @@ export default function Servicios() {
           </div>
         ) : (
           servicesWithPastFlag.map((service) => (
-            <ServiceCard
+            <div
               key={service.id}
-              service={service}
-              pianoInfo={undefined} // TODO: Get piano info
-              clientName={undefined} // TODO: Get client name
-              isPast={service.isPast}
-              onEdit={() => setEditingServiceId(service.id)}
-              onDelete={() => setDeletingServiceId(service.id)}
-            />
+              onMouseEnter={() => prefetchService(service.id)}
+            >
+              <ServiceCard
+                service={service}
+                pianoInfo={undefined} // TODO: Get piano info
+                clientName={undefined} // TODO: Get client name
+                isPast={service.isPast}
+                onEdit={() => setEditingServiceId(service.id)}
+                onDelete={() => setDeletingServiceId(service.id)}
+              />
+            </div>
           ))
         )}
       </div>

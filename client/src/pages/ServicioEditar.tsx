@@ -11,6 +11,7 @@ import { ArrowLeft, Save } from 'lucide-react';
 import { toast } from 'sonner';
 import { useTranslation } from '@/hooks/use-translation';
 import SignatureCanvas from '@/components/SignatureCanvas';
+import { usePrefetchServiceData } from '../hooks/usePrefetch';
 
 export default function ServicioEditar() {
   const { t } = useTranslation();
@@ -22,6 +23,9 @@ export default function ServicioEditar() {
   const updateMutation = trpc.services.updateService.useMutation();
   const { data: clients } = trpc.clients.getClients.useQuery({ page: 1, pageSize: 1000 });
   const { data: pianos } = trpc.pianos.getPianos.useQuery({ page: 1, pageSize: 1000 });
+  
+  // Prefetch: precargar cliente y piano del servicio
+  usePrefetchServiceData(serviceId, service?.clientId, service?.pianoId);
 
   const [formData, setFormData] = useState({
     clientId: '',

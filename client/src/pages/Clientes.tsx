@@ -5,6 +5,7 @@ import { ClientCard } from '../components/ClientCard';
 import ClientFormModal from '../components/ClientFormModal';
 import DeleteConfirmModal from '../components/DeleteConfirmModal';
 import { useTranslation } from '../hooks/use-translation';
+import { usePrefetchOnHover } from '../hooks/usePrefetch';
 
 // Paleta profesional minimalista
 const COLORS = {
@@ -47,7 +48,10 @@ export default function ClientesPage() {
   // Obtener opciones de filtros
   const { data: filterOptions } = trpc.clients.getFilterOptions.useQuery();
 
-  // Mutación para eliminar cliente
+    // Prefetch on-hover
+  const { prefetchClient } = usePrefetchOnHover();
+  
+  // Mutar para eliminar cliente
   const utils = trpc.useUtils();
   const deleteClientMutation = trpc.clients.deleteClient.useMutation({
     onSuccess: () => {
@@ -248,13 +252,17 @@ export default function ClientesPage() {
           <>
             <div className="space-y-3 mb-6">
               {clientsData.clients.map((client) => (
-                <ClientCard
+                <div
                   key={client.id}
-                  client={client}
-                  pianoCount={0} // TODO: Obtener el conteo real de pianos por cliente
-                  onEdit={() => setEditingClientId(client.id)}
-                  onDelete={() => setDeletingClientId(client.id)}
-                />
+                  onMouseEnter={() => prefetchClient(client.id)}
+                >
+                  <ClientCard
+                    client={client}
+                    pianoCount={0} // TODO: Obtener el conteo real de pianos por cliente
+                    onEdit={() => setEditingClientId(client.id)}
+                    onDelete={() => setDeletingClientId(client.id)}
+                  />
+                </div>
               ))}
             </div>
 

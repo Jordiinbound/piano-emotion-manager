@@ -12,6 +12,7 @@ import { Plus, Download, Loader2 } from 'lucide-react';
 import PianoFormModal from '@/components/PianoFormModal';
 import DeleteConfirmModal from '@/components/DeleteConfirmModal';
 import { useTranslation } from '@/hooks/use-translation';
+import { usePrefetchOnHover } from '@/hooks/usePrefetch';
 
 type FilterType = 'all' | 'vertical' | 'grand';
 
@@ -56,6 +57,9 @@ export default function Pianos() {
   // Obtener estadísticas
   const { data: stats, isLoading: statsLoading } = trpc.pianos.getStats.useQuery();
 
+  // Prefetch on-hover
+  const { prefetchPiano } = usePrefetchOnHover();
+  
   // Mutación para eliminar piano
   const utils = trpc.useUtils();
   const deletePianoMutation = trpc.pianos.deletePiano.useMutation({
@@ -214,12 +218,16 @@ export default function Pianos() {
           <>
             <div className="space-y-4">
               {pianos.map((piano) => (
-                <PianoCard
+                <div
                   key={piano.id}
-                  piano={piano}
-                  onEdit={() => setEditingPianoId(piano.id)}
-                  onDelete={() => setDeletingPianoId(piano.id)}
-                />
+                  onMouseEnter={() => prefetchPiano(piano.id)}
+                >
+                  <PianoCard
+                    piano={piano}
+                    onEdit={() => setEditingPianoId(piano.id)}
+                    onDelete={() => setDeletingPianoId(piano.id)}
+                  />
+                </div>
               ))}
             </div>
 

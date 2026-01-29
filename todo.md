@@ -1857,3 +1857,30 @@
 - [x] Implementar prefetching de dashboard (usePrefetchDashboardData)
 - [x] Implementar prefetch on-hover (usePrefetchOnHover)
 - [x] Configurar delays apropiados (500ms-1000ms) para evitar sobrecarga
+
+## FASE 25 - Integración de Prefetching en Vistas
+
+- [x] Buscar páginas de detalle de clientes en el proyecto
+- [x] Integrar usePrefetchClientData en ClientForm.tsx
+- [x] Buscar páginas de detalle de pianos en el proyecto
+- [x] Integrar usePrefetchPianoData en PianoDetalle.tsx
+- [x] Buscar páginas de detalle de servicios en el proyecto
+- [x] Integrar usePrefetchServiceData en ServicioEditar.tsx
+- [x] Integrar usePrefetchDashboardData en Home.tsx (dashboard principal)
+
+## FASE 26 - Prefetch On-Hover en Navegación
+
+- [x] Identificar componentes de navegación con links (Clientes.tsx, Pianos.tsx, Servicios.tsx)
+- [x] Integrar usePrefetchOnHover en links de clientes (Clientes.tsx)
+- [x] Integrar usePrefetchOnHover en links de pianos (Pianos.tsx)
+- [x] Integrar usePrefetchOnHover en links de servicios (Servicios.tsx)
+- [x] Implementar onMouseEnter para activar precarga al pasar el mouse
+
+## FASE 27 - Gráficos de Rendimiento en Dashboard
+
+- [x] Instalar librería de gráficos (recharts)
+- [x] Crear gráfico de hit rate vs miss rate (BarChart)
+- [x] Crear indicador visual de latencia promedio con gradiente
+- [x] Crear gráfico de operaciones por tipo (gets, sets, deletes)
+- [x] Integrar gráficos en CacheMonitor.tsx
+- [x] Agregar control de acceso solo para owner (nota en código)

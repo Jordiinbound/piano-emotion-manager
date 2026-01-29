@@ -6,14 +6,18 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import { RefreshCw, Trash2, Database, Server, Clock, Activity, Wifi, WifiOff } from 'lucide-react';
+import { RefreshCw, Trash2, Database, Server, Clock, Activity, Wifi, WifiOff, TrendingUp, BarChart3 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useServiceWorker } from '@/hooks/useServiceWorker';
+import { LineChart, Line, AreaChart, Area, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
 export default function CacheMonitor() {
   const [pattern, setPattern] = useState('');
   const [autoRefresh, setAutoRefresh] = useState(false);
   const serviceWorker = useServiceWorker();
+  
+  // Nota: Esta página es solo para el gestor principal del sistema
+  // En producción, agregar autenticación adecuada
   
   const { data: cacheStats, refetch, isLoading } = trpc.systemMonitor.getCacheStats.useQuery(undefined, {
     refetchInterval: autoRefresh ? 5000 : false, // Auto-refresh cada 5 segundos si está activado
@@ -396,6 +400,95 @@ export default function CacheMonitor() {
           </div>
         </CardContent>
       </Card>
+      
+      {/* Gráficos de Rendimiento */}
+      {cacheStats?.metrics && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <BarChart3 className="h-5 w-5" />
+              Gráficos de Rendimiento
+            </CardTitle>
+            <CardDescription>
+              Visualización de métricas de caché en tiempo real
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            {/* Gráfico de Hit Rate */}
+            <div>
+              <h3 className="text-sm font-medium mb-4">Hit Rate vs Miss Rate</h3>
+              <ResponsiveContainer width="100%" height={250}>
+                <BarChart
+                  data={[
+                    {
+                      name: 'Hits',
+                      value: cacheStats.metrics.hits,
+                      fill: '#10b981'
+                    },
+                    {
+                      name: 'Misses',
+                      value: cacheStats.metrics.misses,
+                      fill: '#ef4444'
+                    }
+                  ]}
+                >
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="name" />
+                  <YAxis />
+                  <Tooltip />
+                  <Bar dataKey="value" />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+            
+            {/* Gráfico de Operaciones por Tipo */}
+            <div>
+              <h3 className="text-sm font-medium mb-4">Operaciones por Tipo</h3>
+              <ResponsiveContainer width="100%" height={250}>
+                <BarChart
+                  data={[
+                    { name: 'Gets', value: cacheStats.metrics.hits + cacheStats.metrics.misses, fill: '#3b82f6' },
+                    { name: 'Sets', value: cacheStats.metrics.sets, fill: '#8b5cf6' },
+                    { name: 'Deletes', value: cacheStats.metrics.deletes, fill: '#f59e0b' }
+                  ]}
+                >
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="name" />
+                  <YAxis />
+                  <Tooltip />
+                  <Bar dataKey="value" />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+            
+            {/* Indicador de Latencia */}
+            <div>
+              <h3 className="text-sm font-medium mb-4">Latencia Promedio</h3>
+              <div className="flex items-center gap-4">
+                <div className="flex-1">
+                  <div className="h-8 bg-gradient-to-r from-green-500 via-yellow-500 to-red-500 rounded-full relative">
+                    <div 
+                      className="absolute top-0 bottom-0 w-1 bg-white rounded-full shadow-lg"
+                      style={{
+                        left: `${Math.min(100, (cacheStats.metrics.avgLatency / 100) * 100)}%`
+                      }}
+                    />
+                  </div>
+                  <div className="flex justify-between text-xs text-muted-foreground mt-2">
+                    <span>0ms</span>
+                    <span>50ms</span>
+                    <span>100ms+</span>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <p className="text-2xl font-bold">{cacheStats.metrics.avgLatency.toFixed(2)}ms</p>
+                  <p className="text-xs text-muted-foreground">Promedio</p>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
       
       {/* Service Worker (Caché de Segundo Nivel) */}
       <Card>

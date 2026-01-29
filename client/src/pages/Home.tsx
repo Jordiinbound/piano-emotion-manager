@@ -6,6 +6,7 @@ import { trpc } from "@/lib/trpc";
 import { useLocation } from 'wouter';
 import { LicenseExpirationAlert } from '@/components/LicenseExpirationAlert';
 import { useTranslation } from '@/hooks/use-translation';
+import { usePrefetchDashboardData } from '@/hooks/usePrefetch';
 
 /**
  * Dashboard Screen - Elegant Professional Design
@@ -22,6 +23,9 @@ export default function Home() {
   const { t } = useTranslation();
   const [, navigate] = useLocation();
   const [selectedMonth, setSelectedMonth] = useState(new Date());
+  
+  // Prefetch: precargar estadísticas y listados principales
+  usePrefetchDashboardData();
 
   // Mostrar alerta de licencias al inicio del dashboard
 
