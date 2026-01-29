@@ -47,7 +47,7 @@ import { pianoTechnicalRouter } from "./routers/pianoTechnical.router";
 import { workflowsRouter } from "./routers/workflows.router";
 import { settingsRouter } from "./routers/settings.router";
 import { notificationsRouter } from "./routers/notifications.router";
-import { predictionsRouter } from "./routers/predictions.router";
+import { forecastsRouter } from "./routers/forecasts.router";
 
 export const appRouter = router({
     // if you need to use socket.io, read and register route in server/_core/index.ts, all api should start with '/api/' so that the gateway can route correctly
@@ -187,7 +187,7 @@ export const appRouter = router({
   workflows: workflowsRouter,
   settings: settingsRouter,
   notifications: notificationsRouter,
-  predictions: predictionsRouter,
+  forecasts: forecastsRouter,
 }); // TODO: add more feature routers here
 
 export type AppRouter = typeof appRouter;

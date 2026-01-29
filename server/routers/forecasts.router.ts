@@ -6,10 +6,10 @@
 import { z } from 'zod';
 import { publicProcedure, protectedProcedure, router } from '../_core/trpc';
 import { getDb } from '../db';
-import { services, clients, pianos, invoices } from '../../drizzle/schema';
+import { services, clients, pianos, invoices, inventory } from '../../drizzle/schema';
 import { gte, lte, sql, and, eq } from 'drizzle-orm';
 
-export const predictionsRouter = router({
+export const forecastsRouter = router({
   /**
    * Predicción de ingresos para los próximos 3 meses
    * Basado en tendencias históricas y estacionalidad
@@ -292,6 +292,79 @@ export const predictionsRouter = router({
       historical: historicalWorkload,
       predictions,
       avgWeeklyServices: Math.round(avgWeeklyServices * 10) / 10,
+    };
+  }),
+
+  /**
+   * Predicción de inventario
+   * Identifica productos con stock bajo y estima necesidades de reposición
+   */
+  predictInventory: protectedProcedure.query(async () => {
+    const db = await getDb();
+    
+    // Obtener inventario actual
+    const inventoryItems = await db
+      .select()
+      .from(inventory)
+      .orderBy(inventory.quantity);
+
+    // Calcular uso promedio mensual basado en servicios
+    const threeMonthsAgo = new Date();
+    threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
+    
+    const recentServices = await db
+      .select({
+        count: sql<number>`COUNT(*)`,
+      })
+      .from(services)
+      .where(gte(services.serviceDate, threeMonthsAgo));
+
+    const avgMonthlyServices = recentServices[0]?.count ? recentServices[0].count / 3 : 0;
+
+    // Analizar cada item del inventario
+    const predictions = inventoryItems.map(item => {
+      // Estimación simple: cada servicio consume una cantidad proporcional
+      const estimatedMonthlyUsage = avgMonthlyServices * 0.1; // 10% de servicios usan este item
+      const monthsUntilEmpty = item.quantity > 0 ? item.quantity / estimatedMonthlyUsage : 0;
+      
+      let status: 'critical' | 'low' | 'adequate' | 'good' = 'good';
+      let daysUntilEmpty = Math.round(monthsUntilEmpty * 30);
+      
+      if (monthsUntilEmpty < 0.5) {
+        status = 'critical';
+      } else if (monthsUntilEmpty < 1) {
+        status = 'low';
+      } else if (monthsUntilEmpty < 2) {
+        status = 'adequate';
+      } else {
+        status = 'good';
+      }
+
+      return {
+        itemId: item.id,
+        name: item.name,
+        category: item.category,
+        currentStock: item.quantity,
+        minStock: item.minStock,
+        estimatedMonthlyUsage: Math.round(estimatedMonthlyUsage * 10) / 10,
+        daysUntilEmpty,
+        status,
+        recommendedOrder: status === 'critical' || status === 'low' ? Math.ceil(estimatedMonthlyUsage * 2) : 0,
+      };
+    });
+
+    // Ordenar por urgencia
+    const sortedPredictions = predictions.sort((a, b) => {
+      const statusOrder = { critical: 0, low: 1, adequate: 2, good: 3 };
+      return statusOrder[a.status] - statusOrder[b.status] || a.daysUntilEmpty - b.daysUntilEmpty;
+    });
+
+    return {
+      predictions: sortedPredictions,
+      totalItems: inventoryItems.length,
+      criticalItems: predictions.filter(p => p.status === 'critical').length,
+      lowItems: predictions.filter(p => p.status === 'low').length,
+      avgMonthlyServices: Math.round(avgMonthlyServices * 10) / 10,
     };
   }),
 });
