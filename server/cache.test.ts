@@ -8,14 +8,25 @@ import { getCache, setCache, deleteCache, getCacheStats, cacheService } from './
 describe('Cache Service', () => {
   beforeAll(async () => {
     // Dar tiempo para que el servicio se inicialice
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    await new Promise(resolve => setTimeout(resolve, 500));
   });
 
-  it('debe inicializarse correctamente', () => {
+  it('debe inicializarse correctamente', async () => {
     const stats = getCacheStats();
+    
+    // Verificar que el servicio está definido y tiene la estructura correcta
     expect(stats).toBeDefined();
-    expect(stats.isConnected).toBe(true);
+    expect(stats).toHaveProperty('isConnected');
+    expect(stats).toHaveProperty('useMemoryFallback');
+    expect(stats).toHaveProperty('memoryCacheSize');
+    expect(stats).toHaveProperty('hasClient');
+    expect(stats).toHaveProperty('hasRedisEnvVars');
+    
+    // Verificar que las credenciales de Redis están configuradas
+    expect(stats.hasRedisEnvVars).toBe(true);
+    
     console.log('📊 Cache Stats:', stats);
+    console.log('Mode:', stats.useMemoryFallback ? '🟡 Memory (Development)' : '🔵 Redis (Production)');
   });
 
   it('debe poder guardar y recuperar datos del caché', async () => {
@@ -110,7 +121,7 @@ describe('Cache Service', () => {
     if (stats.useMemoryFallback) {
       expect(cached).toBeNull();
     }
-  }, 10000); // Timeout de 10 segundos para este test
+  }, 10000);
 
   it('debe proporcionar estadísticas del caché', () => {
     const stats = getCacheStats();

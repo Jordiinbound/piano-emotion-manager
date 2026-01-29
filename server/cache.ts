@@ -41,6 +41,15 @@ class CacheService {
     console.log('[Cache Service] 🔌 Attempting to connect to Redis');
     
     try {
+      // En desarrollo, usar memoria por defecto para evitar latencia de red
+      if (process.env.NODE_ENV === 'development') {
+        console.log('🟡 [Cache Service] Development mode: using memory cache for fast performance');
+        console.log('🔵 [Cache Service] Production will use Upstash Redis (configured)');
+        this.useMemoryFallback = true;
+        this.isConnected = true;
+        return;
+      }
+
       // Verificar variables de entorno
       if (!this.hasRedisEnvVars()) {
         console.warn('⚠️  [Cache Service] Redis env vars not available, using memory fallback');

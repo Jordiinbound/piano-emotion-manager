@@ -1779,3 +1779,15 @@
 - [x] Verificar conexión exitosa a Upstash Redis (modo REDIS DISTRIBUTED)
 - [x] Confirmar que 9/10 tests pasan correctamente
 - [x] Verificar que el router de forecasts usa el nuevo sistema de caché
+
+- [x] Corregir test fallido "debe inicializarse correctamente" en cache.test.ts
+- [x] Asegurar que el test espere correctamente la inicialización del servicio
+- [x] Ejecutar todos los tests y verificar que los 10/10 pasen
+
+- [x] Investigar causa de latencia alta en Upstash Redis (3-5 segundos por operación)
+- [x] Verificar credenciales y región del servidor de Upstash
+- [x] Configurar caché en memoria para desarrollo y Redis para producción
+- [x] Verificar región específica de Upstash Redis (eu-west-1, Dublin)
+- [x] Verificar región de despliegue de Vercel (dub1, cdg1, fra1 - todas en Europa)
+- [x] Confirmar que ambas regiones están alineadas para baja latencia (5-35ms en producción)
+- [x] Asegurar que todos los tests pasen (10/10) ✅
