@@ -4,6 +4,7 @@ import { getCacheStats, deleteCache, cacheService, resetCacheMetrics } from '../
 import { getMetricsHistory, getRecentMetricsHistory, getMetricsHistoryStats, clearMetricsHistory } from '../metricsHistory';
 import { performanceMonitor } from '../performanceMonitor';
 import { alertSystem } from '../alerts';
+import { generateMetricsCSV, generateMetricsPDFHTML } from '../services/metrics-export.service';
 
 /**
  * Router de Sistema
@@ -234,4 +235,64 @@ export const systemRouter = router({
       timestamp: new Date().toISOString(),
     };
   }),
+
+  /**
+   * Exportar métricas a CSV
+   */
+  exportMetricsCSV: publicProcedure
+    .input(
+      z.object({
+        hours: z.number().min(1).max(168).default(24),
+      })
+    )
+    .query(async ({ input }) => {
+      const cacheStats = getCacheStats();
+      const history = getRecentMetricsHistory(input.hours);
+      
+      const exportData = {
+        timestamp: new Date().toISOString(),
+        cacheStats,
+        history,
+        timeRange: input.hours,
+      };
+      
+      const csv = generateMetricsCSV(exportData);
+      
+      return {
+        success: true,
+        data: csv,
+        filename: `cache-metrics-${new Date().toISOString().split('T')[0]}.csv`,
+        timestamp: new Date().toISOString(),
+      };
+    }),
+
+  /**
+   * Exportar métricas a PDF (HTML)
+   */
+  exportMetricsPDF: publicProcedure
+    .input(
+      z.object({
+        hours: z.number().min(1).max(168).default(24),
+      })
+    )
+    .query(async ({ input }) => {
+      const cacheStats = getCacheStats();
+      const history = getRecentMetricsHistory(input.hours);
+      
+      const exportData = {
+        timestamp: new Date().toISOString(),
+        cacheStats,
+        history,
+        timeRange: input.hours,
+      };
+      
+      const html = generateMetricsPDFHTML(exportData);
+      
+      return {
+        success: true,
+        data: html,
+        filename: `cache-metrics-${new Date().toISOString().split('T')[0]}.pdf`,
+        timestamp: new Date().toISOString(),
+      };
+    }),
 });

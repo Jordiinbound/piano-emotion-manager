@@ -1946,3 +1946,39 @@
 - [x] Conectar con endpoint systemMonitor.getMetricsHistory
 - [x] Mostrar estadísticas del historial (total snapshots, promedios, operaciones totales)
 - [x] Agregar mensaje informativo cuando no hay datos históricos aún
+
+
+## FASE 34 - Preparación para Despliegue en Producción
+
+- [x] Verificar todas las variables de entorno necesarias para producción
+- [x] Confirmar configuración de Upstash Redis (región eu-west-1)
+- [x] Verificar configuración de Vercel (regiones europeas)
+- [x] Revisar configuración de base de datos TiDB
+- [x] Verificar configuración de Clerk para autenticación
+- [x] Revisar configuración de Stripe para pagos
+- [x] Crear checklist de validación post-despliegue
+- [x] Documentar proceso de despliegue paso a paso (DEPLOYMENT-GUIDE.md)
+- [x] Crear guía de troubleshooting para producción
+- [x] Verificar que no hay secretos hardcodeados en el código
+
+## FASE 35 - Controles de Rango Temporal en Gráficos
+
+- [x] Agregar selector de rango temporal en CacheMonitor (última hora, 6h, 24h, 7 días)
+- [x] Modificar query de getMetricsHistory para aceptar parámetro de horas
+- [x] Actualizar gráficos para usar rango seleccionado
+- [x] Agregar indicador visual del rango activo (botones con variant="default" cuando activo)
+- [x] Estado timeRange en componente con useState
+- [x] 4 botones: 1h, 6h, 24h, 7d con estilos diferenciados
+
+## FASE 36 - Exportación de Métricas del Dashboard
+
+- [x] Crear función de exportación a CSV en server/services/metrics-export.service.ts
+- [x] Crear función de exportación a PDF (HTML) en server/services/metrics-export.service.ts
+- [x] Agregar endpoint tRPC exportMetricsCSV en system.router.ts
+- [x] Agregar endpoint tRPC exportMetricsPDF en system.router.ts
+- [x] Implementar botones de exportación en CacheMonitor.tsx (header)
+- [x] Usar rango temporal actual (timeRange) para exportación
+- [x] CSV incluye: resumen general, métricas de rendimiento, historial de snapshots
+- [x] PDF incluye: header con branding, resumen del período, métricas actuales, tabla de historial
+- [x] PDF con estilos profesionales y colores de marca
+- [x] Descarga automática de CSV, PDF abre en nueva ventana con diálogo de impresión

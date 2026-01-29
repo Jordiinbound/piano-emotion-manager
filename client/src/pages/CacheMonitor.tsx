@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import { RefreshCw, Trash2, Database, Server, Clock, Activity, Wifi, WifiOff, TrendingUp, BarChart3 } from 'lucide-react';
+import { RefreshCw, Trash2, Database, Server, Clock, Activity, Wifi, WifiOff, TrendingUp, BarChart3, Download, FileText } from 'lucide-react';
 import { toast } from 'sonner';
 import { useServiceWorker } from '@/hooks/useServiceWorker';
 import { LineChart, Line, AreaChart, Area, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
@@ -17,6 +17,7 @@ export default function CacheMonitor() {
   const { data: currentUser, isLoading: isLoadingUser } = trpc.auth.me.useQuery();
   const [pattern, setPattern] = useState('');
   const [autoRefresh, setAutoRefresh] = useState(false);
+  const [timeRange, setTimeRange] = useState<1 | 6 | 24 | 168>(24); // 1h, 6h, 24h, 7d
   const serviceWorker = useServiceWorker();
   
   // Nota: Esta página es solo para el gestor principal del sistema
@@ -27,7 +28,7 @@ export default function CacheMonitor() {
   });
   
   const { data: systemInfo } = trpc.systemMonitor.getSystemInfo.useQuery();
-  const { data: metricsHistory } = trpc.systemMonitor.getMetricsHistory.useQuery({ hours: 24 });
+  const { data: metricsHistory } = trpc.systemMonitor.getMetricsHistory.useQuery({ hours: timeRange });
   
   const clearCacheMutation = trpc.systemMonitor.clearCache.useMutation({
     onSuccess: (data) => {
@@ -177,6 +178,55 @@ export default function CacheMonitor() {
           >
             <RefreshCw className={`h-4 w-4 mr-2 ${isLoading ? 'animate-spin' : ''}`} />
             Actualizar
+          </Button>
+          
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={async () => {
+              try {
+                const result = await trpc.systemMonitor.exportMetricsCSV.query({ hours: timeRange });
+                const blob = new Blob([result.data], { type: 'text/csv' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = result.filename;
+                a.click();
+                URL.revokeObjectURL(url);
+                toast.success('Métricas exportadas a CSV');
+              } catch (error) {
+                toast.error('Error al exportar métricas');
+              }
+            }}
+          >
+            <Download className="h-4 w-4 mr-2" />
+            Exportar CSV
+          </Button>
+          
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={async () => {
+              try {
+                const result = await trpc.systemMonitor.exportMetricsPDF.query({ hours: timeRange });
+                const blob = new Blob([result.data], { type: 'text/html' });
+                const url = URL.createObjectURL(blob);
+                const newWindow = window.open(url, '_blank');
+                if (newWindow) {
+                  newWindow.onload = () => {
+                    setTimeout(() => {
+                      newWindow.print();
+                    }, 500);
+                  };
+                }
+                toast.success('Reporte PDF abierto en nueva ventana');
+              } catch (error) {
+                toast.error('Error al generar PDF');
+              }
+            }}
+          >
+            <FileText className="h-4 w-4 mr-2" />
+            Exportar PDF
           </Button>
         </div>
       </div>
@@ -456,13 +506,47 @@ export default function CacheMonitor() {
       {/* Gráficos de Evolución Temporal */}
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <TrendingUp className="h-5 w-5" />
-            Evolución Temporal de Métricas
-          </CardTitle>
-          <CardDescription>
-            Historial de snapshots horarios (últimas 24 horas)
-          </CardDescription>
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle className="flex items-center gap-2">
+                <TrendingUp className="h-5 w-5" />
+                Evolución Temporal de Métricas
+              </CardTitle>
+              <CardDescription>
+                Historial de snapshots horarios
+              </CardDescription>
+            </div>
+            <div className="flex gap-2">
+              <Button
+                variant={timeRange === 1 ? "default" : "outline"}
+                size="sm"
+                onClick={() => setTimeRange(1)}
+              >
+                1h
+              </Button>
+              <Button
+                variant={timeRange === 6 ? "default" : "outline"}
+                size="sm"
+                onClick={() => setTimeRange(6)}
+              >
+                6h
+              </Button>
+              <Button
+                variant={timeRange === 24 ? "default" : "outline"}
+                size="sm"
+                onClick={() => setTimeRange(24)}
+              >
+                24h
+              </Button>
+              <Button
+                variant={timeRange === 168 ? "default" : "outline"}
+                size="sm"
+                onClick={() => setTimeRange(168)}
+              >
+                7d
+              </Button>
+            </div>
+          </div>
         </CardHeader>
         <CardContent className="space-y-6">
           {metricsHistory && metricsHistory.history.length > 0 ? (
