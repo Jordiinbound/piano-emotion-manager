@@ -72,6 +72,30 @@
     }
   },
   "clients": {
+    "client": "cliente",
+    "clients_plural": "clientes",
+    "loading": "Cargando clientes...",
+    "actions": {
+      "import": "Importar",
+      "export": "Exportar",
+      "addFirst": "Añadir primer cliente"
+    },
+    "stats": {
+      "total": "Total",
+      "active": "Activos",
+      "vip": "VIP",
+      "withPianos": "Con Pianos"
+    },
+    "filters": {
+      "all": "Todos",
+      "allMale": "Todos",
+      "region": "Comunidad",
+      "city": "Ciudad",
+      "routeGroup": "Grupo de Ruta"
+    },
+    "search": {
+      "placeholder": "Buscar por nombre, email, teléfono o dirección..."
+    },
     "addFirstClient": "Añade tu primer cliente",
     "address": "Dirección",
     "appointments": "Citas",
