@@ -2001,3 +2001,7 @@
 - [ ] Verificar sistema de alertas de caché en producción
 - [ ] Configurar dominio personalizado www.pianoemotion.com
 - [ ] Documentar resultados de validación completa con métricas
+
+## BUGS CRÍTICOS ACTUALES (Prioridad Alta)
+- [ ] Arreglar bucle de recarga infinito cada 3 segundos en producción
+- [ ] Ajustar ancho del contenido (actualmente muy estrecho, no usa toda la pantalla)

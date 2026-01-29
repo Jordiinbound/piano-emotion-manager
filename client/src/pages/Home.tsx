@@ -108,7 +108,11 @@ export default function Home() {
   const { data: metrics, isLoading: loadingMetrics, isError: metricsError } = trpc.dashboard.getMetrics.useQuery(dateRange);
   const { data: alertsData } = trpc.alerts.getAll.useQuery({ limit: 15 });
   const { data: appointmentsData } = trpc.appointments.getUpcoming.useQuery({ limit: 5 });
-  const { data: predictionsData, isLoading: loadingPredictions } = trpc.aiPredictions.getDashboardPredictions.useQuery();
+  // Predicciones usando el router forecasts
+  const { data: revenueData } = trpc.forecasts.predictRevenue.useQuery();
+  const { data: churnData } = trpc.forecasts.predictChurn.useQuery();
+  const { data: maintenanceData } = trpc.forecasts.predictMaintenance.useQuery();
+  const loadingPredictions = false;
 
   // Navegación de mes
   const navigatePreviousMonth = useCallback(() => {
@@ -133,9 +137,9 @@ export default function Home() {
 
   // Predicciones IA
   const aiPredictions = {
-    revenueGrowth: predictionsData?.revenue?.predicted || "N/A",
-    clientsAtRisk: predictionsData?.churn?.atRisk || 0,
-    pianosNeedingMaintenance: predictionsData?.maintenance?.needed || 0,
+    revenueGrowth: revenueData?.predictions?.[0]?.predicted ? `${Math.round(revenueData.predictions[0].predicted)}€` : "N/A",
+    clientsAtRisk: churnData?.atRisk || 0,
+    pianosNeedingMaintenance: maintenanceData?.predictions?.length || 0,
   };
 
   // Próximas citas
