@@ -6,6 +6,7 @@
 
 import { Redis } from '@upstash/redis';
 import { monitoring } from './monitoring.js';
+import { saveMetricsSnapshot } from './metricsHistory.js';
 
 /**
  * Servicio de caché distribuido usando Upstash Redis
@@ -293,6 +294,27 @@ class CacheService {
    * Obtener estadísticas del caché
    */
   getStats() {
+    // Guardar snapshot de métricas cada hora
+    const stats = this.buildStats();
+    saveMetricsSnapshot({
+      hits: this.metrics.hits,
+      misses: this.metrics.misses,
+      hitRate: stats.metrics.hitRate,
+      avgLatency: stats.metrics.avgLatency,
+      totalOperations: stats.metrics.operationCount,
+      sets: this.metrics.sets,
+      deletes: this.metrics.deletes,
+      memoryCacheSize: this.memoryCache.size,
+      mode: this.useMemoryFallback ? 'memory' : 'redis',
+      isConnected: this.isConnected,
+    });
+    return stats;
+  }
+
+  /**
+   * Construir estadísticas del caché
+   */
+  private buildStats() {
     const uptime = Date.now() - this.metrics.startTime;
     const avgLatency = this.metrics.operationCount > 0 
       ? this.metrics.totalLatency / this.metrics.operationCount 

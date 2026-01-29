@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { trpc } from '@/lib/trpc';
+import { useLocation } from 'wouter';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -12,6 +13,8 @@ import { useServiceWorker } from '@/hooks/useServiceWorker';
 import { LineChart, Line, AreaChart, Area, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
 export default function CacheMonitor() {
+  // Verificar autenticación y rol de owner
+  const { data: currentUser, isLoading: isLoadingUser } = trpc.auth.me.useQuery();
   const [pattern, setPattern] = useState('');
   const [autoRefresh, setAutoRefresh] = useState(false);
   const serviceWorker = useServiceWorker();
@@ -89,6 +92,54 @@ export default function CacheMonitor() {
     return `${minutes}m`;
   };
   
+  const [, setLocation] = useLocation();
+
+  // Redirigir si no está autenticado
+  useEffect(() => {
+    if (!isLoadingUser && !currentUser) {
+      setLocation('/');
+    }
+  }, [isLoadingUser, currentUser, setLocation]);
+
+  // Verificar autenticación
+  if (isLoadingUser) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Verificando acceso...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Verificar que esté autenticado
+  if (!currentUser) {
+    return null;
+  }
+
+  // Verificar que sea owner (usando OWNER_OPEN_ID de variables de entorno)
+  const OWNER_OPEN_ID = import.meta.env.VITE_OWNER_OPEN_ID || "";
+  if (currentUser.openId !== OWNER_OPEN_ID) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <Card className="max-w-md">
+          <CardHeader>
+            <CardTitle className="text-destructive">Acceso Denegado</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-muted-foreground mb-4">
+              Esta página solo está disponible para el gestor principal del sistema.
+            </p>
+            <Button onClick={() => window.location.href = "/"} className="w-full">
+              Volver al Inicio
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
   const formatBytes = (bytes: number) => {
     if (bytes === 0) return '0 B';
     const k = 1024;

@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { publicProcedure, router } from '../_core/trpc';
 import { getCacheStats, deleteCache, cacheService, resetCacheMetrics } from '../cache';
+import { getMetricsHistory, getRecentMetricsHistory, getMetricsHistoryStats, clearMetricsHistory } from '../metricsHistory';
 
 /**
  * Router de Sistema
@@ -81,6 +82,34 @@ export const systemRouter = router({
         pattern,
       };
     }),
+
+  /**
+   * Obtener historial de métricas del caché
+   */
+  getMetricsHistory: publicProcedure
+    .input(z.object({
+      hours: z.number().optional().default(24),
+    }))
+    .query(async ({ input }) => {
+      const history = input.hours ? getRecentMetricsHistory(input.hours) : getMetricsHistory();
+      const stats = getMetricsHistoryStats();
+      return {
+        history,
+        stats,
+      };
+    }),
+
+  /**
+   * Limpiar historial de métricas
+   */
+  clearMetricsHistory: publicProcedure.mutation(async () => {
+    clearMetricsHistory();
+    return { 
+      success: true, 
+      message: 'Historial de métricas limpiado correctamente',
+      timestamp: new Date().toISOString(),
+    };
+  }),
 
   /**
    * Resetear métricas de rendimiento del caché

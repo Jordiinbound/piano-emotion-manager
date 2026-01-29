@@ -309,7 +309,17 @@ export const clients = mysqlTable("clients", {
 	routeGroup: varchar({ length: 50 }),
 	partnerId: int().default(1).notNull(),
 	organizationId: int(), // Columna existe en BD como 'organizationId' (camelCase)
-});
+},
+(table) => [
+	index('idx_clients_name').on(table.name),
+	index('idx_clients_email').on(table.email),
+	index('idx_clients_phone').on(table.phone),
+	index('idx_clients_partner').on(table.partnerId),
+	index('idx_clients_organization').on(table.organizationId),
+	index('idx_clients_created').on(table.createdAt),
+	index('idx_clients_city').on(table.city),
+	index('idx_clients_type').on(table.clientType),
+]);
 
 export const distributorModuleConfig = mysqlTable("distributor_module_config", {
 	id: int().autoincrement().notNull(),
@@ -826,7 +836,17 @@ export const pianos = mysqlTable("pianos", {
 	regulationIntervalDays: int().default(730),
 	alertsEnabled: tinyint().default(1),
 	customThresholdsEnabled: tinyint().default(0),
-});
+},
+(table) => [
+	index('idx_pianos_client').on(table.clientId),
+	index('idx_pianos_brand').on(table.brand),
+	index('idx_pianos_serial').on(table.serialNumber),
+	index('idx_pianos_partner').on(table.partnerId),
+	index('idx_pianos_organization').on(table.organizationId),
+	index('idx_pianos_created').on(table.createdAt),
+	index('idx_pianos_category').on(table.category),
+	index('idx_pianos_condition').on(table.condition),
+]);
 
 export const platformAdmins = mysqlTable("platform_admins", {
 	id: int().autoincrement().notNull(),
@@ -971,6 +991,11 @@ export const services = mysqlTable("services", {
 	index("services_partner_idx").on(table.partnerId),
 	index("services_client_idx").on(table.clientId),
 	index("services_piano_idx").on(table.pianoId),
+	index('idx_services_type').on(table.serviceType),
+	index('idx_services_date').on(table.date),
+	index('idx_services_status').on(table.status),
+	index('idx_services_organization').on(table.organizationId),
+	index('idx_services_created').on(table.createdAt),
 ]);
 
 export const subscriptionPlans = mysqlTable("subscription_plans", {
@@ -2005,4 +2030,5 @@ export const notifications = mysqlTable('notifications', {
 
 export type Notification = typeof notifications.$inferSelect;
 export type InsertNotification = typeof notifications.$inferInsert;
+
 

@@ -1,0 +1,9 @@
+{
+  "query": "\nCREATE INDEX IF NOT EXISTS idx_services_type ON services(serviceType);\nCREATE INDEX IF NOT EXISTS idx_services_date ON services(date);\nCREATE INDEX IF NOT EXISTS idx_services_status ON services(status);\nCREATE INDEX IF NOT EXISTS idx_services_organization ON services(organizationId);\nCREATE INDEX IF NOT EXISTS idx_services_created ON services(createdAt);\n",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2ghn282qNtTBYRw.2c60fb684332 --database U7erxBowPGSR3wjYQtQi9z --execute \nCREATE INDEX IF NOT EXISTS idx_services_type ON services(serviceType);\nCREATE INDEX IF NOT EXISTS idx_services_date ON services(date);\nCREATE INDEX IF NOT EXISTS idx_services_status ON services(status);\nCREATE INDEX IF NOT EXISTS idx_services_organization ON services(organizationId);\nCREATE INDEX IF NOT EXISTS idx_services_created ON services(createdAt);\n",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 2493
+}

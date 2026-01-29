@@ -1,0 +1,9 @@
+{
+  "query": "\nCREATE INDEX IF NOT EXISTS idx_clients_name ON clients(name);\nCREATE INDEX IF NOT EXISTS idx_clients_email ON clients(email);\nCREATE INDEX IF NOT EXISTS idx_clients_phone ON clients(phone);\nCREATE INDEX IF NOT EXISTS idx_clients_partner ON clients(partnerId);\nCREATE INDEX IF NOT EXISTS idx_clients_organization ON clients(organizationId);\nCREATE INDEX IF NOT EXISTS idx_clients_created ON clients(createdAt);\nCREATE INDEX IF NOT EXISTS idx_clients_city ON clients(city);\nCREATE INDEX IF NOT EXISTS idx_clients_type ON clients(clientType);\n",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2ghn282qNtTBYRw.2c60fb684332 --database U7erxBowPGSR3wjYQtQi9z --execute \nCREATE INDEX IF NOT EXISTS idx_clients_name ON clients(name);\nCREATE INDEX IF NOT EXISTS idx_clients_email ON clients(email);\nCREATE INDEX IF NOT EXISTS idx_clients_phone ON clients(phone);\nCREATE INDEX IF NOT EXISTS idx_clients_partner ON clients(partnerId);\nCREATE INDEX IF NOT EXISTS idx_clients_organization ON clients(organizationId);\nCREATE INDEX IF NOT EXISTS idx_clients_created ON clients(createdAt);\nCREATE INDEX IF NOT EXISTS idx_clients_city ON clients(city);\nCREATE INDEX IF NOT EXISTS idx_clients_type ON clients(clientType);\n",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 5503
+}

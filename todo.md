@@ -1884,3 +1884,33 @@
 - [x] Crear gráfico de operaciones por tipo (gets, sets, deletes)
 - [x] Integrar gráficos en CacheMonitor.tsx
 - [x] Agregar control de acceso solo para owner (nota en código)
+
+## FASE 28 - Autenticación Real en Monitor de Caché
+
+- [x] Buscar sistema de autenticación existente en el proyecto (trpc.auth.me)
+- [x] Implementar verificación de rol owner en CacheMonitor.tsx
+- [x] Agregar redirección a login si no está autenticado
+- [x] Mostrar mensaje de acceso denegado si no es owner
+- [x] Usar OWNER_OPEN_ID de variables de entorno para verificar owner
+
+## FASE 29 - Tracking Histórico de Métricas
+
+- [x] Crear sistema de tracking en memoria (metricsHistory.ts)
+- [x] Implementar función saveMetricsSnapshot() que guarde snapshots cada hora
+- [x] Crear funciones getMetricsHistory() y getRecentMetricsHistory(hours)
+- [x] Integrar tracking en getCacheStats() para guardar snapshots automáticamente
+- [x] Crear endpoints tRPC (getMetricsHistory, clearMetricsHistory)
+- [x] Sistema guarda últimos 168 snapshots (7 días de historial horario)
+
+## FASE 30 - Optimización de Queries con Índices
+
+- [x] Analizar queries más frecuentes en routers de clientes, pianos y servicios
+- [x] Agregar índices en tabla clients (8 índices: name, email, phone, partner, organization, created, city, type)
+- [x] Agregar índices en tabla pianos (8 índices: client, brand, serial, partner, organization, created, category, condition)
+- [x] Agregar índices en tabla services (5 índices adicionales: type, date, status, organization, created)
+- [x] Ejecutar migración SQL directa para crear índices (evitando proceso interactivo)
+- [x] Verificar que los índices se crearon correctamente (todos ejecutados exitosamente)
+- [ ] Agregar índice en columna serviceType de tabla services
+- [ ] Agregar índice en columna date de tabla services
+- [ ] Aplicar migración de índices con db:push
+- [ ] Medir mejora de rendimiento antes/después
