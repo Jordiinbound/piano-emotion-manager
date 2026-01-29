@@ -198,15 +198,16 @@ export async function sendApprovalEmail(params: {
  * Esta función debe ser llamada periódicamente (ej: cada hora)
  */
 export async function checkPendingApprovalsAndNotify() {
-  const db = await getDb();
-  
-  // Calcular timestamp de hace 24 horas
-  const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
-  
-  console.log('[Email] Verificando aprobaciones pendientes...');
-  
-  // Buscar workflows pendientes de aprobación por más de 24 horas
-  const pendingApprovals = await db.select({
+  try {
+    const db = await getDb();
+    
+    // Calcular timestamp de hace 24 horas
+    const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+    
+    console.log('[Email] Verificando aprobaciones pendientes...');
+    
+    // Buscar workflows pendientes de aprobación por más de 24 horas
+    const pendingApprovals = await db.select({
     executionId: workflowExecutions.id,
     workflowId: workflowExecutions.workflowId,
     workflowName: workflows.name,
@@ -228,7 +229,22 @@ export async function checkPendingApprovalsAndNotify() {
   let emailsSent = 0;
   let emailsFailed = 0;
 
+  // Validar que pendingApprovals sea un array
+  if (!Array.isArray(pendingApprovals)) {
+    console.error('[Email] pendingApprovals no es un array:', typeof pendingApprovals);
+    return {
+      total: 0,
+      sent: 0,
+      failed: 0,
+    };
+  }
+
   for (const approval of pendingApprovals) {
+    // Validar que approval sea un objeto válido
+    if (!approval || typeof approval !== 'object') {
+      console.error('[Email] Aprobación inválida:', approval);
+      continue;
+    }
     if (!approval.userId || !approval.workflowName) continue;
 
     // Verificar si ya se envió email para esta ejecución
@@ -246,13 +262,16 @@ export async function checkPendingApprovalsAndNotify() {
     // Si ya existe una notificación, verificar si ya se envió email
     if (existingNotification && existingNotification.data) {
       try {
-        const notifData = JSON.parse(existingNotification.data as string);
-        if (notifData.emailSent) {
+        const dataStr = typeof existingNotification.data === 'string' 
+          ? existingNotification.data 
+          : JSON.stringify(existingNotification.data);
+        const notifData = JSON.parse(dataStr);
+        if (notifData && notifData.emailSent) {
           console.log(`[Email] Ya se envió email para ejecución ${approval.executionId}`);
           continue;
         }
       } catch (e) {
-        // Ignorar errores de parsing
+        console.error('[Email] Error parsing notification data:', e);
       }
     }
 
@@ -281,7 +300,17 @@ export async function checkPendingApprovalsAndNotify() {
       
       // Actualizar notificación para marcar que se envió email
       if (existingNotification) {
-        const currentData = existingNotification.data ? JSON.parse(existingNotification.data as string) : {};
+        let currentData = {};
+        try {
+          if (existingNotification.data) {
+            const dataStr = typeof existingNotification.data === 'string'
+              ? existingNotification.data
+              : JSON.stringify(existingNotification.data);
+            currentData = JSON.parse(dataStr) || {};
+          }
+        } catch (e) {
+          console.error('[Email] Error parsing existing notification data:', e);
+        }
         await db.update(notifications)
           .set({
             data: JSON.stringify({
@@ -297,11 +326,20 @@ export async function checkPendingApprovalsAndNotify() {
     }
   }
 
-  console.log(`[Email] Resumen: ${emailsSent} enviados, ${emailsFailed} fallidos`);
-  
-  return {
-    total: pendingApprovals.length,
-    sent: emailsSent,
-    failed: emailsFailed,
-  };
+    console.log(`[Email] Resumen: ${emailsSent} enviados, ${emailsFailed} fallidos`);
+    
+    return {
+      total: pendingApprovals.length,
+      sent: emailsSent,
+      failed: emailsFailed,
+    };
+  } catch (error) {
+    console.error('[Email] Error en checkPendingApprovalsAndNotify:', error);
+    return {
+      total: 0,
+      sent: 0,
+      failed: 0,
+      error: error instanceof Error ? error.message : 'Unknown error',
+    };
+  }
 }
