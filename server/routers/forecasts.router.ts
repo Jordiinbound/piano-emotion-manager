@@ -8,6 +8,7 @@ import { publicProcedure, protectedProcedure, router } from '../_core/trpc';
 import { getDb } from '../db';
 import { services, clients, pianos, invoices, inventory } from '../../drizzle/schema';
 import { gte, lte, sql, and, eq } from 'drizzle-orm';
+import { withCache } from '../cache';
 
 export const forecastsRouter = router({
   /**
@@ -15,7 +16,8 @@ export const forecastsRouter = router({
    * Basado en tendencias históricas y estacionalidad
    */
   predictRevenue: protectedProcedure.query(async () => {
-    const db = await getDb();
+    return withCache('forecasts:revenue', async () => {
+      const db = await getDb();
     
     // Obtener ingresos de los últimos 12 meses
     const twelveMonthsAgo = new Date();
@@ -81,6 +83,7 @@ export const forecastsRouter = router({
       avgMonthlyRevenue: Math.round(avgRevenue * 100) / 100,
       growthRate: Math.round(growthRate * 10) / 10,
     };
+    }); // Cierre de withCache
   }),
 
   /**
@@ -88,7 +91,8 @@ export const forecastsRouter = router({
    * Identifica clientes en riesgo de abandono
    */
   predictChurn: protectedProcedure.query(async () => {
-    const db = await getDb();
+    return withCache('forecasts:churn', async () => {
+      const db = await getDb();
     
     // Obtener clientes con sus últimos servicios
     const threeMonthsAgo = new Date();
@@ -153,6 +157,7 @@ export const forecastsRouter = router({
       totalClients: totalClients[0].count,
       churnRate: Math.round(churnRate * 10) / 10,
     };
+    }); // Cierre de withCache
   }),
 
   /**
@@ -160,7 +165,8 @@ export const forecastsRouter = router({
    * Identifica pianos que requieren mantenimiento próximamente
    */
   predictMaintenance: protectedProcedure.query(async () => {
-    const db = await getDb();
+    return withCache('forecasts:maintenance', async () => {
+      const db = await getDb();
     
     // Obtener pianos con sus últimos servicios
     const pianosWithServices = await db
@@ -228,6 +234,7 @@ export const forecastsRouter = router({
       highUrgency: maintenancePredictions.filter(p => p.urgency === 'high').length,
       mediumUrgency: maintenancePredictions.filter(p => p.urgency === 'medium').length,
     };
+    }); // Cierre de withCache
   }),
 
   /**
@@ -235,7 +242,8 @@ export const forecastsRouter = router({
    * Estima la carga de trabajo para las próximas semanas
    */
   predictWorkload: protectedProcedure.query(async () => {
-    const db = await getDb();
+    return withCache('forecasts:workload', async () => {
+      const db = await getDb();
     
     // Obtener servicios de las últimas 8 semanas
     const eightWeeksAgo = new Date();
@@ -293,6 +301,7 @@ export const forecastsRouter = router({
       predictions,
       avgWeeklyServices: Math.round(avgWeeklyServices * 10) / 10,
     };
+    }); // Cierre de withCache
   }),
 
   /**
@@ -300,7 +309,8 @@ export const forecastsRouter = router({
    * Identifica productos con stock bajo y estima necesidades de reposición
    */
   predictInventory: protectedProcedure.query(async () => {
-    const db = await getDb();
+    return withCache('forecasts:inventory', async () => {
+      const db = await getDb();
     
     // Obtener inventario actual
     const inventoryItems = await db
@@ -366,5 +376,6 @@ export const forecastsRouter = router({
       lowItems: predictions.filter(p => p.status === 'low').length,
       avgMonthlyServices: Math.round(avgMonthlyServices * 10) / 10,
     };
+    }); // Cierre de withCache
   }),
 });

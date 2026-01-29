@@ -1757,3 +1757,10 @@
 - [x] Asegurar que los 5 widgets de previsiones estén visibles en el dashboard
 - [x] Agregar enlaces desde los widgets a la página de Previsiones completa
 - [x] Testing de todos los widgets de previsiones
+
+## FASE 16 - Optimización de Consultas de Previsiones con Caché
+- [x] Implementar sistema de caché en memoria para previsiones
+- [x] Configurar TTL (Time To Live) de 5 minutos para datos de previsiones
+- [x] Actualizar router de forecasts para usar caché
+- [x] Agregar invalidación de caché cuando se crean/actualizan datos relevantes
+- [x] Testing de rendimiento antes y después de la optimización
