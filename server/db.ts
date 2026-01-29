@@ -1,5 +1,6 @@
 import { eq } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
+import mysql from 'mysql2/promise';
 import { InsertUser, users } from "../drizzle/schema";
 import * as schema from "../drizzle/schema";
 import { ENV } from './_core/env';
@@ -10,16 +11,33 @@ let _db: ReturnType<typeof drizzle> | null = null;
 export async function getDb() {
   if (!_db) {
     try {
-      // Usar DATABASE_URL del entorno
       const connectionUrl = process.env.DATABASE_URL;
       
-      if (connectionUrl) {
-        _db = drizzle(connectionUrl, { schema, mode: 'default' });
-        console.log('[Database] Connected to TiDB production database');
+      if (!connectionUrl) {
+        throw new Error('DATABASE_URL environment variable is not set');
       }
+      
+      // Parse URL to extract connection details
+      const url = new URL(connectionUrl);
+      const poolConnection = mysql.createPool({
+        host: url.hostname,
+        port: parseInt(url.port) || 4000,
+        user: url.username,
+        password: url.password,
+        database: url.pathname.slice(1),
+        ssl: {
+          rejectUnauthorized: true
+        },
+        waitForConnections: true,
+        connectionLimit: 10,
+        queueLimit: 0
+      });
+      
+      _db = drizzle(poolConnection, { schema, mode: 'default' });
+      console.log('[Database] Connected to TiDB production database');
     } catch (error) {
-      console.warn("[Database] Failed to connect:", error);
-      _db = null;
+      console.error("[Database] Failed to connect:", error);
+      throw error;
     }
   }
   return _db;
