@@ -2005,3 +2005,8 @@
 ## BUGS CRÍTICOS ACTUALES (Prioridad Alta)
 - [ ] Arreglar bucle de recarga infinito cada 3 segundos en producción
 - [ ] Ajustar ancho del contenido (actualmente muy estrecho, no usa toda la pantalla)
+
+## PROBLEMAS ACTUALES (Reportados por usuario)
+- [ ] Bucle de recarga cada 2 segundos en producción (Railway)
+- [ ] Contenido estrecho - no usa todo el ancho de pantalla
+- [ ] Datos del dashboard incorrectos - números no coinciden con base de datos

@@ -7,7 +7,6 @@
  */
 
 import { useState, useEffect, useCallback } from 'react';
-import { trpc } from '@/lib/trpc';
 
 export type SupportedLanguage = 'es' | 'en' | 'fr' | 'de' | 'it' | 'pt' | 'da' | 'no' | 'sv';
 
@@ -85,38 +84,21 @@ function getBrowserLanguage(): SupportedLanguage {
 
 /**
  * Hook for internationalization with lazy loading and language persistence
+ * FIXED: Removed tRPC dependency to prevent infinite reload loops
  */
 export function useI18n() {
   const [currentLanguage, setCurrentLanguage] = useState<SupportedLanguage>(defaultLanguage);
   const [translations, setTranslations] = useState<Record<string, string>>({});
   const [isLoading, setIsLoading] = useState(true);
 
-  const { data: userLanguageData } = trpc.language.getUserLanguage.useQuery(undefined, {
-    enabled: false, // Solo cargar manualmente
-  });
-
-  const updateLanguageMutation = trpc.language.updateLanguage.useMutation();
-
-  // Load saved language on mount
+  // Load saved language on mount - FIXED: Removed dependency on external data
   useEffect(() => {
-    loadSavedLanguage();
-  }, []);
+    const loadSavedLanguage = async () => {
+      try {
+        // Priority: Local Storage > Browser > Default
+        let selectedLanguage = defaultLanguage;
 
-  // Load translations when language changes
-  useEffect(() => {
-    loadLanguageTranslations(currentLanguage);
-  }, [currentLanguage]);
-
-  const loadSavedLanguage = async () => {
-    try {
-      // Priority: Backend > Local Storage > Browser > Default
-      let selectedLanguage = defaultLanguage;
-
-      // Try backend first (if authenticated)
-      if (userLanguageData?.language) {
-        selectedLanguage = userLanguageData.language as SupportedLanguage;
-      } else {
-        // Try localStorage
+        // Try localStorage first
         const savedLanguage = localStorage.getItem(LANGUAGE_STORAGE_KEY);
         if (savedLanguage && supportedLanguages.some(lang => lang.code === savedLanguage)) {
           selectedLanguage = savedLanguage as SupportedLanguage;
@@ -124,44 +106,43 @@ export function useI18n() {
           // Use browser language
           selectedLanguage = getBrowserLanguage();
         }
+
+        setCurrentLanguage(selectedLanguage);
+      } catch (error) {
+        console.error('[i18n] Error loading language:', error);
+        setCurrentLanguage(getBrowserLanguage());
       }
+    };
 
-      setCurrentLanguage(selectedLanguage);
-    } catch (error) {
-      console.error('[i18n] Error loading language:', error);
-      setCurrentLanguage(getBrowserLanguage());
-    }
-  };
+    loadSavedLanguage();
+  }, []); // Empty dependency array - runs only once on mount
 
-  const loadLanguageTranslations = async (language: SupportedLanguage) => {
-    try {
-      setIsLoading(true);
-      const loadedTranslations = await loadTranslations(language);
-      setTranslations(loadedTranslations);
-    } catch (error) {
-      console.error('[i18n] Error loading translations:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  // Load translations when language changes
+  useEffect(() => {
+    const loadLanguageTranslations = async () => {
+      try {
+        setIsLoading(true);
+        const loadedTranslations = await loadTranslations(currentLanguage);
+        setTranslations(loadedTranslations);
+      } catch (error) {
+        console.error('[i18n] Error loading translations:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadLanguageTranslations();
+  }, [currentLanguage]); // Only re-run when language actually changes
 
   const changeLanguage = useCallback(async (language: SupportedLanguage) => {
     try {
-      // Save locally first for immediate UI update
+      // Save locally for immediate UI update
       localStorage.setItem(LANGUAGE_STORAGE_KEY, language);
       setCurrentLanguage(language);
-
-      // Try to save to backend (if authenticated)
-      try {
-        await updateLanguageMutation.mutateAsync({ language });
-      } catch (backendError) {
-        // User not authenticated or backend error - local storage is enough
-        console.log('[i18n] Could not save language to backend:', backendError);
-      }
     } catch (error) {
       console.error('[i18n] Error changing language:', error);
     }
-  }, [updateLanguageMutation]);
+  }, []);
 
   /**
    * Translate function with interpolation support
@@ -200,9 +181,6 @@ export function useI18n() {
   };
 }
 
-/**
- * Interpolate variables in translation string
- */
 /**
  * Flatten nested translations object to dot notation
  */
