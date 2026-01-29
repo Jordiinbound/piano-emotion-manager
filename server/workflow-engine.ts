@@ -811,6 +811,268 @@ export async function triggerWorkflows(triggerType: string, data: any) {
   return results;
 }
 
+/**
+ * Ejecuta un workflow en modo testing con datos de ejemplo
+ * No crea registros reales en la base de datos
+ */
+export async function testWorkflow(workflowId: number, testData?: any) {
+  const db = await getDb();
+  const testLogs: any[] = [];
+  
+  try {
+    // Obtener workflow
+    const workflow = await db
+      .select()
+      .from(workflows)
+      .where(eq(workflows.id, workflowId))
+      .then(rows => rows[0]);
+
+    if (!workflow) {
+      throw new Error(`Workflow ${workflowId} not found`);
+    }
+
+    // Generar datos de prueba si no se proporcionan
+    if (!testData) {
+      const { generateTestData } = await import('./workflow-test-data');
+      testData = generateTestData(workflow.triggerType);
+    }
+
+    testLogs.push({
+      timestamp: new Date().toISOString(),
+      type: 'info',
+      message: `Iniciando testing de workflow "${workflow.name}"`,
+      data: { triggerType: workflow.triggerType }
+    });
+
+    // Obtener nodos y conexiones
+    const nodes = await db
+      .select()
+      .from(workflowNodes)
+      .where(eq(workflowNodes.workflowId, workflowId));
+
+    const connections = await db
+      .select()
+      .from(workflowConnections)
+      .where(eq(workflowConnections.workflowId, workflowId));
+
+    testLogs.push({
+      timestamp: new Date().toISOString(),
+      type: 'info',
+      message: `Workflow tiene ${nodes.length} nodos y ${connections.length} conexiones`,
+      data: { nodeCount: nodes.length, connectionCount: connections.length }
+    });
+
+    // Crear contexto de ejecución en modo test
+    const context: ExecutionContext & { testMode: boolean; testLogs: any[] } = {
+      workflowId,
+      executionId: -1, // ID especial para indicar modo test
+      triggerData: testData,
+      variables: {},
+      testMode: true,
+      testLogs
+    };
+
+    // Encontrar nodo trigger
+    const triggerNode = nodes.find(n => n.nodeType === 'trigger');
+    if (!triggerNode) {
+      throw new Error('No trigger node found');
+    }
+
+    testLogs.push({
+      timestamp: new Date().toISOString(),
+      type: 'success',
+      message: 'Trigger activado con datos de prueba',
+      nodeId: triggerNode.id,
+      data: testData
+    });
+
+    // Ejecutar nodos siguientes al trigger
+    const nextConnections = connections.filter(c => c.sourceNodeId === triggerNode.id);
+    for (const conn of nextConnections) {
+      const nextNode = nodes.find(n => n.id === conn.targetNodeId);
+      if (nextNode) {
+        await executeNodeInTestMode(nextNode, nodes, connections, context);
+      }
+    }
+
+    testLogs.push({
+      timestamp: new Date().toISOString(),
+      type: 'success',
+      message: 'Testing completado exitosamente',
+      data: { totalSteps: testLogs.length }
+    });
+
+    return {
+      success: true,
+      logs: testLogs,
+      testData,
+      summary: {
+        totalNodes: nodes.length,
+        executedNodes: testLogs.filter(l => l.nodeId).length,
+        errors: testLogs.filter(l => l.type === 'error').length
+      }
+    };
+
+  } catch (error: any) {
+    testLogs.push({
+      timestamp: new Date().toISOString(),
+      type: 'error',
+      message: `Error en testing: ${error.message}`,
+      error: error.stack
+    });
+
+    return {
+      success: false,
+      logs: testLogs,
+      error: error.message
+    };
+  }
+}
+
+/**
+ * Ejecuta un nodo en modo testing (no afecta datos reales)
+ */
+async function executeNodeInTestMode(
+  node: WorkflowNode,
+  allNodes: WorkflowNode[],
+  allConnections: WorkflowConnection[],
+  context: ExecutionContext & { testMode: boolean; testLogs: any[] }
+) {
+  const { testLogs } = context;
+
+  testLogs.push({
+    timestamp: new Date().toISOString(),
+    type: 'info',
+    message: `Ejecutando nodo: ${node.nodeType}`,
+    nodeId: node.id,
+    config: node.nodeConfig
+  });
+
+  try {
+    switch (node.nodeType) {
+      case 'condition':
+        const conditionResult = await evaluateCondition(node, context);
+        testLogs.push({
+          timestamp: new Date().toISOString(),
+          type: 'success',
+          message: `Condición evaluada: ${conditionResult ? 'VERDADERO' : 'FALSO'}`,
+          nodeId: node.id,
+          data: { result: conditionResult }
+        });
+
+        const connectionType = conditionResult ? 'true' : 'false';
+        const nextConnections = allConnections.filter(
+          c => c.sourceNodeId === node.id && c.connectionType === connectionType
+        );
+
+        for (const conn of nextConnections) {
+          const nextNode = allNodes.find(n => n.id === conn.targetNodeId);
+          if (nextNode) {
+            await executeNodeInTestMode(nextNode, allNodes, allConnections, context);
+          }
+        }
+        return;
+
+      case 'delay':
+        const config = node.nodeConfig;
+        testLogs.push({
+          timestamp: new Date().toISOString(),
+          type: 'success',
+          message: `Delay simulado: ${config.duration} ${config.unit}`,
+          nodeId: node.id,
+          data: { duration: config.duration, unit: config.unit }
+        });
+        break;
+
+      case 'approval':
+        testLogs.push({
+          timestamp: new Date().toISOString(),
+          type: 'warning',
+          message: 'Nodo de aprobación detectado - En producción pausaría el workflow',
+          nodeId: node.id,
+          data: { approvers: node.nodeConfig.approvers }
+        });
+        break;
+
+      case 'send_email':
+        const { replaceVariables } = await import('./workflow-variables');
+        const emailConfig = node.nodeConfig;
+        const to = replaceVariables(emailConfig.to || '', context.triggerData);
+        const subject = replaceVariables(emailConfig.subject || '', context.triggerData);
+        
+        testLogs.push({
+          timestamp: new Date().toISOString(),
+          type: 'success',
+          message: `Email simulado enviado a ${to}`,
+          nodeId: node.id,
+          data: { to, subject, body: emailConfig.body?.substring(0, 100) + '...' }
+        });
+        break;
+
+      case 'create_task':
+        const taskConfig = node.nodeConfig;
+        testLogs.push({
+          timestamp: new Date().toISOString(),
+          type: 'success',
+          message: `Tarea simulada creada en ClickUp: ${taskConfig.taskName}`,
+          nodeId: node.id,
+          data: { taskName: taskConfig.taskName, listName: taskConfig.listName }
+        });
+        break;
+
+      case 'create_event':
+        const eventConfig = node.nodeConfig;
+        testLogs.push({
+          timestamp: new Date().toISOString(),
+          type: 'success',
+          message: `Evento simulado creado en Google Calendar: ${eventConfig.eventTitle}`,
+          nodeId: node.id,
+          data: { eventTitle: eventConfig.eventTitle, date: eventConfig.date }
+        });
+        break;
+
+      case 'webhook':
+        const webhookConfig = node.nodeConfig;
+        testLogs.push({
+          timestamp: new Date().toISOString(),
+          type: 'success',
+          message: `Webhook simulado llamado: ${webhookConfig.method} ${webhookConfig.url}`,
+          nodeId: node.id,
+          data: { method: webhookConfig.method, url: webhookConfig.url }
+        });
+        break;
+
+      case 'action':
+        testLogs.push({
+          timestamp: new Date().toISOString(),
+          type: 'success',
+          message: `Acción simulada: ${node.nodeConfig.actionType}`,
+          nodeId: node.id,
+          data: node.nodeConfig
+        });
+        break;
+    }
+
+    // Continuar con nodos siguientes
+    const nextConnections = allConnections.filter(c => c.sourceNodeId === node.id);
+    for (const conn of nextConnections) {
+      const nextNode = allNodes.find(n => n.id === conn.targetNodeId);
+      if (nextNode) {
+        await executeNodeInTestMode(nextNode, allNodes, allConnections, context);
+      }
+    }
+
+  } catch (error: any) {
+    testLogs.push({
+      timestamp: new Date().toISOString(),
+      type: 'error',
+      message: `Error ejecutando nodo: ${error.message}`,
+      nodeId: node.id,
+      error: error.stack
+    });
+  }
+}
+
 // ============================================
 // Nuevas funciones de ejecución de nodos
 // ============================================

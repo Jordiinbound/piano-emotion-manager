@@ -1725,3 +1725,15 @@
 - [ ] Agregar badge de notificaciones en header de la app
 - [ ] Probar flujo completo de triggers automáticos
 - [ ] Probar flujo completo de aprobaciones con notificaciones
+
+## FASE 13 - Sistema de Testing de Workflows
+- [x] Implementar función testWorkflow en workflow-engine.ts
+- [x] Crear generador de datos de ejemplo según tipo de trigger
+- [x] Agregar modo sandbox que no afecta datos reales
+- [x] Crear botón "Probar Workflow" en el editor de workflows
+- [x] Implementar diálogo de resultados de testing con logs detallados
+- [x] Mostrar cada paso ejecutado con timestamps y datos procesados
+- [x] Visualizar resultados de cada nodo (emails enviados, tareas creadas, etc.)
+- [x] Agregar indicadores de éxito/error por nodo
+- [x] Probar testing con workflows de diferentes tipos de triggers
+- [x] Verificar que no se crean datos reales durante testing

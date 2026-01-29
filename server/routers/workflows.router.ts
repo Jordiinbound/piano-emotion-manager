@@ -263,4 +263,18 @@ export const workflowsRouter = router({
       
       return result;
     }),
+
+  // Probar workflow con datos de ejemplo
+  test: protectedProcedure
+    .input(z.object({
+      workflowId: z.number(),
+      testData: z.any().optional()
+    }))
+    .mutation(async ({ input }) => {
+      const { testWorkflow } = await import('../workflow-engine');
+      
+      const result = await testWorkflow(input.workflowId, input.testData);
+      
+      return result;
+    }),
 });
