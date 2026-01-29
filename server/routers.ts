@@ -88,6 +88,59 @@ export const appRouter = router({
         
         return { success: true };
       }),
+    
+    // Notification preferences
+    getNotificationPreferences: publicProcedure.query(async ({ ctx }) => {
+      if (!ctx.user) {
+        throw new Error('Not authenticated');
+      }
+      
+      const db = await getDb();
+      const [user] = await db.select({
+        notificationSound: users.notificationSound,
+        notificationVibration: users.notificationVibration,
+        notificationApprovalPending: users.notificationApprovalPending,
+        notificationWorkflowCompleted: users.notificationWorkflowCompleted,
+        notificationWorkflowFailed: users.notificationWorkflowFailed,
+        notificationSystem: users.notificationSystem,
+        notificationEmailEnabled: users.notificationEmailEnabled,
+      })
+      .from(users)
+      .where(eq(users.id, ctx.user.id));
+      
+      return user;
+    }),
+    
+    updateNotificationPreferences: publicProcedure
+      .input(z.object({
+        notificationSound: z.boolean(),
+        notificationVibration: z.boolean(),
+        notificationApprovalPending: z.boolean(),
+        notificationWorkflowCompleted: z.boolean(),
+        notificationWorkflowFailed: z.boolean(),
+        notificationSystem: z.boolean(),
+        notificationEmailEnabled: z.boolean(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        if (!ctx.user) {
+          throw new Error('Not authenticated');
+        }
+        
+        const db = await getDb();
+        await db.update(users)
+          .set({
+            notificationSound: input.notificationSound ? 1 : 0,
+            notificationVibration: input.notificationVibration ? 1 : 0,
+            notificationApprovalPending: input.notificationApprovalPending ? 1 : 0,
+            notificationWorkflowCompleted: input.notificationWorkflowCompleted ? 1 : 0,
+            notificationWorkflowFailed: input.notificationWorkflowFailed ? 1 : 0,
+            notificationSystem: input.notificationSystem ? 1 : 0,
+            notificationEmailEnabled: input.notificationEmailEnabled ? 1 : 0,
+          })
+          .where(eq(users.id, ctx.user.id));
+        
+        return { success: true };
+      }),
   }),
 
   // Feature routers

@@ -1066,6 +1066,14 @@ export const users = mysqlTable("users", {
 	oauth2RefreshToken: text(),
 	oauth2TokenExpiry: timestamp(),
 	oauth2Email: varchar({ length: 320 }),
+	// Notification preferences
+	notificationSound: tinyint().default(1).notNull(),
+	notificationVibration: tinyint().default(1).notNull(),
+	notificationApprovalPending: tinyint().default(1).notNull(),
+	notificationWorkflowCompleted: tinyint().default(1).notNull(),
+	notificationWorkflowFailed: tinyint().default(1).notNull(),
+	notificationSystem: tinyint().default(1).notNull(),
+	notificationEmailEnabled: tinyint().default(1).notNull(),
 	});
 
 export type User = typeof users.$inferSelect;

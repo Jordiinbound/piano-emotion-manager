@@ -65,6 +65,13 @@ async function startServer() {
 
   server.listen(port, () => {
     console.log(`Server running on http://localhost:${port}/`);
+    
+    // Inicializar jobs programados
+    import('../jobs/index').then(({ initializeJobs }) => {
+      initializeJobs();
+    }).catch(error => {
+      console.error('[Server] Error al inicializar jobs:', error);
+    });
   });
 }
 

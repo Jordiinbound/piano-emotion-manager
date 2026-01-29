@@ -38,6 +38,7 @@ import MapaClientes from "./pages/MapaClientes";
 import Configuracion from "./pages/Configuracion";
 import ConfiguracionPerfil from "./pages/ConfiguracionPerfil";
 import CommunicationsSettings from "./pages/CommunicationsSettings";
+import NotificationSettings from "./pages/NotificationSettings";
 import SignIn from "./pages/SignIn";
 import SignUp from "./pages/SignUp";
 import PayInvoice from "./pages/PayInvoice";
@@ -490,11 +491,18 @@ function Router() {
         </ProtectedRoute>
       </Route>
       <Route path="/configuracion/comunicaciones">
-        <ProtectedRoute>
-          <Layout>
+        <Layout>
+          <ProtectedRoute>
             <CommunicationsSettings />
-          </Layout>
-        </ProtectedRoute>
+          </ProtectedRoute>
+        </Layout>
+      </Route>
+      <Route path="/configuracion/notificaciones">
+        <Layout>
+          <ProtectedRoute>
+            <NotificationSettings />
+          </ProtectedRoute>
+        </Layout>
       </Route>
       <Route path="/translation-manager">
         <ProtectedRoute>

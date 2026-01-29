@@ -30,6 +30,12 @@ export function NotificationBell() {
   const [filterType, setFilterType] = useState<NotificationType>('all');
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
+  // Query para obtener preferencias de notificaciones
+  const { data: preferences } = trpc.auth.getNotificationPreferences.useQuery(
+    undefined,
+    { enabled: !!user }
+  );
+
   // Inicializar audio
   useEffect(() => {
     audioRef.current = new Audio('/notification.mp3');
@@ -92,17 +98,21 @@ export function NotificationBell() {
     const currentCount = unreadCount?.count || 0;
     if (currentCount > prevUnreadCount && prevUnreadCount > 0) {
       // Solo reproducir si el contador aumentó (nueva notificación)
-      audioRef.current?.play().catch(() => {
-        // Ignorar errores de autoplay
-      });
       
-      // Vibrar si el dispositivo lo soporta
-      if ('vibrate' in navigator) {
+      // Reproducir sonido si está habilitado
+      if (preferences?.notificationSound) {
+        audioRef.current?.play().catch(() => {
+          // Ignorar errores de autoplay
+        });
+      }
+      
+      // Vibrar si está habilitado y el dispositivo lo soporta
+      if (preferences?.notificationVibration && 'vibrate' in navigator) {
         navigator.vibrate([200, 100, 200]); // Patrón: vibrar 200ms, pausa 100ms, vibrar 200ms
       }
     }
     setPrevUnreadCount(currentCount);
-  }, [unreadCount, prevUnreadCount]);
+  }, [unreadCount, prevUnreadCount, preferences]);
 
   const getNotificationIcon = (type: string) => {
     switch (type) {
