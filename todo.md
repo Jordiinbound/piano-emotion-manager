@@ -1737,3 +1737,15 @@
 - [x] Agregar indicadores de éxito/error por nodo
 - [x] Probar testing con workflows de diferentes tipos de triggers
 - [x] Verificar que no se crean datos reales durante testing
+
+## FASE 14 - Página de Predicciones Matemáticas
+- [x] Crear router de predicciones en el backend
+- [x] Implementar algoritmo de predicción de ingresos (tendencias históricas)
+- [x] Implementar algoritmo de predicción de churn de clientes
+- [x] Implementar algoritmo de mantenimiento preventivo de pianos
+- [x] Implementar algoritmo de predicción de carga de trabajo
+- [x] Crear página Predicciones.tsx con diseño visual
+- [x] Agregar gráficos de tendencias con Chart.js
+- [x] Implementar indicadores circulares de predicciones
+- [x] Agregar ruta /predicciones en App.tsx
+- [x] Testing de todos los algoritmos predictivos

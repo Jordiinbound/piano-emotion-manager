@@ -71,6 +71,7 @@ import WorkflowMetrics from "./pages/WorkflowMetrics";
 import WorkflowExecutionHistory from "./pages/WorkflowExecutionHistory";
 import WorkflowApprovals from "./pages/WorkflowApprovals";
 import TranslationManager from "./pages/TranslationManager";
+import Predicciones from "./pages/Predicciones";
 
 function Router() {
   return (
@@ -428,6 +429,13 @@ function Router() {
         <ProtectedRoute>
           <Layout>
             <Reportes />
+          </Layout>
+        </ProtectedRoute>
+      </Route>
+      <Route path="/predicciones">
+        <ProtectedRoute>
+          <Layout>
+            <Predicciones />
           </Layout>
         </ProtectedRoute>
       </Route>
