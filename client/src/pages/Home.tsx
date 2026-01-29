@@ -29,6 +29,13 @@ export default function Home() {
   const { data: metrics, isLoading: metricsLoading } = trpc.dashboard.getMetrics.useQuery();
   const { data: recentServices, isLoading: recentLoading } = trpc.dashboard.getRecentServices.useQuery();
   const { data: upcomingServices, isLoading: upcomingLoading } = trpc.dashboard.getUpcomingServices.useQuery();
+  
+  // Obtener previsiones
+  const { data: revenueData } = trpc.forecasts.predictRevenue.useQuery();
+  const { data: churnData } = trpc.forecasts.predictChurn.useQuery();
+  const { data: maintenanceData } = trpc.forecasts.predictMaintenance.useQuery();
+  const { data: workloadData } = trpc.forecasts.predictWorkload.useQuery();
+  const { data: inventoryData } = trpc.forecasts.predictInventory.useQuery();
 
   // Navegación de meses
   const navigatePreviousMonth = () => {
@@ -215,36 +222,63 @@ export default function Home() {
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={() => navigate('/predicciones')}
+                onClick={() => navigate('/previsiones')}
               >
                 {t('home.aiPredictions.viewAll')} →
               </Button>
             </div>
           </CardHeader>
           <CardContent>
-            <div className="flex items-center justify-around">
+            <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+              {/* Ingresos Previstos */}
               <div className="flex flex-col items-center">
                 <div className="w-20 h-20 rounded-full border-4 border-green-500 flex flex-col items-center justify-center mb-2">
                   <TrendingUp className="h-6 w-6 text-green-500" />
-                  <div className="text-sm font-bold text-green-500">N/A</div>
+                  <div className="text-xs font-bold text-green-500">
+                    {revenueData?.predictions[0]?.predicted 
+                      ? `€${Math.round(revenueData.predictions[0].predicted)}` 
+                      : 'N/A'}
+                  </div>
                 </div>
                 <div className="text-xs text-muted-foreground text-center">{t('home.aiPredictions.predictedIncome')}</div>
               </div>
 
+              {/* Clientes en Riesgo */}
               <div className="flex flex-col items-center">
                 <div className="w-20 h-20 rounded-full border-4 border-amber-500 flex flex-col items-center justify-center mb-2">
                   <HelpCircle className="h-6 w-6 text-amber-500" />
-                  <div className="text-sm font-bold text-amber-500">0</div>
+                  <div className="text-sm font-bold text-amber-500">{churnData?.totalAtRisk || 0}</div>
                 </div>
                 <div className="text-xs text-muted-foreground text-center">{t('home.aiPredictions.riskClients')}</div>
               </div>
 
+              {/* Mantenimiento Próximo */}
               <div className="flex flex-col items-center">
                 <div className="w-20 h-20 rounded-full border-4 border-purple-600 flex flex-col items-center justify-center mb-2">
                   <SettingsIcon className="h-6 w-6 text-purple-600" />
-                  <div className="text-sm font-bold text-purple-600">0</div>
+                  <div className="text-sm font-bold text-purple-600">{maintenanceData?.highUrgency || 0}</div>
                 </div>
                 <div className="text-xs text-muted-foreground text-center">{t('home.aiPredictions.upcomingMaintenance')}</div>
+              </div>
+
+              {/* Carga de Trabajo */}
+              <div className="flex flex-col items-center">
+                <div className="w-20 h-20 rounded-full border-4 border-blue-500 flex flex-col items-center justify-center mb-2">
+                  <Calendar className="h-6 w-6 text-blue-500" />
+                  <div className="text-sm font-bold text-blue-500">
+                    {workloadData?.predictions[0]?.predictedServices || 0}
+                  </div>
+                </div>
+                <div className="text-xs text-muted-foreground text-center">Servicios Semana 1</div>
+              </div>
+
+              {/* Inventario Crítico */}
+              <div className="flex flex-col items-center">
+                <div className="w-20 h-20 rounded-full border-4 border-red-500 flex flex-col items-center justify-center mb-2">
+                  <AlertCircle className="h-6 w-6 text-red-500" />
+                  <div className="text-sm font-bold text-red-500">{inventoryData?.criticalItems || 0}</div>
+                </div>
+                <div className="text-xs text-muted-foreground text-center">Items Críticos</div>
               </div>
             </div>
           </CardContent>

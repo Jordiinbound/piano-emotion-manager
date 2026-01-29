@@ -1749,3 +1749,11 @@
 - [x] Implementar indicadores circulares de predicciones
 - [x] Agregar ruta /predicciones en App.tsx
 - [x] Testing de todos los algoritmos predictivos
+
+## FASE 15 - Widgets de Previsiones en Dashboard
+- [x] Revisar dashboard actual (Home.tsx) para identificar widgets existentes
+- [x] Identificar cuáles de las 5 previsiones ya tienen widgets
+- [x] Crear widgets para previsiones faltantes
+- [x] Asegurar que los 5 widgets de previsiones estén visibles en el dashboard
+- [x] Agregar enlaces desde los widgets a la página de Previsiones completa
+- [x] Testing de todos los widgets de previsiones
