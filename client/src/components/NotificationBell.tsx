@@ -3,7 +3,7 @@
  * Piano Emotion Manager
  */
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Bell } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
@@ -21,9 +21,20 @@ import { Link } from 'wouter';
 import { formatDistanceToNow } from 'date-fns';
 import { es } from 'date-fns/locale';
 
+type NotificationType = 'all' | 'approval_pending' | 'workflow_completed' | 'workflow_failed' | 'system';
+
 export function NotificationBell() {
   const { user } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
+  const [prevUnreadCount, setPrevUnreadCount] = useState(0);
+  const [filterType, setFilterType] = useState<NotificationType>('all');
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  // Inicializar audio
+  useEffect(() => {
+    audioRef.current = new Audio('/notification.mp3');
+    audioRef.current.volume = 0.5;
+  }, []);
 
   // Query para contar notificaciones no leídas
   const { data: unreadCount, refetch: refetchCount } = trpc.notifications.countUnread.useQuery(
@@ -35,12 +46,17 @@ export function NotificationBell() {
   );
 
   // Query para listar notificaciones
-  const { data: notifications, refetch: refetchList } = trpc.notifications.list.useQuery(
-    { userId: user?.id || 0, limit: 10 },
+  const { data: allNotifications, refetch: refetchList } = trpc.notifications.list.useQuery(
+    { userId: user?.id || 0, limit: 50 },
     {
       enabled: !!user && isOpen,
     }
   );
+
+  // Filtrar notificaciones por tipo
+  const notifications = allNotifications?.filter(n => 
+    filterType === 'all' || n.type === filterType
+  ).slice(0, 10);
 
   // Mutation para marcar como leída
   const markAsReadMutation = trpc.notifications.markAsRead.useMutation({
@@ -70,6 +86,23 @@ export function NotificationBell() {
       markAllAsReadMutation.mutate({ userId: user.id });
     }
   };
+
+  // Reproducir sonido y vibrar cuando hay nuevas notificaciones
+  useEffect(() => {
+    const currentCount = unreadCount?.count || 0;
+    if (currentCount > prevUnreadCount && prevUnreadCount > 0) {
+      // Solo reproducir si el contador aumentó (nueva notificación)
+      audioRef.current?.play().catch(() => {
+        // Ignorar errores de autoplay
+      });
+      
+      // Vibrar si el dispositivo lo soporta
+      if ('vibrate' in navigator) {
+        navigator.vibrate([200, 100, 200]); // Patrón: vibrar 200ms, pausa 100ms, vibrar 200ms
+      }
+    }
+    setPrevUnreadCount(currentCount);
+  }, [unreadCount, prevUnreadCount]);
 
   const getNotificationIcon = (type: string) => {
     switch (type) {
@@ -126,6 +159,43 @@ export function NotificationBell() {
             </Button>
           )}
         </DropdownMenuLabel>
+        <DropdownMenuSeparator />
+        
+        {/* Filtros por tipo */}
+        <div className="flex gap-1 p-2 flex-wrap">
+          <Button
+            variant={filterType === 'all' ? 'default' : 'outline'}
+            size="sm"
+            className="h-7 text-xs"
+            onClick={() => setFilterType('all')}
+          >
+            Todas
+          </Button>
+          <Button
+            variant={filterType === 'approval_pending' ? 'default' : 'outline'}
+            size="sm"
+            className="h-7 text-xs"
+            onClick={() => setFilterType('approval_pending')}
+          >
+            ⏳ Aprobaciones
+          </Button>
+          <Button
+            variant={filterType === 'workflow_completed' ? 'default' : 'outline'}
+            size="sm"
+            className="h-7 text-xs"
+            onClick={() => setFilterType('workflow_completed')}
+          >
+            ✅ Completados
+          </Button>
+          <Button
+            variant={filterType === 'workflow_failed' ? 'default' : 'outline'}
+            size="sm"
+            className="h-7 text-xs"
+            onClick={() => setFilterType('workflow_failed')}
+          >
+            ❌ Fallidos
+          </Button>
+        </div>
         <DropdownMenuSeparator />
         
         {notifications && notifications.length > 0 ? (
