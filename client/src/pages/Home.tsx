@@ -105,7 +105,7 @@ export default function Home() {
   }, [selectedMonth]);
 
   // Queries
-  const { data: metrics, isLoading: loadingMetrics } = trpc.dashboard.getMetrics.useQuery(dateRange);
+  const { data: metrics, isLoading: loadingMetrics, isError: metricsError } = trpc.dashboard.getMetrics.useQuery(dateRange);
   const { data: alertsData } = trpc.alerts.getAll.useQuery({ limit: 15 });
   const { data: appointmentsData } = trpc.appointments.getUpcoming.useQuery({ limit: 5 });
   const { data: predictionsData, isLoading: loadingPredictions } = trpc.aiPredictions.getDashboardPredictions.useQuery();
@@ -141,13 +141,7 @@ export default function Home() {
   // Próximas citas
   const upcomingAppointments = appointmentsData?.appointments || [];
 
-  if (loadingMetrics) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
-      </div>
-    );
-  }
+  // Removed loading spinner - show content immediately with loading states
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: COLORS.background }}>
