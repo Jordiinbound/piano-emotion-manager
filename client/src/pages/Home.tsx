@@ -1,400 +1,405 @@
-import { useState, useMemo } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+/**
+ * Dashboard Screen - Elegant Professional Design
+ * Piano Emotion Manager
+ */
+
+import React, { useState, useMemo, useCallback } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Loader2, TrendingUp, Users, Wrench, Music, DollarSign, Calendar, ChevronLeft, ChevronRight, AlertCircle, CheckCircle, Lightbulb, UserPlus, FileText, Receipt, CalendarPlus, HelpCircle, Settings as SettingsIcon } from "lucide-react";
+import { Wrench, DollarSign, Users, Music, TrendingUp, AlertCircle, HelpCircle, Wrench as WrenchIcon, ChevronLeft, ChevronRight, Calendar, CheckCircle, UserPlus, FileText, CalendarPlus, Clock } from "lucide-react";
 import { trpc } from "@/lib/trpc";
 import { useLocation } from 'wouter';
 import { LicenseExpirationAlert } from '@/components/LicenseExpirationAlert';
 import { useTranslation } from '@/hooks/use-translation';
 import { usePrefetchDashboardData } from '@/hooks/usePrefetch';
+import { PageHeader } from '@/components/PageHeader';
+import { Loader2 } from "lucide-react";
 
-/**
- * Dashboard Screen - Elegant Professional Design
- * Piano Emotion Manager
- * 
- * Diseño con:
- * - Barra de alertas (verde/roja, compacta y elegante)
- * - Grid 2x2 de métricas "Este Mes"
- * - Predicciones IA con indicadores circulares
- * - Próximas citas
- * - Acciones rápidas (botones terracota)
- */
+// Colores del diseño Elegant Professional
+const COLORS = {
+  primary: '#003a8c',      // Azul Cobalto
+  accent: '#e07a5f',       // Terracota
+  white: '#ffffff',
+  background: '#f8f9fa',
+  
+  // Alertas
+  alertSuccess: '#10b981', // Verde (sin alertas)
+  alertDanger: '#ff4d4f',  // Rojo (con alertas)
+  
+  // Métricas
+  services: '#003a8c',     // Azul Cobalto
+  income: '#10b981',       // Verde Esmeralda
+  clients: '#0891b2',      // Cian Oscuro
+  pianos: '#7c3aed',       // Violeta Profundo
+  
+  // IA
+  aiWarning: '#f59e0b',    // Ámbar
+  
+  // Textos
+  textPrimary: '#1a1a1a',
+  textSecondary: '#666666',
+};
+
+// Componente MetricCard
+function MetricCard({ icon: Icon, iconColor, value, label, onPress }: any) {
+  return (
+    <button
+      onClick={onPress}
+      className="flex flex-col items-center justify-center p-6 rounded-xl border border-gray-200 bg-white hover:shadow-lg transition-all duration-200"
+      style={{ minHeight: '140px' }}
+    >
+      <Icon className="h-10 w-10 mb-3" style={{ color: iconColor }} />
+      <div className="text-3xl font-bold mb-1" style={{ color: COLORS.textPrimary }}>{value}</div>
+      <div className="text-sm text-gray-600">{label}</div>
+    </button>
+  );
+}
+
+// Componente CircularIndicator
+function CircularIndicator({ color, icon: iconName, label, value }: any) {
+  const getIcon = () => {
+    switch(iconName) {
+      case 'trending-up': return TrendingUp;
+      case 'help-circle-outline': return HelpCircle;
+      case 'build-outline': return WrenchIcon;
+      default: return TrendingUp;
+    }
+  };
+  const Icon = getIcon();
+  
+  return (
+    <div className="flex flex-col items-center gap-2">
+      <div 
+        className="w-20 h-20 rounded-full flex items-center justify-center border-4"
+        style={{ borderColor: color, backgroundColor: `${color}10` }}
+      >
+        <div className="flex flex-col items-center">
+          <Icon className="h-5 w-5 mb-1" style={{ color }} />
+          <span className="text-lg font-bold" style={{ color }}>{value}</span>
+        </div>
+      </div>
+      <span className="text-xs text-gray-600 text-center max-w-[80px]">{label}</span>
+    </div>
+  );
+}
+
 export default function Home() {
   const { t } = useTranslation();
   const [, navigate] = useLocation();
   const [selectedMonth, setSelectedMonth] = useState(new Date());
-  
-  // Prefetch: precargar estadísticas y listados principales
+
+  // Prefetch data for better performance
   usePrefetchDashboardData();
 
-  // Mostrar alerta de licencias al inicio del dashboard
+  // Calcular rango de fechas del mes seleccionado
+  const dateRange = useMemo(() => {
+    const year = selectedMonth.getFullYear();
+    const month = selectedMonth.getMonth();
+    const dateFrom = new Date(year, month, 1);
+    const dateTo = new Date(year, month + 1, 0, 23, 59, 59, 999);
+    
+    return {
+      dateFrom: dateFrom.toISOString(),
+      dateTo: dateTo.toISOString(),
+    };
+  }, [selectedMonth]);
 
-  // Obtener métricas del dashboard
-  const { data: metrics, isLoading: metricsLoading } = trpc.dashboard.getMetrics.useQuery();
-  const { data: recentServices, isLoading: recentLoading } = trpc.dashboard.getRecentServices.useQuery();
-  const { data: upcomingServices, isLoading: upcomingLoading } = trpc.dashboard.getUpcomingServices.useQuery();
-  
-  // Obtener previsiones
-  const { data: revenueData } = trpc.forecasts.predictRevenue.useQuery();
-  const { data: churnData } = trpc.forecasts.predictChurn.useQuery();
-  const { data: maintenanceData } = trpc.forecasts.predictMaintenance.useQuery();
-  const { data: workloadData } = trpc.forecasts.predictWorkload.useQuery();
-  const { data: inventoryData } = trpc.forecasts.predictInventory.useQuery();
+  // Queries
+  const { data: metrics, isLoading: loadingMetrics } = trpc.dashboard.getMetrics.useQuery(dateRange);
+  const { data: alertsData } = trpc.alerts.getAll.useQuery({ limit: 15 });
+  const { data: appointmentsData } = trpc.appointments.getUpcoming.useQuery({ limit: 5 });
+  const { data: predictionsData, isLoading: loadingPredictions } = trpc.aiPredictions.getDashboardPredictions.useQuery();
 
-  // Navegación de meses
-  const navigatePreviousMonth = () => {
-    setSelectedMonth((prev) => {
-      const newDate = new Date(prev);
-      newDate.setMonth(newDate.getMonth() - 1);
-      return newDate;
-    });
-  };
+  // Navegación de mes
+  const navigatePreviousMonth = useCallback(() => {
+    setSelectedMonth(prev => new Date(prev.getFullYear(), prev.getMonth() - 1, 1));
+  }, []);
 
-  const navigateNextMonth = () => {
-    setSelectedMonth((prev) => {
-      const newDate = new Date(prev);
-      newDate.setMonth(newDate.getMonth() + 1);
-      return newDate;
-    });
-  };
+  const navigateNextMonth = useCallback(() => {
+    setSelectedMonth(prev => new Date(prev.getFullYear(), prev.getMonth() + 1, 1));
+  }, []);
 
-  const goToToday = () => {
+  const goToToday = useCallback(() => {
     setSelectedMonth(new Date());
+  }, []);
+
+  // Estado de alertas
+  const hasAlerts = (alertsData?.urgent || 0) + (alertsData?.warning || 0) > 0;
+  const alertCount = (alertsData?.urgent || 0) + (alertsData?.warning || 0);
+
+  // Label del mes
+  const monthLabel = selectedMonth.toLocaleDateString('es-ES', { month: 'short', year: 'numeric' })
+    .charAt(0).toUpperCase() + selectedMonth.toLocaleDateString('es-ES', { month: 'short', year: 'numeric' }).slice(1);
+
+  // Predicciones IA
+  const aiPredictions = {
+    revenueGrowth: predictionsData?.revenue?.predicted || "N/A",
+    clientsAtRisk: predictionsData?.churn?.atRisk || 0,
+    pianosNeedingMaintenance: predictionsData?.maintenance?.needed || 0,
   };
 
-  // Formatear mes seleccionado
-  const monthLabel = selectedMonth.toLocaleDateString('es-ES', { 
-    month: 'short', 
-    year: 'numeric' 
-  }).charAt(0).toUpperCase() + selectedMonth.toLocaleDateString('es-ES', { 
-    month: 'short', 
-    year: 'numeric' 
-  }).slice(1);
+  // Próximas citas
+  const upcomingAppointments = appointmentsData?.appointments || [];
 
-  // Obtener alertas desde la base de datos
-  const { data: alertsData } = trpc.alerts.getSummary.useQuery();
-  const { data: remindersStats } = trpc.reminders.getStats.useQuery();
-  
-  const alertCount = (alertsData?.total || 0) + (remindersStats?.pending || 0);
-  const hasAlerts = alertCount > 0;
-
-  // Función helper para formatear fechas
-  const formatDate = (date: Date | string | null) => {
-    if (!date) return 'N/A';
-    const d = typeof date === 'string' ? new Date(date) : date;
-    return d.toLocaleDateString('es-ES', { 
-      day: 'numeric',
-      month: 'short',
-      hour: '2-digit',
-      minute: '2-digit'
-    });
-  };
-
-  // Función helper para formatear tipo de servicio
-  const formatServiceType = (type: string) => {
-    return t(`home.serviceTypes.${type}` as any) || type;
-  };
-
-  if (metricsLoading) {
+  if (loadingMetrics) {
     return (
-      <div className="flex items-center justify-center py-12">
+      <div className="flex items-center justify-center min-h-screen">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
-      {/* Alerta de Licencias Próximas a Expirar */}
-      <LicenseExpirationAlert />
+    <div className="min-h-screen" style={{ backgroundColor: COLORS.background }}>
+      <PageHeader 
+        title="INICIO" 
+        subtitle="Panel de control principal" 
+      />
+      
+      <div className="max-w-7xl mx-auto px-6 py-6 space-y-6">
+        {/* Alerta de Licencias */}
+        <LicenseExpirationAlert />
 
-      {/* 1. BARRA DE ALERTAS - Compacta y elegante */}
-      <button
-        onClick={() => navigate('/alertas')}
-        className={`w-full flex items-center justify-between px-4 py-3 rounded-lg transition-colors ${
-          hasAlerts
-            ? 'bg-red-500 hover:bg-red-600'
-            : 'bg-green-500 hover:bg-green-600'
-        }`}
-      >
-        <div className="flex items-center gap-2 text-white">
-          {hasAlerts ? (
-            <AlertCircle className="h-5 w-5" />
-          ) : (
-            <CheckCircle className="h-5 w-5" />
-          )}
-          <span className="font-medium">
-            {hasAlerts
-              ? `${alertCount} ${alertCount === 1 ? 'alerta/recordatorio requiere' : 'alertas/recordatorios requieren'} tu atención`
-              : t('home.alerts.allGood')}
-          </span>
-        </div>
-        {hasAlerts && (
-          <span className="text-white font-medium">{t('home.alerts.view')} →</span>
-        )}
-      </button>
-
-      {/* 2. SECCIÓN "ESTE MES" + PREDICCIONES IA */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Este Mes - Grid 2x2 */}
-        <Card>
-          <CardHeader>
-            <div className="flex items-center justify-between">
-              <CardTitle>{t('home.thisMonth.title')}</CardTitle>
-              <div className="flex items-center gap-2">
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={navigatePreviousMonth}
-                >
-                  <ChevronLeft className="h-4 w-4" />
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={goToToday}
-                  className="min-w-[100px]"
-                >
-                  {monthLabel}
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={navigateNextMonth}
-                >
-                  <ChevronRight className="h-4 w-4" />
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => navigate('/agenda')}
-                >
-                  <Calendar className="h-4 w-4 text-amber-500" />
-                </Button>
-              </div>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-2 gap-4">
-              <button
-                onClick={() => navigate('/servicios')}
-                className="flex flex-col items-center justify-center p-6 rounded-lg border border-border hover:bg-accent transition-colors"
-              >
-                <Wrench className="h-8 w-8 text-blue-600 mb-2" />
-                <div className="text-2xl font-bold text-foreground">{metrics?.services ?? 0}</div>
-                <div className="text-sm text-muted-foreground">{t('home.thisMonth.services')}</div>
-              </button>
-
-              <button
-                onClick={() => navigate('/facturacion')}
-                className="flex flex-col items-center justify-center p-6 rounded-lg border border-border hover:bg-accent transition-colors"
-              >
-                <DollarSign className="h-8 w-8 text-green-600 mb-2" />
-                <div className="text-2xl font-bold text-foreground">0 €</div>
-                <div className="text-sm text-muted-foreground">{t('home.thisMonth.income')}</div>
-              </button>
-
-              <button
-                onClick={() => navigate('/clientes')}
-                className="flex flex-col items-center justify-center p-6 rounded-lg border border-border hover:bg-accent transition-colors"
-              >
-                <Users className="h-8 w-8 text-cyan-600 mb-2" />
-                <div className="text-2xl font-bold text-foreground">{metrics?.clients ?? 0}</div>
-                <div className="text-sm text-muted-foreground">{t('home.thisMonth.clients')}</div>
-              </button>
-
-              <button
-                onClick={() => navigate('/pianos')}
-                className="flex flex-col items-center justify-center p-6 rounded-lg border border-border hover:bg-accent transition-colors"
-              >
-                <Music className="h-8 w-8 text-purple-600 mb-2" />
-                <div className="text-2xl font-bold text-foreground">{metrics?.pianos ?? 0}</div>
-                <div className="text-sm text-muted-foreground">{t('home.thisMonth.pianos')}</div>
-              </button>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Predicciones IA */}
-        <Card>
-          <CardHeader>
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <Lightbulb className="h-5 w-5 text-purple-600" />
-                <CardTitle>{t('home.aiPredictions.title')}</CardTitle>
-              </div>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => navigate('/previsiones')}
-              >
-                {t('home.aiPredictions.viewAll')} →
-              </Button>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-              {/* Ingresos Previstos */}
-              <div className="flex flex-col items-center">
-                <div className="w-20 h-20 rounded-full border-4 border-green-500 flex flex-col items-center justify-center mb-2">
-                  <TrendingUp className="h-6 w-6 text-green-500" />
-                  <div className="text-xs font-bold text-green-500">
-                    {revenueData?.predictions[0]?.predicted 
-                      ? `€${Math.round(revenueData.predictions[0].predicted)}` 
-                      : 'N/A'}
-                  </div>
-                </div>
-                <div className="text-xs text-muted-foreground text-center">{t('home.aiPredictions.predictedIncome')}</div>
-              </div>
-
-              {/* Clientes en Riesgo */}
-              <div className="flex flex-col items-center">
-                <div className="w-20 h-20 rounded-full border-4 border-amber-500 flex flex-col items-center justify-center mb-2">
-                  <HelpCircle className="h-6 w-6 text-amber-500" />
-                  <div className="text-sm font-bold text-amber-500">{churnData?.totalAtRisk || 0}</div>
-                </div>
-                <div className="text-xs text-muted-foreground text-center">{t('home.aiPredictions.riskClients')}</div>
-              </div>
-
-              {/* Mantenimiento Próximo */}
-              <div className="flex flex-col items-center">
-                <div className="w-20 h-20 rounded-full border-4 border-purple-600 flex flex-col items-center justify-center mb-2">
-                  <SettingsIcon className="h-6 w-6 text-purple-600" />
-                  <div className="text-sm font-bold text-purple-600">{maintenanceData?.highUrgency || 0}</div>
-                </div>
-                <div className="text-xs text-muted-foreground text-center">{t('home.aiPredictions.upcomingMaintenance')}</div>
-              </div>
-
-              {/* Carga de Trabajo */}
-              <div className="flex flex-col items-center">
-                <div className="w-20 h-20 rounded-full border-4 border-blue-500 flex flex-col items-center justify-center mb-2">
-                  <Calendar className="h-6 w-6 text-blue-500" />
-                  <div className="text-sm font-bold text-blue-500">
-                    {workloadData?.predictions[0]?.predictedServices || 0}
-                  </div>
-                </div>
-                <div className="text-xs text-muted-foreground text-center">Servicios Semana 1</div>
-              </div>
-
-              {/* Inventario Crítico */}
-              <div className="flex flex-col items-center">
-                <div className="w-20 h-20 rounded-full border-4 border-red-500 flex flex-col items-center justify-center mb-2">
-                  <AlertCircle className="h-6 w-6 text-red-500" />
-                  <div className="text-sm font-bold text-red-500">{inventoryData?.criticalItems || 0}</div>
-                </div>
-                <div className="text-xs text-muted-foreground text-center">Items Críticos</div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* 3. PRÓXIMAS CITAS + ACCIONES RÁPIDAS */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Próximas Citas */}
-        <Card>
-          <CardHeader>
-            <CardTitle>{t('home.upcomingAppointments.title')}</CardTitle>
-          </CardHeader>
-          <CardContent>
-            {upcomingLoading ? (
-              <div className="flex items-center justify-center py-8">
-                <Loader2 className="h-6 w-6 animate-spin text-primary" />
-              </div>
-            ) : !upcomingServices || upcomingServices.length === 0 ? (
-              <div className="flex flex-col items-center justify-center py-8 text-center">
-                <Calendar className="h-12 w-12 text-muted-foreground mb-2" />
-                <p className="text-sm text-muted-foreground">{t('home.upcomingAppointments.noAppointments')}</p>
-              </div>
+        {/* 1. BARRA DE ALERTAS */}
+        <button
+          onClick={() => navigate('/alertas')}
+          className="w-full flex items-center justify-between px-5 py-4 rounded-lg transition-all duration-200 shadow-sm"
+          style={{ backgroundColor: hasAlerts ? COLORS.alertDanger : COLORS.alertSuccess }}
+        >
+          <div className="flex items-center gap-3 text-white">
+            {hasAlerts ? (
+              <AlertCircle className="h-5 w-5" />
             ) : (
-              <div className="space-y-3">
-                {upcomingServices.slice(0, 3).map((service) => (
-                  <button
-                    key={service.id}
-                    onClick={() => navigate(`/servicios/${service.id}`)}
-                    className="w-full flex items-center gap-3 p-3 rounded-lg border border-border hover:bg-accent transition-colors text-left"
-                  >
-                    <div className="flex flex-col items-center justify-center min-w-[60px] bg-primary/10 rounded-lg p-2">
-                      <div className="text-sm font-bold text-primary">
-                        {new Date(service.date).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}
-                      </div>
-                      <div className="text-xs text-muted-foreground">
-                        {new Date(service.date).toLocaleDateString('es-ES', { day: 'numeric', month: 'short' })}
-                      </div>
-                    </div>
-                    <div className="flex-1 text-left">
-                      <div className="font-medium text-foreground">
-                        {formatServiceType(service.serviceType)}
-                      </div>
-                      <div className="text-sm text-muted-foreground">
-                        Cliente #{service.clientId}
-                      </div>
-                    </div>
-                    <ChevronRight className="h-5 w-5 text-muted-foreground" />
-                  </button>
-                ))}
-              </div>
+              <CheckCircle className="h-5 w-5" />
             )}
-          </CardContent>
-        </Card>
+            <span className="font-semibold text-base">
+              {hasAlerts
+                ? `${alertCount} ${alertCount === 1 ? 'alerta requiere' : 'alertas requieren'} tu atención`
+                : t('home.alerts.allGood')}
+            </span>
+          </div>
+          {hasAlerts && (
+            <span className="text-white font-medium">Ver →</span>
+          )}
+        </button>
 
-        {/* Acciones Rápidas */}
-        <Card>
-          <CardHeader>
-            <CardTitle>{t('home.quickActions.title')}</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-2 gap-3">
-              <Button
-                onClick={() => navigate('/clientes/nuevo')}
-                className="h-auto flex-col gap-2 py-4 bg-[#e07a5f] hover:bg-[#d16a4f] text-white"
-              >
-                <UserPlus className="h-6 w-6" />
-                <span className="text-sm">{t('home.quickActions.newClient')}</span>
-              </Button>
+        {/* 2. SECCIÓN "ESTE MES" + PREDICCIONES IA */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Este Mes - Grid 2x2 */}
+          <Card className="shadow-md border-gray-200">
+            <CardHeader className="pb-4">
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-xl font-bold" style={{ color: COLORS.textPrimary }}>
+                  Este Mes
+                </CardTitle>
+                <div className="flex items-center gap-2">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={navigatePreviousMonth}
+                    className="h-8 w-8"
+                  >
+                    <ChevronLeft className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={goToToday}
+                    className="min-w-[100px] h-8 text-sm"
+                  >
+                    {monthLabel}
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={navigateNextMonth}
+                    className="h-8 w-8"
+                  >
+                    <ChevronRight className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => navigate('/agenda')}
+                    className="h-8 w-8"
+                  >
+                    <Calendar className="h-4 w-4" style={{ color: COLORS.aiWarning }} />
+                  </Button>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-2 gap-4">
+                <MetricCard
+                  icon={Wrench}
+                  iconColor={COLORS.services}
+                  value={metrics?.services ?? 0}
+                  label={t('home.thisMonth.services')}
+                  onPress={() => navigate('/servicios')}
+                />
+                <MetricCard
+                  icon={DollarSign}
+                  iconColor={COLORS.income}
+                  value={`${metrics?.revenue?.toFixed(0) ?? 0} €`}
+                  label={t('home.thisMonth.income')}
+                  onPress={() => navigate('/facturacion')}
+                />
+                <MetricCard
+                  icon={Users}
+                  iconColor={COLORS.clients}
+                  value={metrics?.clients ?? 0}
+                  label={t('home.thisMonth.clients')}
+                  onPress={() => navigate('/clientes')}
+                />
+                <MetricCard
+                  icon={Music}
+                  iconColor={COLORS.pianos}
+                  value={metrics?.pianos ?? 0}
+                  label={t('home.thisMonth.pianos')}
+                  onPress={() => navigate('/pianos')}
+                />
+              </div>
+            </CardContent>
+          </Card>
 
-              <Button
-                onClick={() => navigate('/servicios/nuevo')}
-                className="h-auto flex-col gap-2 py-4 bg-[#e07a5f] hover:bg-[#d16a4f] text-white"
-              >
-                <Wrench className="h-6 w-6" />
-                <span className="text-sm">{t('home.quickActions.newService')}</span>
-              </Button>
+          {/* Predicciones IA */}
+          <Card className="shadow-md border-gray-200">
+            <CardHeader className="pb-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <div className="w-6 h-6 rounded-full flex items-center justify-center" style={{ backgroundColor: `${COLORS.pianos}20` }}>
+                    <div className="w-3 h-3 rounded-full" style={{ backgroundColor: COLORS.pianos }} />
+                  </div>
+                  <CardTitle className="text-xl font-bold" style={{ color: COLORS.textPrimary }}>
+                    {t('home.aiPredictions.title')}
+                  </CardTitle>
+                </div>
+                <button 
+                  onClick={() => navigate('/previsiones')}
+                  className="text-sm font-medium hover:underline"
+                  style={{ color: COLORS.primary }}
+                >
+                  {t('home.aiPredictions.viewAll')} →
+                </button>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="flex justify-around items-center py-4">
+                <CircularIndicator
+                  color={COLORS.income}
+                  icon="trending-up"
+                  label={t('home.aiPredictions.predictedIncome')}
+                  value={loadingPredictions ? "..." : aiPredictions.revenueGrowth}
+                />
+                <CircularIndicator
+                  color={COLORS.aiWarning}
+                  icon="help-circle-outline"
+                  label={t('home.aiPredictions.riskClients')}
+                  value={loadingPredictions ? "..." : aiPredictions.clientsAtRisk.toString()}
+                />
+                <CircularIndicator
+                  color={COLORS.pianos}
+                  icon="build-outline"
+                  label={t('home.aiPredictions.upcomingMaintenance')}
+                  value={loadingPredictions ? "..." : aiPredictions.pianosNeedingMaintenance.toString()}
+                />
+              </div>
+            </CardContent>
+          </Card>
+        </div>
 
-              <Button
-                onClick={() => navigate('/facturacion/nueva')}
-                className="h-auto flex-col gap-2 py-4 bg-[#e07a5f] hover:bg-[#d16a4f] text-white"
-              >
-                <Receipt className="h-6 w-6" />
-                <span className="text-sm">{t('home.quickActions.newInvoice')}</span>
-              </Button>
+        {/* 3. PRÓXIMAS CITAS + ACCIONES RÁPIDAS */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Próximas Citas */}
+          <Card className="shadow-md border-gray-200">
+            <CardHeader>
+              <CardTitle className="text-xl font-bold" style={{ color: COLORS.textPrimary }}>
+                {t('home.upcomingAppointments.title')}
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              {upcomingAppointments.length > 0 ? (
+                <div className="space-y-3">
+                  {upcomingAppointments.slice(0, 3).map((apt: any) => (
+                    <button
+                      key={apt.id}
+                      onClick={() => navigate(`/agenda`)}
+                      className="w-full flex items-center gap-4 p-4 rounded-lg border border-gray-200 hover:shadow-md transition-all duration-200 bg-white"
+                    >
+                      <div className="flex flex-col items-center justify-center px-3 py-2 rounded-lg" style={{ backgroundColor: `${COLORS.primary}10` }}>
+                        <Clock className="h-5 w-5 mb-1" style={{ color: COLORS.primary }} />
+                        <span className="text-xs font-medium" style={{ color: COLORS.primary }}>
+                          {new Date(apt.date).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}
+                        </span>
+                      </div>
+                      <div className="flex-1 text-left">
+                        <div className="font-semibold text-base" style={{ color: COLORS.textPrimary }}>
+                          {apt.service_type || 'Servicio'}
+                        </div>
+                        <div className="text-sm" style={{ color: COLORS.textSecondary }}>
+                          {apt.client_name || 'Cliente no especificado'}
+                        </div>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-8 text-gray-500">
+                  <Calendar className="h-12 w-12 mx-auto mb-3 opacity-50" />
+                  <p>{t('home.upcomingAppointments.noAppointments')}</p>
+                </div>
+              )}
+            </CardContent>
+          </Card>
 
-              <Button
-                onClick={() => navigate('/pianos/nuevo')}
-                className="h-auto flex-col gap-2 py-4 bg-[#e07a5f] hover:bg-[#d16a4f] text-white"
-              >
-                <Music className="h-6 w-6" />
-                <span className="text-sm">{t('home.quickActions.newPiano')}</span>
-              </Button>
-
-              <Button
-                onClick={() => navigate('/presupuestos/nuevo')}
-                className="h-auto flex-col gap-2 py-4 bg-[#e07a5f] hover:bg-[#d16a4f] text-white"
-              >
-                <FileText className="h-6 w-6" />
-                <span className="text-sm">{t('home.quickActions.newQuote')}</span>
-              </Button>
-
-              <Button
-                onClick={() => navigate('/agenda/nueva')}
-                className="h-auto flex-col gap-2 py-4 bg-[#e07a5f] hover:bg-[#d16a4f] text-white"
-              >
-                <CalendarPlus className="h-6 w-6" />
-                <span className="text-sm">{t('home.quickActions.newAppointment')}</span>
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
+          {/* Acciones Rápidas */}
+          <Card className="shadow-md border-gray-200">
+            <CardHeader>
+              <CardTitle className="text-xl font-bold" style={{ color: COLORS.textPrimary }}>
+                {t('home.quickActions.title')}
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-2 gap-3">
+                <Button
+                  onClick={() => navigate('/cliente-nuevo')}
+                  className="h-auto flex-col gap-2 py-4 text-white shadow-sm hover:shadow-md transition-all"
+                  style={{ backgroundColor: COLORS.accent }}
+                >
+                  <UserPlus className="h-6 w-6" />
+                  <span className="text-sm font-medium">{t('home.quickActions.newClient')}</span>
+                </Button>
+                
+                <Button
+                  onClick={() => navigate('/servicio-nuevo')}
+                  className="h-auto flex-col gap-2 py-4 text-white shadow-sm hover:shadow-md transition-all"
+                  style={{ backgroundColor: COLORS.accent }}
+                >
+                  <Wrench className="h-6 w-6" />
+                  <span className="text-sm font-medium">{t('home.quickActions.newService')}</span>
+                </Button>
+                
+                <Button
+                  onClick={() => navigate('/factura-nueva')}
+                  className="h-auto flex-col gap-2 py-4 text-white shadow-sm hover:shadow-md transition-all"
+                  style={{ backgroundColor: COLORS.accent }}
+                >
+                  <FileText className="h-6 w-6" />
+                  <span className="text-sm font-medium">{t('home.quickActions.newInvoice')}</span>
+                </Button>
+                
+                <Button
+                  onClick={() => navigate('/cita-nueva')}
+                  className="h-auto flex-col gap-2 py-4 text-white shadow-sm hover:shadow-md transition-all"
+                  style={{ backgroundColor: COLORS.accent }}
+                >
+                  <CalendarPlus className="h-6 w-6" />
+                  <span className="text-sm font-medium">{t('home.quickActions.newAppointment')}</span>
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
       </div>
     </div>
   );

@@ -164,7 +164,6 @@ export const translationsRouter = router({
     
     return stats;
   }),
-});
 
   // Exportar traducciones a CSV
   exportToCSV: protectedProcedure

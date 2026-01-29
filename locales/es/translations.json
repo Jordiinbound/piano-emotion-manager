@@ -192,6 +192,51 @@
     "unauthorized": "No autorizado",
     "validation": "Por favor, revisa los datos introducidos"
   },
+  "home": {
+    "alerts": {
+      "allGood": "Todo en orden",
+      "view": "Ver alertas"
+    },
+    "thisMonth": {
+      "title": "Este Mes",
+      "services": "Servicios",
+      "income": "Ingresos",
+      "clients": "Clientes",
+      "pianos": "Pianos"
+    },
+    "aiPredictions": {
+      "title": "Predicciones IA",
+      "viewAll": "Ver todas",
+      "predictedIncome": "Ingresos Previstos",
+      "riskClients": "Clientes en Riesgo",
+      "upcomingMaintenance": "Mantenimiento Próximo"
+    },
+    "upcomingAppointments": {
+      "title": "Próximas Citas",
+      "noAppointments": "No hay citas programadas"
+    },
+    "quickActions": {
+      "title": "Acciones Rápidas",
+      "newClient": "Nuevo Cliente",
+      "newService": "Nuevo Servicio",
+      "newInvoice": "Nueva Factura",
+      "newPiano": "Nuevo Piano",
+      "newQuote": "Nuevo Presupuesto",
+      "newAppointment": "Nueva Cita"
+    },
+    "serviceTypes": {
+      "tuning": "Afinación",
+      "repair": "Reparación",
+      "maintenance": "Mantenimiento",
+      "regulation": "Regulación",
+      "voicing": "Entonación",
+      "restoration": "Restauración",
+      "inspection": "Inspección",
+      "moving": "Mudanza",
+      "appraisal": "Tasación",
+      "other": "Otro"
+    }
+  },
   "help": {
     "contact": "Contactar soporte",
     "faq": "Preguntas frecuentes",

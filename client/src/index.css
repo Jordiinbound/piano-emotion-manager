@@ -77,6 +77,11 @@
 }
 
 :root {
+  /* Piano Emotion Colors */
+  --piano-blue: #003a8c;
+  --piano-terracotta: #e07a5f;
+  --piano-bg: #f8f9fa;
+  
   --primary: var(--color-blue-700);
   --primary-foreground: var(--color-blue-50);
   --sidebar-primary: var(--color-blue-600);
