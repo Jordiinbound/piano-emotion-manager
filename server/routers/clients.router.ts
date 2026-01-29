@@ -5,6 +5,7 @@ import { eq, and, desc, sql } from 'drizzle-orm';
 import { getDb } from '../db';
 import { triggerWorkflowEvent } from '../workflow-triggers';
 import { withCache, invalidateCachePattern } from '../cache';
+import { getDynamicTTL, trackEntityUpdate } from '../dynamicTTL';
 
 const { clients } = schema;
 
@@ -144,6 +145,7 @@ export const clientsRouter = router({
   getClientById: publicProcedure
     .input(z.object({ id: z.number() }))
     .query(async ({ input }) => {
+      const ttl = getDynamicTTL('client', input.id);
       return withCache(
         `clients:detail:${input.id}`,
         async () => {
@@ -158,10 +160,9 @@ export const clientsRouter = router({
           if (!client || client.length === 0) {
             throw new Error('Cliente no encontrado');
           }
-
-          return client[0];
+          return client[0] || null;
         },
-        300 // 5 minutos de TTL
+        ttl // TTL dinámico basado en frecuencia de actualización
       );
     }),
 
@@ -205,6 +206,9 @@ export const clientsRouter = router({
         client_type: input.clientType,
       });
 
+      // Trackear actualización para TTL dinámico
+      trackEntityUpdate('client', clientId);
+      
       // Invalidar caché relacionado
       await invalidateCachePattern('clients:list');
       await invalidateCachePattern('clients:stats');
@@ -247,13 +251,14 @@ export const clientsRouter = router({
         })
         .where(eq(clients.id, id));
 
+           // Trackear actualización para TTL dinámico
+      trackEntityUpdate('client', id);
+      
       // Invalidar caché relacionado
       await invalidateCachePattern(`clients:detail:${id}`);
       await invalidateCachePattern('clients:list');
 
-      return {
-        success: true,
-      };
+      return { success: true };
     }),
 
   /**

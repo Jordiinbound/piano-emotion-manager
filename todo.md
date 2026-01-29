@@ -1829,3 +1829,31 @@
 - [x] Agregar endpoint tRPC para resetear métricas
 - [x] Actualizar dashboard de monitoreo para mostrar métricas de rendimiento
 - [x] Agregar alertas visuales cuando el hit rate es bajo (<80%)
+
+## FASE 22 - TTL Dinámico Basado en Frecuencia de Actualización
+
+- [x] Crear sistema de tracking en memoria (dynamicTTL.ts) en lugar de tabla DB
+- [x] Implementar función `getDynamicTTL(entityType, entityId)` y `trackEntityUpdate()`
+- [x] Agregar tracking de actualizaciones en todas las mutations (create, update, delete)
+- [x] Ajustar TTL automáticamente: alta frecuencia = TTL bajo, baja frecuencia = TTL alto
+- [x] Configurar rangos de TTL por tipo de entidad (client: 1-10min, piano: 2-20min, service: 30s-5min)
+- [x] Integrar TTL dinámico en queries de clientes, pianos y servicios
+
+## FASE 23 - Caché de Segundo Nivel con Service Workers
+
+- [x] Crear Service Worker en client/public/sw.js
+- [x] Implementar estrategia de caché: Network First con fallback a Cache
+- [x] Configurar rutas a cachear (API tRPC, assets estáticos)
+- [x] Agregar registro de Service Worker en client/src/main.tsx
+- [x] Crear hook useServiceWorker para controlar SW desde la aplicación
+- [x] Agregar UI en CacheMonitor para activar/desactivar y limpiar caché del SW
+
+## FASE 24 - Prefetching Inteligente de Datos Relacionados
+
+- [x] Implementar hook `usePrefetch` en client/src/hooks/usePrefetch.ts
+- [x] Agregar prefetching en vista de cliente (usePrefetchClientData - precargar pianos y servicios)
+- [x] Agregar prefetching en vista de piano (usePrefetchPianoData - precargar servicios relacionados)
+- [x] Agregar prefetching en vista de servicio (usePrefetchServiceData - precargar cliente y piano)
+- [x] Implementar prefetching de dashboard (usePrefetchDashboardData)
+- [x] Implementar prefetch on-hover (usePrefetchOnHover)
+- [x] Configurar delays apropiados (500ms-1000ms) para evitar sobrecarga

@@ -5,6 +5,7 @@ import { services, clients, pianos } from "../../drizzle/schema.js";
 import { eq, and, like, or, sql, desc } from "drizzle-orm";
 import { triggerWorkflowEvent } from '../workflow-triggers';
 import { withCache, invalidateCachePattern } from '../cache';
+import { getDynamicTTL, trackEntityUpdate } from '../dynamicTTL';
 
 export const servicesRouter = router({
   /**
@@ -131,6 +132,7 @@ export const servicesRouter = router({
   getServiceById: publicProcedure
     .input(z.object({ id: z.number() }))
     .query(async ({ input }) => {
+      const ttl = getDynamicTTL('service', input.id);
       return withCache(
         `services:detail:${input.id}`,
         async () => {
@@ -144,7 +146,7 @@ export const servicesRouter = router({
           
           return result[0] || null;
         },
-        120 // 2 minutos de TTL
+        ttl // TTL dinámico basado en frecuencia de actualización
       );
     }),
 
@@ -181,6 +183,10 @@ export const servicesRouter = router({
         notes: input.notes,
         partnerId: 1, // Required by TiDB schema
       } as any);
+      const serviceId = (result as any).insertId || 0;
+      
+      // Trackear actualización para TTL dinámico
+      trackEntityUpdate('service', serviceId);
       
       // Invalidar caché relacionado
       await invalidateCachePattern('services:list');
@@ -188,7 +194,7 @@ export const servicesRouter = router({
       
       return { 
         success: true,
-        serviceId: (result as any).insertId || 0,
+        serviceId,
       };
     }),
 
@@ -256,6 +262,9 @@ export const servicesRouter = router({
         }
       }
       
+      // Trackear actualización para TTL dinámico
+      trackEntityUpdate('service', id);
+      
       // Invalidar caché relacionado
       await invalidateCachePattern(`services:detail:${id}`);
       await invalidateCachePattern('services:list');
@@ -272,6 +281,9 @@ export const servicesRouter = router({
       const db = await getDb();
       if (!db) throw new Error('Database not available');
       await db.delete(services).where(eq(services.id, input.id));
+      
+      // Trackear actualización para TTL dinámico (eliminación)
+      trackEntityUpdate('service', input.id);
       
       // Invalidar caché relacionado
       await invalidateCachePattern(`services:detail:${input.id}`);

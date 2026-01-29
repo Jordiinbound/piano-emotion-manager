@@ -4,6 +4,7 @@ import { getDb } from '../db';
 import { pianos } from '../../drizzle/schema';
 import { eq, like, or, and, sql, desc } from 'drizzle-orm';
 import { withCache, invalidateCachePattern } from '../cache';
+import { getDynamicTTL, trackEntityUpdate } from '../dynamicTTL';
 
 export const pianosRouter = router({
   // Obtener estadísticas de pianos
@@ -105,6 +106,7 @@ export const pianosRouter = router({
   getPianoById: publicProcedure
     .input(z.object({ id: z.number() }))
     .query(async ({ input }) => {
+      const ttl = getDynamicTTL('piano', input.id);
       return withCache(
         `pianos:detail:${input.id}`,
         async () => {
@@ -117,9 +119,9 @@ export const pianosRouter = router({
             .where(eq(pianos.id, input.id))
             .limit(1);
 
-          return piano || null;
+                  return piano;
         },
-        600 // 10 minutos de TTL
+        ttl // TTL dinámico basado en frecuencia de actualización
       );
     }),
 
@@ -145,6 +147,10 @@ export const pianosRouter = router({
 
       const odId = `PIANO-${Date.now()}-${Math.random().toString(36).substring(7)}`;
       const result = await db.insert(pianos).values({ ...input, odId, partnerId: 1 } as any);
+      const pianoId = (result as any).insertId || 0;
+
+      // Trackear actualización para TTL dinámico
+      trackEntityUpdate('piano', pianoId);
 
       // Invalidar caché relacionado
       await invalidateCachePattern('pianos:list');
@@ -152,7 +158,7 @@ export const pianosRouter = router({
 
       return {
         success: true,
-        pianoId: (result as any).insertId || 0,
+        pianoId,
       };
     }),
 
@@ -183,6 +189,9 @@ export const pianosRouter = router({
         .set(updateData as any)
         .where(eq(pianos.id, id));
 
+      // Trackear actualización para TTL dinámico
+      trackEntityUpdate('piano', id);
+
       // Invalidar caché relacionado
       await invalidateCachePattern(`pianos:detail:${id}`);
       await invalidateCachePattern('pianos:list');
@@ -198,6 +207,9 @@ export const pianosRouter = router({
       if (!db) throw new Error('Database not available');
 
       await db.delete(pianos).where(eq(pianos.id, input.id));
+
+      // Trackear actualización para TTL dinámico (eliminación)
+      trackEntityUpdate('piano', input.id);
 
       // Invalidar caché relacionado
       await invalidateCachePattern(`pianos:detail:${input.id}`);

@@ -6,12 +6,14 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import { RefreshCw, Trash2, Database, Server, Clock, Activity } from 'lucide-react';
+import { RefreshCw, Trash2, Database, Server, Clock, Activity, Wifi, WifiOff } from 'lucide-react';
 import { toast } from 'sonner';
+import { useServiceWorker } from '@/hooks/useServiceWorker';
 
 export default function CacheMonitor() {
   const [pattern, setPattern] = useState('');
   const [autoRefresh, setAutoRefresh] = useState(false);
+  const serviceWorker = useServiceWorker();
   
   const { data: cacheStats, refetch, isLoading } = trpc.systemMonitor.getCacheStats.useQuery(undefined, {
     refetchInterval: autoRefresh ? 5000 : false, // Auto-refresh cada 5 segundos si está activado
@@ -390,6 +392,94 @@ export default function CacheMonitor() {
             >
               <Trash2 className="h-4 w-4 mr-2" />
               Limpiar Todo
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+      
+      {/* Service Worker (Caché de Segundo Nivel) */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Service Worker (Caché de Segundo Nivel)</CardTitle>
+          <CardDescription>
+            Caché en el navegador para reducir latencia y permitir funcionamiento offline
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="flex items-center justify-between">
+            <div className="space-y-1">
+              <Label className="text-sm font-medium">Estado del Service Worker</Label>
+              <p className="text-sm text-muted-foreground">
+                {!serviceWorker.isSupported && 'No soportado en este navegador'}
+                {serviceWorker.isSupported && !serviceWorker.isRegistered && 'No registrado'}
+                {serviceWorker.isSupported && serviceWorker.isRegistered && !serviceWorker.isActive && 'Registrado pero inactivo'}
+                {serviceWorker.isSupported && serviceWorker.isRegistered && serviceWorker.isActive && 'Activo y funcionando'}
+              </p>
+            </div>
+            <div>
+              {serviceWorker.isActive ? (
+                <Badge variant="default" className="bg-green-500">
+                  <Wifi className="h-3 w-3 mr-1" />
+                  Activo
+                </Badge>
+              ) : (
+                <Badge variant="secondary">
+                  <WifiOff className="h-3 w-3 mr-1" />
+                  Inactivo
+                </Badge>
+              )}
+            </div>
+          </div>
+          
+          <Separator />
+          
+          <div className="flex gap-2">
+            <Button
+              onClick={async () => {
+                const success = await serviceWorker.clearCache();
+                if (success) {
+                  toast.success('Caché del Service Worker limpiado');
+                } else {
+                  toast.error('No se pudo limpiar el caché del Service Worker');
+                }
+              }}
+              disabled={!serviceWorker.isActive}
+              variant="outline"
+            >
+              <Trash2 className="h-4 w-4 mr-2" />
+              Limpiar Caché del Navegador
+            </Button>
+            
+            <Button
+              onClick={async () => {
+                const success = await serviceWorker.update();
+                if (success) {
+                  toast.success('Service Worker actualizado');
+                } else {
+                  toast.error('No se pudo actualizar el Service Worker');
+                }
+              }}
+              disabled={!serviceWorker.isActive}
+              variant="outline"
+            >
+              <RefreshCw className="h-4 w-4 mr-2" />
+              Actualizar SW
+            </Button>
+            
+            <Button
+              onClick={async () => {
+                const success = await serviceWorker.unregister();
+                if (success) {
+                  toast.success('Service Worker desregistrado');
+                } else {
+                  toast.error('No se pudo desregistrar el Service Worker');
+                }
+              }}
+              disabled={!serviceWorker.isActive}
+              variant="destructive"
+            >
+              <WifiOff className="h-4 w-4 mr-2" />
+              Desactivar SW
             </Button>
           </div>
         </CardContent>
