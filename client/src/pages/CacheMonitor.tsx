@@ -27,6 +27,7 @@ export default function CacheMonitor() {
   });
   
   const { data: systemInfo } = trpc.systemMonitor.getSystemInfo.useQuery();
+  const { data: metricsHistory } = trpc.systemMonitor.getMetricsHistory.useQuery({ hours: 24 });
   
   const clearCacheMutation = trpc.systemMonitor.clearCache.useMutation({
     onSuccess: (data) => {
@@ -452,6 +453,92 @@ export default function CacheMonitor() {
         </CardContent>
       </Card>
       
+      {/* Gráficos de Evolución Temporal */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <TrendingUp className="h-5 w-5" />
+            Evolución Temporal de Métricas
+          </CardTitle>
+          <CardDescription>
+            Historial de snapshots horarios (últimas 24 horas)
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          {metricsHistory && metricsHistory.history.length > 0 ? (
+            <>
+              {/* Gráfico de Hit Rate en el tiempo */}
+              <div>
+                <h4 className="text-sm font-medium mb-4">Hit Rate vs Tiempo</h4>
+                <ResponsiveContainer width="100%" height={250}>
+                  <LineChart data={metricsHistory.history.map((snapshot: any) => ({
+                    time: new Date(snapshot.timestamp).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' }),
+                    hitRate: snapshot.hitRate,
+                  }))}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="time" />
+                    <YAxis domain={[0, 100]} />
+                    <Tooltip formatter={(value: number) => `${value.toFixed(2)}%`} />
+                    <Legend />
+                    <Line type="monotone" dataKey="hitRate" stroke="#10b981" name="Hit Rate (%)" strokeWidth={2} />
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
+
+              {/* Gráfico de Latencia en el tiempo */}
+              <div>
+                <h4 className="text-sm font-medium mb-4">Latencia Promedio vs Tiempo</h4>
+                <ResponsiveContainer width="100%" height={250}>
+                  <AreaChart data={metricsHistory.history.map((snapshot: any) => ({
+                    time: new Date(snapshot.timestamp).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' }),
+                    avgLatency: snapshot.avgLatency,
+                  }))}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="time" />
+                    <YAxis />
+                    <Tooltip formatter={(value: number) => `${value.toFixed(2)} ms`} />
+                    <Legend />
+                    <Area type="monotone" dataKey="avgLatency" stroke="#3b82f6" fill="#3b82f6" fillOpacity={0.3} name="Latencia (ms)" />
+                  </AreaChart>
+                </ResponsiveContainer>
+              </div>
+
+              {/* Gráfico de Operaciones en el tiempo */}
+              <div>
+                <h4 className="text-sm font-medium mb-4">Operaciones Totales vs Tiempo</h4>
+                <ResponsiveContainer width="100%" height={250}>
+                  <BarChart data={metricsHistory.history.map((snapshot: any) => ({
+                    time: new Date(snapshot.timestamp).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' }),
+                    totalOperations: snapshot.totalOperations,
+                  }))}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="time" />
+                    <YAxis />
+                    <Tooltip />
+                    <Legend />
+                    <Bar dataKey="totalOperations" fill="#8b5cf6" name="Operaciones" />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+
+              <div className="text-sm text-muted-foreground space-y-1">
+                <p><strong>Estadísticas del historial:</strong></p>
+                <p>• Total de snapshots: {metricsHistory.stats.totalSnapshots}</p>
+                <p>• Hit rate promedio: {metricsHistory.stats.avgHitRate.toFixed(2)}%</p>
+                <p>• Latencia promedio: {metricsHistory.stats.avgLatency.toFixed(2)} ms</p>
+                <p>• Operaciones totales: {metricsHistory.stats.totalOperations.toLocaleString()}</p>
+              </div>
+            </>
+          ) : (
+            <div className="text-sm text-muted-foreground space-y-2">
+              <p>⏳ Esperando datos históricos...</p>
+              <p>Los gráficos mostrarán datos una vez que el sistema haya recopilado snapshots horarios.</p>
+              <p>El sistema guarda automáticamente snapshots cada hora durante 7 días.</p>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
       {/* Gráficos de Rendimiento */}
       {cacheStats?.metrics && (
         <Card>

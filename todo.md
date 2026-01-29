@@ -1914,3 +1914,35 @@
 - [ ] Agregar índice en columna date de tabla services
 - [ ] Aplicar migración de índices con db:push
 - [ ] Medir mejora de rendimiento antes/después
+
+## FASE 31 - Monitoreo de Rendimiento en Producción
+
+- [x] Crear endpoint tRPC para obtener métricas de rendimiento (velocidad de queries, latencia de Redis)
+- [x] Implementar tracking de tiempo de ejecución de queries principales
+- [x] Agregar comparación antes/después de índices en dashboard
+- [x] Mostrar latencia real de Redis en producción vs desarrollo
+- [x] Crear sección de "Performance Insights" en CacheMonitor
+- [x] Crear performanceMonitor.ts con tracking de queries
+- [x] Agregar 4 endpoints en system.router.ts: getPerformanceStats, getRecentQueryMetrics, clearPerformanceMetrics, checkAlerts
+
+## FASE 32 - Alertas Automáticas de Caché
+
+- [x] Crear sistema de alertas en server/alerts.ts
+- [x] Implementar verificación de hit rate <80%
+- [x] Implementar verificación de latencia >100ms
+- [x] Integrar con sistema de notificaciones del owner (notifyOwner)
+- [x] Agregar indicadores visuales de alertas en CacheMonitor
+- [x] Configurar frecuencia de verificación (cada 5 minutos con cron job)
+- [x] Crear endpoints tRPC: checkAlerts, getAlertState, setAlertThresholds, resetAlerts
+- [x] Implementar sistema de cooldown para evitar spam de notificaciones
+
+## FASE 33 - Gráficos de Evolución Temporal
+
+- [x] Instalar librería de gráficos de líneas (Recharts LineChart, AreaChart, BarChart)
+- [x] Crear componente de gráfico de hit rate en el tiempo (LineChart verde)
+- [x] Crear componente de gráfico de latencia en el tiempo (AreaChart azul)
+- [x] Crear componente de gráfico de operaciones por hora (BarChart morado)
+- [x] Integrar gráficos en CacheMonitor usando historial de snapshots
+- [x] Conectar con endpoint systemMonitor.getMetricsHistory
+- [x] Mostrar estadísticas del historial (total snapshots, promedios, operaciones totales)
+- [x] Agregar mensaje informativo cuando no hay datos históricos aún
