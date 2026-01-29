@@ -86,7 +86,7 @@ function CircularIndicator({ color, icon: iconName, label, value }: any) {
 export default function Home() {
   const { t } = useTranslation();
   const [, navigate] = useLocation();
-  const [selectedMonth, setSelectedMonth] = useState(new Date());
+  const [selectedMonth, setSelectedMonth] = useState(() => new Date());
 
   // Prefetch data for better performance
   usePrefetchDashboardData();
@@ -156,7 +156,7 @@ export default function Home() {
         subtitle="Panel de control principal" 
       />
       
-      <div className="max-w-7xl mx-auto px-6 py-6 space-y-6">
+      <div className="w-full px-8 py-6 space-y-6">
         {/* Alerta de Licencias */}
         <LicenseExpirationAlert />
 
