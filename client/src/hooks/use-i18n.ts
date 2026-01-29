@@ -51,8 +51,11 @@ async function loadTranslations(language: SupportedLanguage): Promise<Record<str
 
   try {
     // Cargar dinámicamente el archivo de traducción
-    const translations = await import(`../../../locales/${language}.json`);
-    translationsCache[language] = translations.default || translations;
+    const translations = await import(`../../../locales/${language}/translations.json`);
+    const translationsData = translations.default || translations;
+    // Flatten nested translations object
+    const flattened = flattenTranslations(translationsData);
+    translationsCache[language] = flattened;
     return translationsCache[language]!;
   } catch (error) {
     console.error(`[i18n] Error loading translations for ${language}:`, error);
@@ -195,6 +198,29 @@ export function useI18n() {
     isLoading,
     hasTranslation,
   };
+}
+
+/**
+ * Interpolate variables in translation string
+ */
+/**
+ * Flatten nested translations object to dot notation
+ */
+function flattenTranslations(obj: any, prefix = ''): Record<string, string> {
+  const result: Record<string, string> = {};
+  
+  for (const key in obj) {
+    const value = obj[key];
+    const newKey = prefix ? `${prefix}.${key}` : key;
+    
+    if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
+      Object.assign(result, flattenTranslations(value, newKey));
+    } else {
+      result[newKey] = String(value);
+    }
+  }
+  
+  return result;
 }
 
 /**
